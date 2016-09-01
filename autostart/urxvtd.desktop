@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=rxvtd
+TryExec=urxvtd
+TryExec=urxvtd --quiet --fork --opendisplay
+Terminal=false
+Type=Application
+StartupNotify=false
+OnlyShowIn=awesome
