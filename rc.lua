@@ -2106,11 +2106,11 @@ uniarg:key_repeat({modkey, "Control"}, "n", customization.func.tag_move_forward)
 
 --- change focus
 
-uniarg:key_repeat({ modkey,           }, "j", customization.func.client_focus_next),
+uniarg:key_repeat({ modkey,           }, "k", customization.func.client_focus_next),
 
 uniarg:key_repeat({ modkey,           }, "Tab", customization.func.client_focus_next),
 
-uniarg:key_repeat({ modkey,           }, "k", customization.func.client_focus_prev),
+uniarg:key_repeat({ modkey,           }, "j", customization.func.client_focus_prev),
 
 uniarg:key_repeat({ modkey, "Shift"   }, "Tab", customization.func.client_focus_prev),
 
