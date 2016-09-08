@@ -118,8 +118,7 @@ do
 end
 -- }}}
 
--- {{{
--- HACK! prevent Awesome start autostart items multiple times in a session
+-- {{{ HACK! prevent Awesome start autostart items multiple times in a session
 -- cause: in-place restart by awesome.restart, xrandr change
 -- idea:
 -- * create a file awesome-autostart-once when first time "dex" autostart items (at the end of this file)
