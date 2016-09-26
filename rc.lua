@@ -182,40 +182,24 @@ do
 
         end
     end)
-
-    customization.orig.quit = awesome.quit
-    awesome.quit = function ()
-        local scr = mouse.screen
-        awful.prompt.run({prompt = "Quit (type 'yes' to confirm)? "},
-        customization.widgets.promptbox[scr].widget,
-        function (t)
-            if string.lower(t) == 'yes' then
-                customization.orig.quit()
-            end
-        end,
-        function (t, p, n)
-            return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
-        end)
-    end
 end
 
-do
-    customization.orig.restart = awesome.restart
-    awesome.restart = function ()
-        local scr = mouse.screen
-        awful.prompt.run({prompt = "Restart (type 'yes' to confirm)? "},
-        customization.widgets.promptbox[scr].widget,
-        function (t)
-            if string.lower(t) == 'yes' then
-                customization.orig.restart()
-            end
-        end,
-        function (t, p, n)
-            return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
-        end)
-    end
+for _,fname in pairs({"quit", "restart"}) do
+  customization.orig[fname] = awesome[fname]
+  awesome[fname] = function ()
+    local scr = mouse.screen
+    awful.prompt.run({prompt = fname .. " (type 'yes' to confirm)? "},
+      customization.widgets.promptbox[scr].widget,
+      function (t)
+        if string.lower(t) == 'yes' then
+          customization.orig[fname]()
+        end
+      end,
+      function (t, p, n)
+        return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
+    end)
+  end
 end
-
 -- }}}
 
 -- {{{ Variable definitions
