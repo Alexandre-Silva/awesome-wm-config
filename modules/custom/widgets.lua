@@ -1,0 +1,3 @@
+local widgets = {}
+
+return widgets
