@@ -1,4 +1,6 @@
 local awful = require("awful")
+awful.rules = require("awful.rules")
+
 -- local config_path = awful.util.getdir("config")
 local config_path = "/home/alex/projects/awesome-wm-config"
 package.path = config_path .. "/?.lua;" .. package.path
@@ -6,14 +8,6 @@ package.path = config_path .. "/?/init.lua;" .. package.path
 package.path = config_path .. "/modules/?.lua;" .. package.path
 package.path = config_path .. "/modules/?/init.lua;" .. package.path
 
-awful.client = require("awful.client")
-awful.screen = require("awful.screen")
-awful.rules = require("awful.rules")
-awful.menu = require("awful.menu")
-awful.ewmh = require("awful.ewmh")
-awful.autofocus = require("awful.autofocus")
-awful.dbus = require("awful.dbus")
-awful.remote = require("awful.remote")
 
 local math = require("math")
 local gears = require("gears")
@@ -204,34 +198,6 @@ do
 end
 --]]
 
--- This is used later as the default terminal and editor to run.
-
---{{
-local tools = {
-    terminal = os.getenv("TERMCMD") or "xterm",
-    system = {
-        taskmanager = "htopl",
-        filemanager = "rangerl"
-    },
-    browser = {
-    },
-    editor = {
-    },
-}
-
-tools.browser.primary = os.getenv("BROWSER") or "firefox"
-tools.browser.secondary = ({chromium="firefox", firefox="chromium"})[tools.browser.primary]
-
--- alternative: override
---tools.browser.primary = "google-chrome-stable"
---tools.browser.secondary = "firefox"
-
-tools.editor.primary = os.getenv("EDITOR") or "gvim"
-tools.editor.secondary = "emacs-24.5"
-
--- alternative: override
---tools.editor.primary = "gvim"
---tools.editor.secondary = "emacs"
 
 local myapp = nil
 do
@@ -251,16 +217,16 @@ do
         end
         return current
     end
-    myapp = build(tools)
+    myapp = build(custom.config)
 end
 --}}
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
--- I suggest you to remap Mod4 to another key using xmodmap or other tools.
+-- I suggest you to remap Mod4 to another key using xmodmap or other custom.config.
 -- However, you can use another modifier like Mod1, but it may interact with others.
-modkey = "Mod4"
+local modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 local layouts =
@@ -305,7 +271,7 @@ end
 
 -- Create a launcher widget and a main menu
 mysystemmenu = {
-    --{ "manual", tools.terminal .. " -e man awesome" },
+    --{ "manual", custom.config.terminal .. " -e man awesome" },
     { "&lock", custom.func.system_lock },
     { "&suspend", custom.func.system_suspend },
     { "hi&bernate", custom.func.system_hibernate },
@@ -316,8 +282,8 @@ mysystemmenu = {
 
 -- Create a launcher widget and a main menu
 myawesomemenu = {
-    --{ "manual", tools.terminal .. " -e man awesome" },
-    { "&edit config", tools.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
+    --{ "manual", custom.config.terminal .. " -e man awesome" },
+    { "&edit config", custom.config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
     { "&restart", awesome.restart },
     { "&quit", awesome.quit }
 }
@@ -328,7 +294,7 @@ mymainmenu = awful.menu({
     { "&system", mysystemmenu },
     { "app &finder", custom.func.app_finder },
     { "&apps", myapp },
-    { "&terminal", tools.terminal },
+    { "&terminal", custom.config.terminal },
     { "a&wesome", myawesomemenu, beautiful.awesome_icon },
     { "&client action", function ()
       custom.func.client_action_menu()
@@ -368,7 +334,7 @@ custom.widgets.cpuusage:set_color({
   stops = { {0, "#FF5656"}, {0.5, "#88A175"}, {1, "#AECF96" }}})
 vicious.register(custom.widgets.cpuusage, vicious.widgets.cpu, "$1", 5)
 do
-    local prog=tools.system.taskmanager
+    local prog=custom.config.system.taskmanager
     local started=false
     custom.widgets.cpuusage:buttons(awful.util.table.join(
     awful.button({ }, 1, function ()
@@ -386,7 +352,7 @@ custom.widgets.memusage = wibox.widget.textbox()
 vicious.register(custom.widgets.memusage, vicious.widgets.mem,
   "<span fgcolor='yellow'>$1% ($2MB/$3MB)</span>", 3)
 do
-    local prog=tools.system.taskmanager
+    local prog=custom.config.system.taskmanager
     local started=false
     custom.widgets.memusage:buttons(awful.util.table.join(
     awful.button({ }, 1, function ()
@@ -789,7 +755,7 @@ awful.key({ modkey }, "\\", custom.func.systeminfo),
 awful.key({modkey}, "F1", custom.func.help),
 
 awful.key({ "Ctrl", "Shift" }, "Escape", function ()
-    awful.util.spawn(tools.system.taskmanager)
+    awful.util.spawn(custom.config.system.taskmanager)
 end),
 
 --- Layout
@@ -845,7 +811,7 @@ awful.key({modkey}, "F4", function()
 end),
 
 awful.key({ modkey }, "c", function ()
-    awful.util.spawn(tools.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua" )
+    awful.util.spawn(custom.config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua" )
 end),
 
 awful.key({ modkey, "Shift" }, "/", function() mymainmenu:toggle({keygrabber=true}) end),
@@ -871,9 +837,9 @@ awful.key({ modkey, }, "x", function() mymainmenu:toggle({keygrabber=true}) end)
 
 awful.key({ modkey, }, "X", function() mymainmenu:toggle({keygrabber=true}) end),
 
-uniarg:key_repeat({ modkey,           }, "Return", function () awful.util.spawn(tools.terminal) end),
+uniarg:key_repeat({ modkey,           }, "Return", function () awful.util.spawn(custom.config.terminal) end),
 
-uniarg:key_repeat({ modkey, "Mod1" }, "Return", function () awful.util.spawn("gksudo " .. tools.terminal) end),
+uniarg:key_repeat({ modkey, "Mod1" }, "Return", function () awful.util.spawn("gksudo " .. custom.config.terminal) end),
 
 -- dynamic tagging
 
@@ -1001,15 +967,15 @@ end),
 --- everyday
 
 uniarg:key_repeat({ modkey, "Mod1", }, "l", function ()
-    awful.util.spawn(tools.system.filemanager)
+    awful.util.spawn(custom.config.system.filemanager)
 end),
 
 uniarg:key_repeat({ modkey,  }, "e", function ()
-    awful.util.spawn(tools.system.filemanager)
+    awful.util.spawn(custom.config.system.filemanager)
 end),
 
 uniarg:key_repeat({ modkey,  }, "E", function ()
-    awful.util.spawn(tools.system.filemanager)
+    awful.util.spawn(custom.config.system.filemanager)
 end),
 
 uniarg:key_repeat({ modkey, "Mod1", }, "p", function ()
@@ -1021,19 +987,19 @@ uniarg:key_repeat({ modkey, "Mod1", }, "r", function ()
 end),
 
 uniarg:key_repeat({ modkey, }, "i", function ()
-    awful.util.spawn(tools.editor.primary)
+    awful.util.spawn(custom.config.editor.primary)
 end),
 
 uniarg:key_repeat({ modkey, "Shift" }, "i", function ()
-    awful.util.spawn(tools.editor.secondary)
+    awful.util.spawn(custom.config.editor.secondary)
 end),
 
 uniarg:key_repeat({ modkey, }, "b", function ()
-    awful.util.spawn(tools.browser.primary)
+    awful.util.spawn(custom.config.browser.primary)
 end),
 
 uniarg:key_repeat({ modkey, "Shift" }, "b", function ()
-    awful.util.spawn(tools.browser.secondary)
+    awful.util.spawn(custom.config.browser.secondary)
 end),
 
 uniarg:key_repeat({ modkey, "Mod1", }, "v", function ()
@@ -1123,7 +1089,7 @@ awful.key({}, "Print", function ()
 end),
 
 uniarg:key_repeat({}, "XF86Launch1", function ()
-    awful.util.spawn(tools.terminal)
+    awful.util.spawn(custom.config.terminal)
 end),
 
 awful.key({ }, "XF86Sleep", function ()
