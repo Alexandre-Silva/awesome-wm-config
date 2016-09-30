@@ -28,7 +28,7 @@ util.client = {}
 
 function util.client.rel_send(rel_idx)
     local client = capi.client.focus
-    if client then 
+    if client then
         local scr = capi.client.focus.screen or capi.mouse.screen
         local sel = awful.tag.selected(scr)
         local sel_idx = awful.tag.getidx(sel)
@@ -44,7 +44,7 @@ end
 util.tag = {}
 
 function util.tag.rel_move(tag, rel_idx)
-    if tag then 
+    if tag then
         local scr = awful.tag.getscreen(tag)
         local tag_idx = awful.tag.getidx(tag)
         local tags = awful.tag.gettags(scr)
@@ -80,8 +80,8 @@ end
 --@param name: name of the tag
 --@param props: table of properties (screen, index, etc.)
 function util.tag.add(name, props)
-    props = props or 
-    { 
+    props = props or
+    {
         screen = capi.mouse.screen,
         index = 1,
     }
@@ -138,7 +138,7 @@ function util.tag.rename(tag, newp)
             text=key,
             timeout=20,
         }
-        ) 
+        )
     end
     --]]
 
@@ -171,5 +171,43 @@ function util.tag.rename(tag, newp)
     end
     )
 end
+
+--tablecopy: Copies a table (recursively)
+--@param orig: the table to copy
+function tablecopy(orig)
+  local orig_type = type(orig)
+  local copy
+  if orig_type == 'table' then
+    copy = {}
+    for orig_key, orig_value in next, orig, nil do
+      copy[tablecopy(orig_key)] = tablecopy(orig_value)
+    end
+    setmetatable(copy, tablecopy(getmetatable(orig)))
+  else -- number, string, boolean, etc
+    copy = orig
+  end
+  return copy
+end
+util.tablecopy = tablecopy
+
+--tableMerge: merges two table's items into a third table (for repeated key's t2's value is copied)
+--@param name: name of the tag
+--@param props: table of properties (screen, index, etc.)
+function util.tableJoin(t1, t2)
+  local t3 = util.tablecopy(t1)
+  for k,v in pairs(t2) do
+    if type(v) == "table" then
+      if type(t1[k] or false) == "table" then
+        t3[k] = tableJoin(t1[k] or {}, t2[k] or {})
+      else
+        t3[k] = v
+      end
+    else
+      t3[k] = v
+    end
+  end
+  return t3
+end
+
 
 return util
