@@ -1,5 +1,8 @@
 local awful = require("awful")
 awful.rules = require("awful.rules")
+require("awful.autofocus")
+require("awful.dbus")
+require("awful.remote")
 
 -- local config_path = awful.util.getdir("config")
 local config_path = "/home/alex/projects/awesome-wm-config"
