@@ -1,12 +1,11 @@
-local awful = require("awful")
-
 local custom = {}
 
 custom.config = require("custom.config")
-custom.orig = {}
-custom.func = require("custom.func")
 custom.default = require("custom.default")
+custom.func = require("custom.func")
 custom.option = {}
+custom.orig = {}
+custom.structure = require("custom.structure")
 custom.timer = {}
 custom.widgets = require("custom.widgets")
 

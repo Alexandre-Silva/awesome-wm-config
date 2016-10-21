@@ -1,5 +1,6 @@
 local awful = require("awful")
 awful.rules = require("awful.rules")
+
 require("awful.autofocus")
 require("awful.dbus")
 require("awful.remote")
@@ -12,25 +13,23 @@ package.path = config_path .. "/modules/?.lua;" .. package.path
 package.path = config_path .. "/modules/?/init.lua;" .. package.path
 
 
-local math = require("math")
-local gears = require("gears")
-local wibox = require("wibox")
-local beautiful = require("beautiful")
-local naughty = require("naughty")
-local menubar = require("menubar")
-local vicious = require("vicious")
-
 local autostart = require("autostart")
+local bashets = require("bashets") -- bashets config: https://gitorious.org/bashets/pages/Brief_Introduction
+local beautiful = require("beautiful")
 local custom = require('custom')
--- bashets config: https://gitorious.org/bashets/pages/Brief_Introduction
-local bashets = require("bashets")
-local util = require("util")
+local gears = require("gears")
+local math = require("math")
+local menubar = require("menubar")
+local naughty = require("naughty")
 local uniarg = require("uniarg")
+local util = require("util")
+local vicious = require("vicious")
+local wibox = require("wibox")
 
 local capi = {
-    tag = tag,
-    screen = screen,
-    client = client,
+  tag = tag,
+  screen = screen,
+  client = client,
 }
 
 -- do not use letters, which shadow access key to menu entry
@@ -47,8 +46,8 @@ naughty.config.presets.normal.opacity = custom.default.property.default_naughty_
 naughty.config.presets.critical.opacity = custom.default.property.default_naughty_opacity
 
 do
-    local config_path = awful.util.getdir("config")
-    bashets.set_script_path(config_path .. "/modules/bashets/")
+  local config_path = awful.util.getdir("config")
+  bashets.set_script_path(config_path .. "/modules/bashets/")
 end
 
 -- {{{ Error handling
@@ -202,28 +201,6 @@ end
 --]]
 
 
-local myapp = nil
-do
-    local function build(arg)
-        local current = {}
-        local keys = {} -- keep the keys sorted
-        for k, v in pairs(arg) do table.insert(keys, k) end
-        table.sort(keys)
-
-        for _, k in ipairs(keys) do
-            v = arg[k]
-            if type(v) == 'table' then
-                table.insert(current, {k, build(v)})
-            else
-                table.insert(current, {v, v})
-            end
-        end
-        return current
-    end
-    myapp = build(custom.config)
-end
---}}
-
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
@@ -269,59 +246,7 @@ end
 -- }}}
 --]]
 
-
--- {{{ Menu
-
--- Create a launcher widget and a main menu
-mysystemmenu = {
-    --{ "manual", custom.config.terminal .. " -e man awesome" },
-    { "&lock", custom.func.system_lock },
-    { "&suspend", custom.func.system_suspend },
-    { "hi&bernate", custom.func.system_hibernate },
-    { "hybri&d sleep", custom.func.system_hybrid_sleep },
-    { "&reboot", custom.func.system_reboot },
-    { "&power off", custom.func.system_power_off }
-}
-
--- Create a launcher widget and a main menu
-myawesomemenu = {
-    --{ "manual", custom.config.terminal .. " -e man awesome" },
-    { "&edit config", custom.config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
-    { "&restart", awesome.restart },
-    { "&quit", awesome.quit }
-}
-
-mymainmenu = awful.menu({
-  theme = { width=150, },
-  items = {
-    { "&system", mysystemmenu },
-    { "app &finder", custom.func.app_finder },
-    { "&apps", myapp },
-    { "&terminal", custom.config.terminal },
-    { "a&wesome", myawesomemenu, beautiful.awesome_icon },
-    { "&client action", function ()
-      custom.func.client_action_menu()
-      mymainmenu:hide()
-    end, beautiful.awesome_icon },
-    { "&tag action", function ()
-      custom.func.tag_action_menu()
-      mymainmenu:hide()
-    end, beautiful.awesome_icon },
-    { "clients &on current tag", function ()
-      custom.func.clients_on_tag()
-      mymainmenu:hide()
-    end, beautiful.awesome_icon },
-    { "clients on a&ll tags", function ()
-      custom.func.all_clients()
-      mymainmenu:hide()
-    end, beautiful.awesome_icon },
-  }
-})
-
-custom.widgets.launcher = awful.widget.launcher({ image = beautiful.awesome_icon,
-menu = mymainmenu })
-
--- }}}
+custom.structure.init()
 
 -- {{{ Wibox
 --custom.widgets.textclock = wibox.widget.textbox()
@@ -693,7 +618,7 @@ end
 root.buttons(awful.util.table.join(
 awful.button({ }, 1, custom.func.all_clients),
 awful.button({ }, 2, custom.func.tag_action_menu),
-awful.button({ }, 3, function () mymainmenu:toggle() end),
+awful.button({ }, 3, function () custom.structure.main_menu:toggle() end),
 awful.button({ }, 4, awful.tag.viewprev),
 awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -817,8 +742,6 @@ awful.key({ modkey }, "c", function ()
     awful.util.spawn(custom.config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua" )
 end),
 
-awful.key({ modkey, "Shift" }, "/", function() mymainmenu:toggle({keygrabber=true}) end),
-
 awful.key({ modkey, }, ";", function()
   local c = client.focus
   if c then
@@ -836,9 +759,7 @@ awful.key({ modkey, "Shift" }, "'", custom.func.all_clients),
 
 awful.key({ modkey, "Shift", "Ctrl" }, "'", custom.func.all_clients_prompt),
 
-awful.key({ modkey, }, "x", function() mymainmenu:toggle({keygrabber=true}) end),
-
-awful.key({ modkey, }, "X", function() mymainmenu:toggle({keygrabber=true}) end),
+awful.key({ modkey, }, "x", function() custom.structure.main_menu:toggle({keygrabber=true}) end),
 
 uniarg:key_repeat({ modkey,           }, "Return", function () awful.util.spawn(custom.config.terminal) end),
 
