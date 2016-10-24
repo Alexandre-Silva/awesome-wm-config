@@ -1,6 +1,7 @@
 local custom = {}
 
 custom.config = require("custom.config")
+custom.binds = require("custom.binds")
 custom.default = require("custom.default")
 custom.func = require("custom.func")
 custom.option = {}

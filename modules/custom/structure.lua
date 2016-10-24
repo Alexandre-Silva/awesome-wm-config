@@ -27,7 +27,11 @@ end
 -- }}}
 
 -- Menus {{{
-local apps_menu = build(config)
+local apps_menu = build({system=config.system,
+                         terminal=config.terminal,
+                         browser=config.browser,
+                         editor=config.editor,
+})
 
 -- Create a launcher widget and a main menu
 local system_menu = {
