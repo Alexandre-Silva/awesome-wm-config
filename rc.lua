@@ -212,33 +212,6 @@ end
 custom.structure.init()
 
 -- {{{ Wibox
---custom.widgets.textclock = wibox.widget.textbox()
---bashets.register("date.sh", {widget=custom.widgets.textclock, update_time=1, format="$1 <span fgcolor='red'>$2</span> <small>$3$4</small> <b>$5<small>$6</small></b>"}) -- http://awesome.naquadah.org/wiki/Bashets
-
--- vicious widgets: http://awesome.naquadah.org/wiki/Vicious
-
-custom.widgets.cpuusage = awful.widget.graph()
-custom.widgets.cpuusage:set_width(50)
-custom.widgets.cpuusage:set_background_color("#494B4F")
-custom.widgets.cpuusage:set_color({
-  type = "linear", from = { 0, 0 }, to = { 10,0 },
-  stops = { {0, "#FF5656"}, {0.5, "#88A175"}, {1, "#AECF96" }}})
-vicious.register(custom.widgets.cpuusage, vicious.widgets.cpu, "$1", 5)
-do
-    local prog=custom.config.system.taskmanager
-    local started=false
-    custom.widgets.cpuusage:buttons(awful.util.table.join(
-    awful.button({ }, 1, function ()
-        if started then
-            awful.util.spawn("pkill -f '" .. prog .. "'")
-        else
-            awful.util.spawn(prog)
-        end
-        started=not started
-    end)
-    ))
-end
-
 custom.widgets.memusage = wibox.widget.textbox()
 vicious.register(custom.widgets.memusage, vicious.widgets.mem,
   "<span fgcolor='yellow'>$1% ($2MB/$3MB)</span>", 3)
