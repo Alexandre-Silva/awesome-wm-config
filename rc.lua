@@ -40,6 +40,7 @@ awful.menu.menu_keys.back = { "Left", "[", "{", "-", "_", }
 awful.menu.menu_keys.exec = { "Return", "Space", }
 awful.menu.menu_keys.close = { "Escape", "BackSpace", }
 
+local modkey = custom.binds.modkey
 
 naughty.config.presets.low.opacity = custom.default.property.default_naughty_opacity
 naughty.config.presets.normal.opacity = custom.default.property.default_naughty_opacity
@@ -74,7 +75,6 @@ do
     end)
 end
 -- }}}
-
 -- {{{ HACK! prevent Awesome start autostart items multiple times in a session
 -- cause: in-place restart by awesome.restart, xrandr change
 -- idea:
@@ -160,11 +160,7 @@ for _,fname in pairs({"quit", "restart"}) do
   end
 end
 -- }}}
-
-
 -- {{{ Variable definitions
--- Themes define colours, icons, and wallpapers
----[[
 
 do
     local config_path = awful.util.getdir("config")
@@ -201,11 +197,6 @@ do
     custom.func.change_wallpaper()
     --}}
 end
---]]
-
-
-local modkey = custom.binds.modkey
-
 -- }}}
 
 --[[
@@ -582,7 +573,6 @@ awful.rules.rules = {
 
 }
 -- }}}
-
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c, startup)
