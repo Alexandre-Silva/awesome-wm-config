@@ -350,7 +350,7 @@ do
 end
 
 custom.widgets.date = wibox.widget.textbox()
-vicious.register(custom.widgets.date, vicious.widgets.date, "%x %X%Z", 1)
+vicious.register(custom.widgets.date, vicious.widgets.date, "%d-%m-%y %X", 1)
 do
     local prog1="gnome-control-center datetime"
     local started1=false
