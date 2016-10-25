@@ -265,7 +265,7 @@ custom.widgets.bat0:set_background_color("#494B4F")
 custom.widgets.bat0:set_border_color(nil)
 custom.widgets.bat0:set_color({ type = "linear", from = { 0, 0 }, to = { 0, 10 },
   stops = { { 0, "#AECF96" }, { 0.5, "#88A175" }, { 1, "#FF5656" }}})
-vicious.register(custom.widgets.bat0, vicious.widgets.bat, "$2", 61, "BAT0")
+vicious.register(custom.widgets.bat0, vicious.widgets.bat, "$2", 61, "BAT1")
 do
     local prog="gnome-control-center power"
     local started=false
