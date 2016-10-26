@@ -9,9 +9,6 @@ local config = require("custom.config")
 
 local binds = {}
 
-local globalkeys = nil
-local clientkeys = nil
-local clientbuttons = nil
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -73,7 +70,7 @@ root.buttons(awful.util.table.join(
 ))
 -- }}}
 -- {{{ universal arguments
-globalkeys = awful.util.table.join(
+binds.globalkeys = awful.util.table.join(
   awful.key({ modkey }, "u",
     function ()
       uniarg:activate()
@@ -113,8 +110,8 @@ globalkeys = awful.util.table.join(
 )
 -- }}}
 -- {{{ window management
-globalkeys = awful.util.table.join(
-  globalkeys,
+binds.globalkeys = awful.util.table.join(
+  binds.globalkeys,
 
   --- restart/quit/info
   awful.key({ modkey, "Control" }, "r", awesome.restart),
@@ -358,7 +355,7 @@ globalkeys = awful.util.table.join(
 -- {{{ client management
 
 --- operation
-clientkeys = awful.util.table.join(
+binds.clientkeys = awful.util.table.join(
   awful.key({ modkey,           }, "f", func.client_fullscreen),
   awful.key({ modkey,           }, "m", func.client_maximize),
   awful.key({ modkey, "Shift"   }, "c", func.client_kill),
@@ -450,8 +447,8 @@ clientkeys = awful.util.table.join(
 for i = 1, 10 do
   local keycode = "#" .. i+9
 
-  globalkeys = awful.util.table.join(
-    globalkeys,
+  binds.globalkeys = awful.util.table.join(
+    binds.globalkeys,
 
     awful.key({ modkey }, keycode,
       function () tag = get_tag(i, mouse.screen) if tag then awful.tag.viewonly(tag) end
@@ -486,7 +483,7 @@ for i = 1, 10 do
 end
 -- }}}
 -- {{{ client buttons
-local clientbuttons = awful.util.table.join(
+binds.clientbuttons = awful.util.table.join(
   awful.button({ }, 1, function (c)
       if awful.client.focus.filter(c) then
         client.focus = c
@@ -500,11 +497,7 @@ local clientbuttons = awful.util.table.join(
 
 
 function binds.init()
-  root.keys(globalkeys)
+  root.keys(binds.globalkeys)
 end
-
-config.globalkeys = globalkeys
-config.clientkeys = clientkeys
-config.clientbuttons = clientbuttons
 
 return binds
