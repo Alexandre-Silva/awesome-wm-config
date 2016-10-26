@@ -115,7 +115,6 @@ for _,fname in pairs({"quit", "restart"}) do
 end
 -- }}}
 -- {{{ Variable definitions
-
 do
   local config_path = awful.util.getdir("config")
   local function init_theme(theme_name)
@@ -152,17 +151,15 @@ do
   --}}
 end
 -- }}}
-
+-- {{{ Wallpaper
 --[[
-  -- {{{ Wallpaper
   if beautiful.wallpaper then
   for s = 1, screen.count() do
   gears.wallpaper.maximized(beautiful.wallpaper, s, true)
   end
   end
-  -- }}}
 --]]
-
+-- }}}
 -- {{{ Wibox
 custom.widgets.memusage = wibox.widget.textbox()
 vicious.register(custom.widgets.memusage, vicious.widgets.mem,

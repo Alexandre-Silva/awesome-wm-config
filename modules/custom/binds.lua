@@ -124,8 +124,8 @@ globalkeys = awful.util.table.join(
   awful.key({ "Ctrl", "Shift"   }, "Escape", function () awful.util.spawn(config.system.taskmanager) end),
 
   --- Layout
-  uniarg:key_repeat({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
-  uniarg:key_repeat({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
+  uniarg:key_repeat({ modkey,           }, "space", function () awful.layout.inc(config.layouts,  1) end),
+  uniarg:key_repeat({ modkey, "Shift"   }, "space", function () awful.layout.inc(config.layouts, -1) end),
 
   --- multiple screens/multi-head/RANDR
   uniarg:key_repeat({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
