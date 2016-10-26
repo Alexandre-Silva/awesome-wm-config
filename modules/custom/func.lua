@@ -1,4 +1,5 @@
 local awful = require("awful")
+local naughty = require("naughty")
 local util = require("util")
 
 -- from this module
@@ -171,6 +172,9 @@ end
 
 func.client_minimize = function (c)
   c.minimized = not c.minimized
+end
+
+func.client_manage_tag = function (c, startup)
 end
 
 do

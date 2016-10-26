@@ -4,7 +4,6 @@ local uniarg = require("uniarg")
 local widgets = require("custom.widgets")
 local func = require("custom.func")
 local structure = require("custom.structure")
-local default = require("custom.default")
 local config = require("custom.config")
 
 
@@ -23,85 +22,6 @@ local modkey = "Mod4"
 binds.modkey = modkey
 
 -- {{{ Utils
-do
-  local cachedir = awful.util.getdir("cache")
-  local awesome_tags_fname = cachedir .. "/awesome-tags"
-
-  -- test whether screen 1 tag file exists
-  local f = io.open(awesome_tags_fname .. ".0", "r")
-  if f then
-    local old_scr_count = tonumber(f:read("*l"))
-    f:close()
-    os.remove(awesome_tags_fname .. ".0")
-
-    local new_scr_count = screen.count()
-    local count = {}
-    local scr_count = math.min(new_scr_count, old_scr_count)
-
-    if scr_count>0 then
-      for s = 1, scr_count do
-        count[s] = 1
-      end
-
-      for s = 1, old_scr_count do
-        local count_index = math.min(s, scr_count)
-        local fname = awesome_tags_fname .. "." .. s
-        for tagname in io.lines(fname) do
-          local tag = awful.tag.add(tagname,
-                                    {
-                                      screen = count_index,
-                                      layout = default.property.layout,
-                                      mwfact = default.property.mwfact,
-                                      nmaster = default.property.nmaster,
-                                      ncol = default.property.ncol,
-                                    }
-          )
-          awful.tag.move(count[count_index], tag)
-
-          count[count_index] = count[count_index]+1
-        end
-        os.remove(fname)
-      end
-    end
-
-    for s = 1, screen.count() do
-      local fname = awesome_tags_fname .. "-selected." .. s
-      f = io.open(fname, "r")
-      if f then
-        local tag = awful.tag.gettags(s)[tonumber(f:read("*l"))]
-        if tag then
-          awful.tag.viewonly(tag)
-        end
-        f:close()
-      end
-      os.remove(fname)
-    end
-
-  else
-    local tag = awful.tag.add(os.getenv("USER"),
-                              {
-                                screen = 1,
-                                layout = default.property.layout,
-                                mwfact = default.property.mwfact,
-                                nmaster = default.property.nmaster,
-                                ncol = default.property.ncol,
-                              }
-    )
-    awful.tag.viewonly(tag)
-
-    awful.tag.add("nil",
-                  {
-                    screen = 2,
-                    layout = default.property.layout,
-                    mwfact = default.property.mwfact,
-                    nmaster = default.property.nmaster,
-                    ncol = default.property.ncol,
-                  }
-    )
-
-  end
-end
-
 -- Create a new at screen (creates tag iff name is not nill)
 -- @param screen Screen where to create the tag
 -- @param name Tag's name
@@ -200,7 +120,7 @@ globalkeys = awful.util.table.join(
   awful.key({ modkey, "Control" }, "r", awesome.restart),
   awful.key({ modkey, "Shift"   }, "q", awesome.quit),
   awful.key({ modkey            }, "\\", func.systeminfo),
-  awful.key({modkey             }, "F1", func.help),
+  awful.key({ modkey            }, "F1", func.help),
   awful.key({ "Ctrl", "Shift"   }, "Escape", function () awful.util.spawn(config.system.taskmanager) end),
 
   --- Layout
@@ -269,26 +189,8 @@ globalkeys = awful.util.table.join(
     function () awful.util.spawn("gksudo " .. config.terminal)
   end),
 
-  -- dynamic tagging
-  awful.key({ modkey, "Ctrl", "Mod1" }, "t", function ()
-      option.tag_persistent_p = not option.tag_persistent_p
-      local msg = nil
-      if option.tag_persistent_p then
-        msg = "Tags will persist across exit/restart."
-      else
-        msg = "Tags will <span fgcolor='red'>NOT</span> persist across exit/restart."
-      end
-      naughty.notify({
-          preset = naughty.config.presets.normal,
-          title="Tag persistence",
-          text=msg,
-          timeout = 1,
-          screen = mouse.screen,
-      })
-  end),
-
   --- add/delete/rename
-  awful.key({modkey}, "a", func.tag_add_after),
+  awful.key({modkey         }, "a", func.tag_add_after),
   awful.key({modkey, "Shift"}, "a", func.tag_add_before),
   awful.key({modkey, "Shift"}, "d", func.tag_delete),
   awful.key({modkey, "Shift"}, "r", func.tag_rename),

@@ -1,3 +1,4 @@
+-- {{{ Imports 
 local awful = require("awful")
 local bashets = require("bashets")
 local beautiful = require("beautiful")
@@ -7,10 +8,12 @@ local wibox = require("wibox")
 local config = require("custom.config")
 local widgets = require("custom.widgets")
 local func = require("custom.func")
+local default = require("custom.default")
+-- }}}
 
 local structure = {}
 
--- helper funcs {{{
+-- {{{ Helper funcs
 local function build(arg)
   local current = {}
   local keys = {} -- keep the keys sorted
@@ -28,8 +31,7 @@ local function build(arg)
   return current
 end
 -- }}}
-
--- Menus {{{
+-- {{{ Menus
 local apps_menu = build({system=config.system,
                          terminal=config.terminal,
                          browser=config.browser,
@@ -78,19 +80,34 @@ local main_menu = {
   }
 }
 -- }}}
-
-
--- attaches widgets to panel
+-- {{{ Init
 function structure.init()
-  structure.main_menu = awful.menu(main_menu)
+  local tag = awful.tag.add(
+    os.getenv("USER"),
+    {screen = 1,
+     layout = default.property.layout,
+     mwfact = default.property.mwfact,
+     nmaster = default.property.nmaster,
+     ncol = default.property.ncol,
+  })
+  awful.tag.viewonly(tag)
 
+  awful.tag.add(
+    "nil",
+    {screen = 2,
+     layout = default.property.layout,
+     mwfact = default.property.mwfact,
+     nmaster = default.property.nmaster,
+     ncol = default.property.ncol,
+    }
+  )
+
+  -- attaches main menu to panel
+  structure.main_menu = awful.menu(main_menu)
   widgets.launcher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                              menu = main_menu })
 
-
-  -- Create a wibox for each screen and add it
-
-
+  -- creates and attaches taglist widget
   widgets.taglist.buttons = awful.util.table.join(
     awful.button({        }, 1, awful.tag.viewonly),
     awful.button({ modkey }, 1, awful.client.movetotag),
@@ -147,19 +164,21 @@ function structure.init()
   -- start bashets
   bashets.start()
 
+  -- Create a wibox for each screen and add it
   for s = 1, screen.count() do
     -- Create a promptbox for each screen
     widgets.promptbox[s] = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     widgets.layoutbox[s] = awful.widget.layoutbox(s)
-    widgets.layoutbox[s]:buttons(awful.util.table.join(
-                                   awful.button({ }, 1, function () awful.layout.inc(custom.config.layouts, 1) end),
-                                   awful.button({ }, 3, function () awful.layout.inc(custom.config.layouts, -1) end),
-                                   awful.button({ }, 4, function () awful.layout.inc(custom.config.layouts, -1) end),
-                                   awful.button({ }, 5, function () awful.layout.inc(custom.config.layouts, 1) end),
-                                   nil
-                                ))
+    widgets.layoutbox[s]:buttons(
+      awful.util.table.join(
+        awful.button({ }, 1, function () awful.layout.inc(custom.config.layouts,  1) end),
+        awful.button({ }, 3, function () awful.layout.inc(custom.config.layouts, -1) end),
+        awful.button({ }, 4, function () awful.layout.inc(custom.config.layouts, -1) end),
+        awful.button({ }, 5, function () awful.layout.inc(custom.config.layouts,  1) end),
+        nil))
+
     -- Create a taglist widget
     widgets.taglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, widgets.taglist.buttons)
 
@@ -202,7 +221,6 @@ function structure.init()
 
   util.taglist.set_taglist(widgets.taglist)
 end
-
 -- }}}
 
 return structure
