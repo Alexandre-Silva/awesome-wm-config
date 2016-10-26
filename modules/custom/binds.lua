@@ -1,5 +1,6 @@
 local awful = require("awful")
 local uniarg = require("uniarg")
+local util = require("util")
 
 local widgets = require("custom.widgets")
 local func = require("custom.func")
@@ -19,33 +20,6 @@ local modkey = "Mod4"
 binds.modkey = modkey
 
 -- {{{ Utils
--- Create a new at screen (creates tag iff name is not nill)
--- @param screen Screen where to create the tag
--- @param name Tag's name
-local function new_tag(screen, name)
-  tag = nil
-  if text and #text>0 then
-    tag = awful.tag.add(text)
-    awful.tag.setscreen(tag, scr)
-    awful.tag.move(#tags+1, tag)
-    awful.tag.viewonly(tag)
-  end
-  return tag
-end
-
--- Ask for new tag's name and creates a tag
--- @param screen Screen where to create the tag
-local function promp_new_tag(screen)
-  tag = nil
-  awful.prompt.run(
-    {prompt = "<span fgcolor='red'>new tag: </span>"},
-    widgets.promptbox[scr].widget,
-    function(text) tag = new_tag(screen,text) end,
-    nil)
-
-  return tag
-end
-
 -- Gets the 'index'-esme tag with in the given 'focus'
 -- @param index The index of indended tag (starts at 1)
 -- @param screen The screen to search for the tag
@@ -56,7 +30,12 @@ local function get_tag(index, screen)
   if index <= #tags then
     return tags[index]
   else
-    return prompt_new_tag(screen)
+    return util.tag.add(
+      nil,
+      {
+        screen = screen,
+        index = #tags + 1,
+    })
   end
 end
 -- }}}
