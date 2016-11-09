@@ -1,4 +1,4 @@
--- {{{ Imports 
+-- {{{ Imports
 local awful = require("awful")
 local bashets = require("bashets")
 local beautiful = require("beautiful")
@@ -105,7 +105,7 @@ function structure.init()
   -- attaches main menu to panel
   structure.main_menu = awful.menu(main_menu)
   widgets.launcher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                             menu = main_menu })
+                                             menu = structure.main_menu })
 
   -- creates and attaches taglist widget
   widgets.taglist.buttons = awful.util.table.join(
