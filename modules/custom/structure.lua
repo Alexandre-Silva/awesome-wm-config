@@ -113,7 +113,7 @@ function structure.init()
     awful.button({ modkey }, 1, awful.client.movetotag),
     awful.button({        }, 2, awful.tag.viewtoggle),
     awful.button({ modkey }, 2, awful.client.toggletag),
-    awful.button({        }, 3, function (t) custom.func.tag_action_menu(t) end),
+    awful.button({        }, 3, function (t) func.tag_action_menu(t) end),
     awful.button({ modkey }, 3, awful.tag.delete),
     awful.button({        }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
     awful.button({        }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
@@ -140,15 +140,15 @@ function structure.init()
     end),
 
     awful.button({ }, 2, function (c)
-        custom.func.clients_on_tag()
+        func.clients_on_tag()
     end),
 
     awful.button({ modkey }, 2, function (c)
-        custom.func.all_clients()
+        func.all_clients()
     end),
 
     awful.button({ }, 3, function (c)
-        custom.func.client_action_menu(c)
+        func.client_action_menu(c)
     end),
 
     awful.button({ }, 4, function ()
@@ -173,10 +173,10 @@ function structure.init()
     widgets.layoutbox[s] = awful.widget.layoutbox(s)
     widgets.layoutbox[s]:buttons(
       awful.util.table.join(
-        awful.button({ }, 1, function () awful.layout.inc(custom.config.layouts,  1) end),
-        awful.button({ }, 3, function () awful.layout.inc(custom.config.layouts, -1) end),
-        awful.button({ }, 4, function () awful.layout.inc(custom.config.layouts, -1) end),
-        awful.button({ }, 5, function () awful.layout.inc(custom.config.layouts,  1) end),
+        awful.button({ }, 1, function () awful.layout.inc(config.layouts,  1) end),
+        awful.button({ }, 3, function () awful.layout.inc(config.layouts, -1) end),
+        awful.button({ }, 4, function () awful.layout.inc(config.layouts, -1) end),
+        awful.button({ }, 5, function () awful.layout.inc(config.layouts,  1) end),
         nil))
 
     -- Create a taglist widget
