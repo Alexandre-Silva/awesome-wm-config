@@ -200,7 +200,7 @@ function structure.init()
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
-    right_layout:add(widgets.new_cpuusage())
+    right_layout:add(widgets.cpuusage)
     right_layout:add(widgets.memusage)
     right_layout:add(widgets.bat0)
     right_layout:add(widgets.mpdstatus)
