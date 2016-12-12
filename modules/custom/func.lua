@@ -1124,7 +1124,7 @@ do
         text = text .. "You are running awesome <span fgcolor='red'>" .. awesome.version .. "</span> (<span fgcolor='red'>" .. awesome.release .. "</span>)"
         text = text .. "\n" .. "with config version <span fgcolor='red'>" .. config.version .. "</span>"
         text = text .. "\n\n" .. "help can be found at the URL: <u>" .. config.help_url .. "</u>"
-        text = text .. "\n\n\n\n" .. "opening in <b>" .. tools.browser.primary .. "</b>..."
+        text = text .. "\n\n\n\n" .. "opening in <b>" .. config.browser.primary .. "</b>..."
         instance = naughty.notify({
             preset = naughty.config.presets.normal,
             title="help about configuration",
@@ -1132,7 +1132,7 @@ do
             timeout = 20,
             screen = mouse.screen,
         })
-        awful.util.spawn_with_shell(tools.browser.primary .. " '" .. config.help_url .. "'")
+        awful.util.spawn_with_shell(config.browser.primary .. " '" .. config.help_url .. "'")
     end
 end
 
