@@ -126,40 +126,48 @@ do
   init_theme("zenburn")
 
   awful.util.spawn_with_shell("hsetroot -solid '#000000'")
-
-  -- randomly select a background picture
-  --{{
-  function custom.func.change_wallpaper()
-    if custom.option.wallpaper_change_p then
-      awful.util.spawn_with_shell("cd " .. config_path .. "/wallpaper/; ./my-wallpaper-pick.sh")
-    end
-  end
-
-  custom.timer.change_wallpaper= timer({timeout = custom.default.wallpaper_change_interval})
-
-  custom.timer.change_wallpaper:connect_signal("timeout", custom.func.change_wallpaper)
-
-  custom.timer.change_wallpaper:connect_signal("property::timeout",
-                                               function ()
-                                                 custom.timer.change_wallpaper:stop()
-                                                 custom.timer.change_wallpaper:start()
-                                               end
-  )
-
-  custom.timer.change_wallpaper:start()
-  -- first trigger
-  custom.func.change_wallpaper()
-  --}}
 end
 -- }}}
 -- {{{ Wallpaper
---[[
+local function set_wallpaper(s)
+  -- Wallpaper
   if beautiful.wallpaper then
-  for s = 1, screen.count() do
-  gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+    local wallpaper = beautiful.wallpaper
+    -- If wallpaper is a function, call it with the screen
+    if type(wallpaper) == "function" then
+      wallpaper = wallpaper(s)
+    end
+    gears.wallpaper.maximized(wallpaper, s, true)
   end
+end
+
+-- randomly select a background picture
+--{{
+function custom.func.change_wallpaper(s)
+  if custom.option.wallpaper_change_p then
+    awful.util.spawn_with_shell("cd " .. config_path .. "/wallpaper/; ./my-wallpaper-pick.sh")
   end
---]]
+end
+
+custom.timer.change_wallpaper = timer({timeout = custom.default.wallpaper_change_interval})
+
+custom.timer.change_wallpaper:connect_signal("timeout", custom.func.change_wallpaper)
+
+custom.timer.change_wallpaper:connect_signal("property::timeout",
+                                             function ()
+                                               custom.timer.change_wallpaper:stop()
+                                               custom.timer.change_wallpaper:start()
+                                             end
+)
+
+custom.timer.change_wallpaper:start()
+-- first trigger
+custom.func.change_wallpaper(nil)
+
+--Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
+-- screen.connect_signal("property::geometry", set_wallpaper)
+screen.connect_signal("property::geometry", custom.func.set_wallpaper)
+--}}
 -- }}}
 
 custom.widgets.init()

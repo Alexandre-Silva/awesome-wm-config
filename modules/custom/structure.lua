@@ -90,7 +90,7 @@ function structure.init()
      nmaster = default.property.nmaster,
      ncol = default.property.ncol,
   })
-  awful.tag.viewonly(tag)
+  tag:view_only()
 
   awful.tag.add(
     "nil",
@@ -109,14 +109,14 @@ function structure.init()
 
   -- creates and attaches taglist widget
   widgets.taglist.buttons = awful.util.table.join(
-    awful.button({        }, 1, awful.tag.viewonly),
-    awful.button({ modkey }, 1, awful.client.movetotag),
-    awful.button({        }, 2, awful.tag.viewtoggle),
-    awful.button({ modkey }, 2, awful.client.toggletag),
-    awful.button({        }, 3, function (t) func.tag_action_menu(t) end),
-    awful.button({ modkey }, 3, awful.tag.delete),
-    awful.button({        }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
-    awful.button({        }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
+    awful.button({        }, 1, function(t) t:view_only() end),
+    awful.button({ modkey }, 1, function(t) if client.focus then client.focus:move_to_tag(t) end end),
+      awful.button({        }, 2, awful.tag.viewtoggle),
+      awful.button({ modkey }, 2, awful.client.toggletag),
+      awful.button({        }, 3, function (t) func.tag_action_menu(t) end),
+      awful.button({ modkey }, 3, awful.tag.delete),
+      awful.button({        }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
+      awful.button({        }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
   )
 
   widgets.tasklist = {}
@@ -130,7 +130,7 @@ function structure.init()
           -- :isvisible() makes no sense
           c.minimized = false
           if not c:isvisible() then
-            awful.tag.viewonly(c:tags()[1])
+            c:tags()[1]:view_only()
           end
           -- This will also un-minimize
           -- the client, if needed

@@ -755,7 +755,7 @@ func.tag_goto = function ()
   awful.prompt.run({prompt = "Goto tag: "},
   widgets.promptbox[scr].widget,
   function (t)
-    awful.tag.viewonly(util.tag.name2tag(t))
+    util.tag.name2tag(t):view_only()
   end,
   function (t, p, n)
     return awful.completion.generic(t, p, n, keywords)
@@ -777,7 +777,7 @@ func.tag_move_screen = function (scrdelta)
         local s = awful.tag.getscreen(seltag) + scrdelta
         if s > scrcount then s = 1 elseif s < 1 then s = scrcount end
         awful.tag.setscreen(seltag, s)
-        awful.tag.viewonly(seltag)
+        seltag:view_only()
         awful.screen.focus(s)
     end
 end
@@ -1022,7 +1022,7 @@ do
                     function ()
                         local t = c:tags()
                         if t then
-                            awful.tag.viewonly(t[1])
+                          t[1]:view_only()
                         end
                         clear_instance()
                         client.focus = c
@@ -1061,7 +1061,7 @@ func.all_clients_prompt = function ()
       if c then
         local t = c:tags()
         if t then
-          awful.tag.viewonly(t[1])
+          t[1]:view_only()
         end
         client.focus = c
         c:raise()

@@ -1,0 +1,1 @@
+- use awesome's api to set wallpaper instead of feh

@@ -35,7 +35,8 @@ function util.client.rel_send(rel_idx)
         local tags = awful.tag.gettags(scr)
         local target = awful.util.cycle(#tags, sel_idx + rel_idx)
         awful.client.movetotag(tags[target], client)
-        awful.tag.viewonly(tags[target])
+        client.focus:move_to_tag(target)
+        tags[target]:view_only()
     end
 end
 
@@ -50,7 +51,7 @@ function util.tag.rel_move(tag, rel_idx)
         local tags = awful.tag.gettags(scr)
         local target = awful.util.cycle(#tags, tag_idx + rel_idx)
         awful.tag.move(target, tag)
-        awful.tag.viewonly(tag)
+        tag:view_only()
     end
 end
 
@@ -92,7 +93,7 @@ function util.tag.add(name, props)
     if t then
         awful.tag.move(index or 1, t)
         awful.tag.setscreen(t, props.screen)
-        awful.tag.viewonly(t)
+        t:view_only()
     end
 
     -- if add the tag interactively

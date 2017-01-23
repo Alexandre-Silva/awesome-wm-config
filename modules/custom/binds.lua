@@ -430,7 +430,7 @@ for i = 1, 10 do
     binds.globalkeys,
 
     awful.key({ modkey }, keycode,
-      function () tag = get_tag(i, mouse.screen) if tag then awful.tag.viewonly(tag) end
+      function () tag = get_tag(i, mouse.screen) if tag then tag:view_only() end
     end),
 
     awful.key({ modkey, "Control" }, keycode,
