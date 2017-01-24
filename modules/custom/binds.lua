@@ -106,7 +106,7 @@ binds.globalkeys = awful.util.table.join(
   --- multiple screens/multi-head/RANDR
   uniarg:key_repeat({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
   uniarg:key_repeat({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
-  uniarg:key_repeat({ modkey,           }, "o", awful.client.movetoscreen),
+  uniarg:key_repeat({ modkey,           }, "o", function (c) c:move_to_screen() end),
   uniarg:key_repeat({ modkey, "Control" }, "o", func.tag_move_screen_next),
   uniarg:key_repeat({ modkey, "Shift", "Control" }, "o", func.tag_move_screen_prev),
 
@@ -407,7 +407,7 @@ binds.clientkeys = awful.util.table.join(
 
   -- maximize/minimize
   awful.key({ modkey, "Shift"   }, "m", func.client_minimize),
-  awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle),
+  awful.key({ modkey, "Control" }, "space",  function(c) c.floating = not floating end),
   awful.key({ modkey,           }, "t", func.client_toggle_top),
   awful.key({ modkey,           }, "s", func.client_toggle_sticky),
   awful.key({ modkey,           }, ",", func.client_maximize_horizontal),
@@ -441,9 +441,7 @@ for i = 1, 10 do
       function ()
         if client.focus then
           tag = get_tag(i, client.focus.screen)
-          if tag then
-            awful.client.movetotag(tag)
-          end
+          if tag then awful.client.movetotag(tag) end
         end
     end),
 
@@ -451,9 +449,7 @@ for i = 1, 10 do
       function ()
         if client.focus then
           tag = get_tag(i, client.focus.screen)
-          if tag then
-            awful.client.toggletag(tag)
-          end
+          if tag then client.focus:move_to_tag(tag) end
         end
     end),
 

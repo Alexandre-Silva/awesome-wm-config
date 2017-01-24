@@ -111,13 +111,14 @@ function structure.init()
   widgets.taglist.buttons = awful.util.table.join(
     awful.button({        }, 1, function(t) t:view_only() end),
     awful.button({ modkey }, 1, function(t) if client.focus then client.focus:move_to_tag(t) end end),
-      awful.button({        }, 2, awful.tag.viewtoggle),
-      awful.button({ modkey }, 2, awful.client.toggletag),
-      awful.button({        }, 3, function (t) func.tag_action_menu(t) end),
-      awful.button({ modkey }, 3, awful.tag.delete),
-      awful.button({        }, 4, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end),
-      awful.button({        }, 5, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end)
+    awful.button({        }, 2, awful.tag.viewtoggle),
+    awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
+    awful.button({        }, 3, function (t) func.tag_action_menu(t) end),
+    awful.button({ modkey }, 3, awful.tag.delete),
+    awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
+    awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
   )
+
 
   widgets.tasklist = {}
   widgets.tasklist.buttons = awful.util.table.join(
@@ -129,9 +130,8 @@ function structure.init()
           -- Without this, the following
           -- :isvisible() makes no sense
           c.minimized = false
-          if not c:isvisible() then
-            c:tags()[1]:view_only()
-          end
+          if not c:isvisible() and c.first_tag then c.first_tag:view_only() end
+
           -- This will also un-minimize
           -- the client, if needed
           client.focus = c
@@ -165,14 +165,15 @@ function structure.init()
   bashets.start()
 
   -- Create a wibox for each screen and add it
-  for s = 1, screen.count() do
+  awful.screen.connect_for_each_screen(function(s)
+
     -- Create a promptbox for each screen
-    widgets.promptbox[s] = awful.widget.prompt()
+    s.mypromptbox = awful.widget.prompt()
+
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    widgets.layoutbox[s] = awful.widget.layoutbox(s)
-    widgets.layoutbox[s]:buttons(
-      awful.util.table.join(
+    s.mylayoutbox = awful.widget.layoutbox(s)
+    s.mylayoutbox:buttons(awful.util.table.join(
         awful.button({ }, 1, function () awful.layout.inc(config.layouts,  1) end),
         awful.button({ }, 3, function () awful.layout.inc(config.layouts, -1) end),
         awful.button({ }, 4, function () awful.layout.inc(config.layouts, -1) end),
@@ -180,26 +181,28 @@ function structure.init()
         nil))
 
     -- Create a taglist widget
-    widgets.taglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, widgets.taglist.buttons)
+    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
     -- Create a textbox showing current universal argument
-    widgets.uniarg[s] = wibox.widget.textbox()
+    s.myuniarg = wibox.widget.textbox()
+
     -- Create a tasklist widget
-    widgets.tasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, widgets.tasklist.buttons)
+    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    widgets.wibox[s] = awful.wibox({ position = "top", height = "18", screen = s })
+    s.mywibox = awful.wibar({ position = "top", height = "18", screen = s })
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(widgets.launcher)
-    left_layout:add(widgets.taglist[s])
-    left_layout:add(widgets.uniarg[s])
-    left_layout:add(widgets.promptbox[s])
+    left_layout:add(s.mytaglist)
+    left_layout:add(s.myuniarg)
+    left_layout:add(s.mypromptbox)
+
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(wibox.widget.systray())
     right_layout:add(widgets.cpuusage)
     right_layout:add(widgets.memusage)
     right_layout:add(widgets.bat0)
@@ -208,16 +211,16 @@ function structure.init()
     right_layout:add(widgets.volume)
     right_layout:add(widgets.date)
     --right_layout:add(widgets.textclock)
-    right_layout:add(widgets.layoutbox[s])
+    right_layout:add(s.mylayoutbox)
 
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
     layout:set_left(left_layout)
-    layout:set_middle(widgets.tasklist[s])
+    layout:set_middle(s.mytasklist)
     layout:set_right(right_layout)
 
-    widgets.wibox[s]:set_widget(layout)
-  end
+    s.mywibox:set_widget(layout)
+  end)
 
   util.taglist.set_taglist(widgets.taglist)
 end

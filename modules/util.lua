@@ -34,7 +34,6 @@ function util.client.rel_send(rel_idx)
         local sel_idx = awful.tag.getidx(sel)
         local tags = awful.tag.gettags(scr)
         local target = awful.util.cycle(#tags, sel_idx + rel_idx)
-        awful.client.movetotag(tags[target], client)
         client.focus:move_to_tag(target)
         tags[target]:view_only()
     end
