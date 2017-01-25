@@ -33,7 +33,7 @@ function autostart_dir(dir)
         if c=='*' then  -- executables
             executable = string.sub( file, 1,-2 )
             print("Awesome Autostart: Executing: " .. executable)
-            awful.util.spawn_with_shell(dir .. "/" .. executable .. "") -- launch in bg
+            awful.spawn.with_shell(dir .. "/" .. executable .. "") -- launch in bg
         elseif c=='@' then  -- symbolic links
             print("Awesome Autostart: Not handling symbolic links: " .. file)
         else
@@ -51,9 +51,9 @@ function run_once(prg,arg_string,pname,screen)
        pname = prg
     end
     if not arg_string then
-        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
+        awful.spawn.with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
     else
-        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
+        awful.spawn.with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
     end
 end
 

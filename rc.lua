@@ -93,7 +93,7 @@ awesome.connect_signal(
   "exit",
   function (restart)
     if not restart then
-      awful.util.spawn_with_shell("rm -rf " .. awesome_autostart_once_fname)
+      awful.spawn.with_shell("rm -rf " .. awesome_autostart_once_fname)
       bashets.stop()
     end
 end)
@@ -125,7 +125,7 @@ do
 
   init_theme("zenburn")
 
-  awful.util.spawn_with_shell("hsetroot -solid '#000000'")
+  awful.spawn.with_shell("hsetroot -solid '#000000'")
 end
 -- }}}
 -- {{{ Wallpaper
@@ -145,7 +145,7 @@ end
 --{{
 function custom.func.change_wallpaper(s)
   if custom.option.wallpaper_change_p then
-    awful.util.spawn_with_shell("cd " .. config_path .. "/wallpaper/; ./my-wallpaper-pick.sh")
+    awful.spawn.with_shell("cd " .. config_path .. "/wallpaper/; ./my-wallpaper-pick.sh")
   end
 end
 
@@ -329,15 +329,8 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 client.connect_signal("manage", custom.func.client_manage_tag)
 -- }}}
 
--- disable startup-notification globally
--- prevent unintended mouse cursor change
-custom.orig.awful_util_spawn = awful.util.spawn
-awful.util.spawn = function (s)
-  custom.orig.awful_util_spawn(s, false)
-end
-
 
 -- XDG style autostart with "dex"
 -- HACK continue
-awful.util.spawn_with_shell("if ! [ -e " .. awesome_autostart_once_fname .. " ]; then dex -a -e awesome; touch " .. awesome_autostart_once_fname .. "; fi")
+awful.spawn.with_shell("if ! [ -e " .. awesome_autostart_once_fname .. " ]; then dex -a -e awesome; touch " .. awesome_autostart_once_fname .. "; fi")
 custom.func.client_opaque_on(nil) -- start xcompmgr

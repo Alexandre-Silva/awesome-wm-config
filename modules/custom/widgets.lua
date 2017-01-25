@@ -36,7 +36,7 @@ function widgets.add_prog_toggle(widget, prog, _mod, _button) -- {{{
         mod, button,
         function ()
           if pid then
-            awful.util.spawn("kill " .. pid)
+            awful.spawn("kill " .. pid)
             pid = nil
 
           else
@@ -124,19 +124,19 @@ function widgets.new_mpdstatus() -- {{{
   mpdstatus:buttons(
     awful.util.table.join(
       awful.button({ }, 1, function ()
-          awful.util.spawn("mpc toggle")
+          awful.spawn("mpc toggle")
       end),
       awful.button({ }, 2, function ()
-          awful.util.spawn("mpc prev")
+          awful.spawn("mpc prev")
       end),
       awful.button({ }, 3, function ()
-          awful.util.spawn("mpc next")
+          awful.spawn("mpc next")
       end),
       awful.button({ }, 4, function ()
-          awful.util.spawn("mpc seek -1%")
+          awful.spawn("mpc seek -1%")
       end),
       awful.button({ }, 5, function ()
-          awful.util.spawn("mpc seek +1%")
+          awful.spawn("mpc seek +1%")
       end)
   ))
 
@@ -153,16 +153,16 @@ function widgets.new_volume() -- {{{
     awful.util.table.join(
       volume:buttons(),
       awful.button({ }, 2, function ()
-          awful.util.spawn("amixer sset Mic toggle")
+          awful.spawn("amixer sset Mic toggle")
       end),
       awful.button({ }, 3, function ()
-          awful.util.spawn("amixer sset Master toggle")
+          awful.spawn("amixer sset Master toggle")
       end),
       awful.button({ }, 4, function ()
-          awful.util.spawn("amixer sset Master 1%-")
+          awful.spawn("amixer sset Master 1%-")
       end),
       awful.button({ }, 5, function ()
-          awful.util.spawn("amixer sset Master 1%+")
+          awful.spawn("amixer sset Master 1%+")
       end)
   ))
 
@@ -183,17 +183,17 @@ function widgets.new_date() -- {{{
   --   awful.util.table.join(
   --     awful.button({ }, 1, function ()
   --         if started1 then
-  --           awful.util.spawn("pkill -f '" .. prog1 .. "'")
+  --           awful.spawn("pkill -f '" .. prog1 .. "'")
   --         else
-  --           awful.util.spawn(prog1)
+  --           awful.spawn(prog1)
   --         end
   --         started1=not started1
   --     end),
   --     awful.button({ }, 3, function ()
   --         if started2 then
-  --           awful.util.spawn("pkill -f '" .. prog2 .. "'")
+  --           awful.spawn("pkill -f '" .. prog2 .. "'")
   --         else
-  --           awful.util.spawn(prog2)
+  --           awful.spawn(prog2)
   --         end
   --         started2=not started2
   --     end)

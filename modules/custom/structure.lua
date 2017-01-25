@@ -113,8 +113,8 @@ function structure.init()
     awful.button({ modkey }, 1, function(t) if client.focus then client.focus:move_to_tag(t) end end),
     awful.button({        }, 2, awful.tag.viewtoggle),
     awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
-    awful.button({        }, 3, function (t) func.tag_action_menu(t) end),
-    awful.button({ modkey }, 3, awful.tag.delete),
+    awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
+    awful.button({ modkey }, 3, function(t) t:delete() end),
     awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
     awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
   )
@@ -167,59 +167,63 @@ function structure.init()
   -- Create a wibox for each screen and add it
   awful.screen.connect_for_each_screen(function(s)
 
-    -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
+      -- Create a promptbox for each screen
+      s.mypromptbox = awful.widget.prompt()
 
-    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(awful.util.table.join(
-        awful.button({ }, 1, function () awful.layout.inc(config.layouts,  1) end),
-        awful.button({ }, 3, function () awful.layout.inc(config.layouts, -1) end),
-        awful.button({ }, 4, function () awful.layout.inc(config.layouts, -1) end),
-        awful.button({ }, 5, function () awful.layout.inc(config.layouts,  1) end),
-        nil))
+      -- Create an imagebox widget which will contains an icon indicating which layout we're using.
+      -- We need one layoutbox per screen.
+      s.mylayoutbox = awful.widget.layoutbox(s)
+      s.mylayoutbox:buttons(
+        awful.util.table.join(
+          awful.button({ }, 1, function () awful.layout.inc(config.layouts,  1) end),
+          awful.button({ }, 3, function () awful.layout.inc(config.layouts, -1) end),
+          awful.button({ }, 4, function () awful.layout.inc(config.layouts, -1) end),
+          awful.button({ }, 5, function () awful.layout.inc(config.layouts,  1) end),
+          nil))
 
-    -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+      -- Create a taglist widget
+      s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
-    -- Create a textbox showing current universal argument
-    s.myuniarg = wibox.widget.textbox()
+      -- Create a textbox showing current universal argument
+      s.myuniarg = wibox.widget.textbox()
 
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
+      -- Create a tasklist widget
+      s.mytasklist = awful.widget.tasklist(
+        s,
+        awful.widget.tasklist.filter.currenttags,
+        widgets.tasklist.buttons)
 
-    -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", height = "18", screen = s })
+      -- Create the wibox
+      s.mywibox = awful.wibar({ position = "top", height = "18", screen = s })
 
-    -- Widgets that are aligned to the left
-    local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(widgets.launcher)
-    left_layout:add(s.mytaglist)
-    left_layout:add(s.myuniarg)
-    left_layout:add(s.mypromptbox)
+      -- Widgets that are aligned to the left
+      local left_layout = wibox.layout.fixed.horizontal()
+      left_layout:add(widgets.launcher)
+      left_layout:add(s.mytaglist)
+      left_layout:add(s.myuniarg)
+      left_layout:add(s.mypromptbox)
 
 
-    -- Widgets that are aligned to the right
-    local right_layout = wibox.layout.fixed.horizontal()
-    right_layout:add(wibox.widget.systray())
-    right_layout:add(widgets.cpuusage)
-    right_layout:add(widgets.memusage)
-    right_layout:add(widgets.bat0)
-    right_layout:add(widgets.mpdstatus)
-    --right_layout:add(widgets.audio_volume)
-    right_layout:add(widgets.volume)
-    right_layout:add(widgets.date)
-    --right_layout:add(widgets.textclock)
-    right_layout:add(s.mylayoutbox)
+      -- Widgets that are aligned to the right
+      local right_layout = wibox.layout.fixed.horizontal()
+      right_layout:add(wibox.widget.systray())
+      right_layout:add(widgets.cpuusage)
+      right_layout:add(widgets.memusage)
+      right_layout:add(widgets.bat0)
+      right_layout:add(widgets.mpdstatus)
+      --right_layout:add(widgets.audio_volume)
+      right_layout:add(widgets.volume)
+      right_layout:add(widgets.date)
+      --right_layout:add(widgets.textclock)
+      right_layout:add(s.mylayoutbox)
 
-    -- Now bring it all together (with the tasklist in the middle)
-    local layout = wibox.layout.align.horizontal()
-    layout:set_left(left_layout)
-    layout:set_middle(s.mytasklist)
-    layout:set_right(right_layout)
+      -- Now bring it all together (with the tasklist in the middle)
+      local layout = wibox.layout.align.horizontal()
+      layout:set_left(left_layout)
+      layout:set_middle(s.mytasklist)
+      layout:set_right(right_layout)
 
-    s.mywibox:set_widget(layout)
+      s.mywibox:set_widget(layout)
   end)
 
   util.taglist.set_taglist(widgets.taglist)
