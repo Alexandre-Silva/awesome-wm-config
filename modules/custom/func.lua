@@ -99,13 +99,13 @@ end
 
 -- {{{ client actions
 func.client_focus_next = function ()
-    awful.client.focus.byidx(1)
-    if client.focus then client.focus:raise() end
+  awful.client.focus.byidx(1)
+  if client.focus then client.focus:raise() end
 end
 
 func.client_focus_prev = function ()
-    awful.client.focus.byidx(-1)
-    if client.focus then client.focus:raise() end
+  awful.client.focus.byidx(-1)
+  if client.focus then client.focus:raise() end
 end
 
 func.client_focus_urgent = awful.client.urgent.jumpto
@@ -125,17 +125,17 @@ func.client_move_to_tag = function ()
     table.insert(keywords, t.name)
   end
   awful.prompt.run({prompt = "Move client to tag: "},
-  widgets.promptbox[scr].widget,
-  function (t)
-    local tag = util.tag.name2tag(t)
-    if tag then
-      awful.client.movetotag(tag)
-    end
-  end,
-  function (t, p, n)
-    return awful.completion.generic(t, p, n, keywords)
-  end,
-  nil)
+    widgets.promptbox[scr].widget,
+    function (t)
+      local tag = util.tag.name2tag(t)
+      if tag then
+        awful.client.movetotag(tag)
+      end
+    end,
+    function (t, p, n)
+      return awful.completion.generic(t, p, n, keywords)
+    end,
+    nil)
 end
 
 func.client_toggle_tag = function (c)
@@ -146,17 +146,17 @@ func.client_toggle_tag = function (c)
   end
   local c = c or client.focus
   awful.prompt.run({prompt = "Toggle tag for " .. c.name .. ": "},
-  widgets.promptbox[scr].widget,
-  function (t)
-    local tag = util.tag.name2tag(t)
-    if tag then
-      awful.client.toggletag(tag)
-    end
-  end,
-  function (t, p, n)
-    return awful.completion.generic(t, p, n, keywords)
-  end,
-  nil)
+    widgets.promptbox[scr].widget,
+    function (t)
+      local tag = util.tag.name2tag(t)
+      if tag then
+        awful.client.toggletag(tag)
+      end
+    end,
+    function (t, p, n)
+      return awful.completion.generic(t, p, n, keywords)
+    end,
+    nil)
 end
 
 func.client_toggle_titlebar = function ()
@@ -191,208 +191,204 @@ end
 func.client_manage_tag = function (c, startup)
 end
 
-do
+-- closures for client_status
+-- client_status[client] = {sidelined = <boolean>, geometry= <client geometry>}
+local client_status = {}
 
-  -- closures for client_status
-  -- client_status[client] = {sidelined = <boolean>, geometry= <client geometry>}
-  local client_status = {}
-
-  func.client_sideline_left = function (c)
-    local scr = screen[mouse.screen]
-    local workarea = scr.workarea
-    if client_status[c] == nil then
-      client_status[c] = {sidelined=false, geometry=nil}
-    end
-    if client_status[c].sidelined then
-      if client_status[c].geometry then
-        c:geometry(client_status[c].geometry)
-      end
-    else
-      client_status[c].geometry = c:geometry()
-      workarea.width = math.floor(workarea.width/2)
-      c:geometry(workarea)
-    end
-    client_status[c].sidelined = not client_status[c].sidelined
+func.client_sideline_left = function (c)
+  local scr = screen[mouse.screen]
+  local workarea = scr.workarea
+  if client_status[c] == nil then
+    client_status[c] = {sidelined=false, geometry=nil}
   end
-
-  func.client_sideline_right = function (c)
-    local scr = screen[mouse.screen]
-    local workarea = scr.workarea
-    if client_status[c] == nil then
-      client_status[c] = {sidelined=false, geometry=nil}
+  if client_status[c].sidelined then
+    if client_status[c].geometry then
+      c:geometry(client_status[c].geometry)
     end
-    if client_status[c].sidelined then
-      if client_status[c].geometry then
-        c:geometry(client_status[c].geometry)
-      end
-    else
-      client_status[c].geometry = c:geometry()
-      workarea.x = workarea.x + math.floor(workarea.width/2)
-      workarea.width = math.floor(workarea.width/2)
-      c:geometry(workarea)
-    end
-    client_status[c].sidelined = not client_status[c].sidelined
+  else
+    client_status[c].geometry = c:geometry()
+    workarea.width = math.floor(workarea.width/2)
+    c:geometry(workarea)
   end
+  client_status[c].sidelined = not client_status[c].sidelined
+end
 
-  func.client_sideline_top = function (c)
-    local scr = screen[mouse.screen]
-    local workarea = scr.workarea
-    if client_status[c] == nil then
-      client_status[c] = {sidelined=false, geometry=nil}
-    end
-    if client_status[c].sidelined then
-      if client_status[c].geometry then
-        c:geometry(client_status[c].geometry)
-      end
-    else
-      client_status[c].geometry = c:geometry()
-      workarea.height = math.floor(workarea.height/2)
-      c:geometry(workarea)
-    end
-    client_status[c].sidelined = not client_status[c].sidelined
+func.client_sideline_right = function (c)
+  local scr = screen[mouse.screen]
+  local workarea = scr.workarea
+  if client_status[c] == nil then
+    client_status[c] = {sidelined=false, geometry=nil}
   end
-
-  func.client_sideline_bottom = function (c)
-    local scr = screen[mouse.screen]
-    local workarea = scr.workarea
-    if client_status[c] == nil then
-      client_status[c] = {sidelined=false, geometry=nil}
+  if client_status[c].sidelined then
+    if client_status[c].geometry then
+      c:geometry(client_status[c].geometry)
     end
-    if client_status[c].sidelined then
-      if client_status[c].geometry then
-        c:geometry(client_status[c].geometry)
-      end
-    else
-      client_status[c].geometry = c:geometry()
-      workarea.y = workarea.y + math.floor(workarea.height/2)
-      workarea.height = math.floor(workarea.height/2)
-      c:geometry(workarea)
-    end
-    client_status[c].sidelined = not client_status[c].sidelined
+  else
+    client_status[c].geometry = c:geometry()
+    workarea.x = workarea.x + math.floor(workarea.width/2)
+    workarea.width = math.floor(workarea.width/2)
+    c:geometry(workarea)
   end
+  client_status[c].sidelined = not client_status[c].sidelined
+end
 
-  func.client_sideline_extend_left = function (c, by)
-    local cg = c:geometry()
-    if by then
-      cg.x = cg.x - by
-      cg.width = cg.width + by
-    else -- use heuristics
-      local delta = math.floor(cg.x/7)
-      if delta ~= 0 then
-        cg.x = cg.x - delta
-        cg.width = cg.width + delta
-      end
-    end
-    c:geometry(cg)
+func.client_sideline_top = function (c)
+  local scr = screen[mouse.screen]
+  local workarea = scr.workarea
+  if client_status[c] == nil then
+    client_status[c] = {sidelined=false, geometry=nil}
   end
-
-  func.client_sideline_extend_right = function (c, by)
-    local cg = c:geometry()
-    if by then
-      cg.width = cg.width + by
-    else
-      local workarea = screen[mouse.screen].workarea
-      local rmargin = math.max( (workarea.x + workarea.width - cg.x - cg.width), 0)
-      local delta = math.floor(rmargin/7)
-      if delta ~= 0 then
-        cg.width = cg.width + delta
-      end
+  if client_status[c].sidelined then
+    if client_status[c].geometry then
+      c:geometry(client_status[c].geometry)
     end
-    c:geometry(cg)
+  else
+    client_status[c].geometry = c:geometry()
+    workarea.height = math.floor(workarea.height/2)
+    c:geometry(workarea)
   end
+  client_status[c].sidelined = not client_status[c].sidelined
+end
 
-  func.client_sideline_extend_top = function (c, by)
-    local cg = c:geometry()
-    if by then
-      cg.y = cg.y - by
-      cg.height = cg.height + by
-    else
-      local delta = math.floor(cg.y/7)
-      if delta ~= 0 then
-        cg.y = cg.y - delta
-        cg.height = cg.height + delta
-      end
+func.client_sideline_bottom = function (c)
+  local scr = screen[mouse.screen]
+  local workarea = scr.workarea
+  if client_status[c] == nil then
+    client_status[c] = {sidelined=false, geometry=nil}
+  end
+  if client_status[c].sidelined then
+    if client_status[c].geometry then
+      c:geometry(client_status[c].geometry)
     end
-    c:geometry(cg)
+  else
+    client_status[c].geometry = c:geometry()
+    workarea.y = workarea.y + math.floor(workarea.height/2)
+    workarea.height = math.floor(workarea.height/2)
+    c:geometry(workarea)
   end
+  client_status[c].sidelined = not client_status[c].sidelined
+end
 
-  func.client_sideline_extend_bottom = function (c, by)
-    local cg = c:geometry()
-    if by then
-      cg.height = cg.height + by
-      else
+func.client_sideline_extend_left = function (c, by)
+  local cg = c:geometry()
+  if by then
+    cg.x = cg.x - by
+    cg.width = cg.width + by
+  else -- use heuristics
+    local delta = math.floor(cg.x/7)
+    if delta ~= 0 then
+      cg.x = cg.x - delta
+      cg.width = cg.width + delta
+    end
+  end
+  c:geometry(cg)
+end
+
+func.client_sideline_extend_right = function (c, by)
+  local cg = c:geometry()
+  if by then
+    cg.width = cg.width + by
+  else
+    local workarea = screen[mouse.screen].workarea
+    local rmargin = math.max( (workarea.x + workarea.width - cg.x - cg.width), 0)
+    local delta = math.floor(rmargin/7)
+    if delta ~= 0 then
+      cg.width = cg.width + delta
+    end
+  end
+  c:geometry(cg)
+end
+
+func.client_sideline_extend_top = function (c, by)
+  local cg = c:geometry()
+  if by then
+    cg.y = cg.y - by
+    cg.height = cg.height + by
+  else
+    local delta = math.floor(cg.y/7)
+    if delta ~= 0 then
+      cg.y = cg.y - delta
+      cg.height = cg.height + delta
+    end
+  end
+  c:geometry(cg)
+end
+
+func.client_sideline_extend_bottom = function (c, by)
+  local cg = c:geometry()
+  if by then
+    cg.height = cg.height + by
+  else
     local workarea = screen[mouse.screen].workarea
     local bmargin = math.max( (workarea.y + workarea.height - cg.y - cg.height), 0)
     local delta = math.floor(bmargin/7)
     if delta ~= 0 then
       cg.height = cg.height + delta
     end
-      end
-      c:geometry(cg)
   end
+  c:geometry(cg)
+end
 
-  func.client_sideline_shrink_left = function (c, by)
-    local cg = c:geometry()
-    local min = default.property.minimal_client_width
-    if by then
-      cg.width = math.max(cg.width - by, min)
-    else
-      local delta = math.floor(cg.width/11)
-      if delta ~= 0 and cg.width > min then
-        cg.width = cg.width - delta
-      end
+func.client_sideline_shrink_left = function (c, by)
+  local cg = c:geometry()
+  local min = default.property.minimal_client_width
+  if by then
+    cg.width = math.max(cg.width - by, min)
+  else
+    local delta = math.floor(cg.width/11)
+    if delta ~= 0 and cg.width > min then
+      cg.width = cg.width - delta
     end
-    c:geometry(cg)
   end
+  c:geometry(cg)
+end
 
-  func.client_sideline_shrink_right = function (c, by)
-    local cg = c:geometry()
-    local min = default.property.minimal_client_width
-    if by then
-      local t = cg.x + cg.width
-      cg.width = math.max(cg.width - by, min)
-      cg.x = t - cg.width
-    else
-      local delta = math.floor(cg.width/11)
-      if delta ~= 0 and cg.width > min then
-        cg.x = cg.x + delta
-        cg.width = cg.width - delta
-      end
+func.client_sideline_shrink_right = function (c, by)
+  local cg = c:geometry()
+  local min = default.property.minimal_client_width
+  if by then
+    local t = cg.x + cg.width
+    cg.width = math.max(cg.width - by, min)
+    cg.x = t - cg.width
+  else
+    local delta = math.floor(cg.width/11)
+    if delta ~= 0 and cg.width > min then
+      cg.x = cg.x + delta
+      cg.width = cg.width - delta
     end
-    c:geometry(cg)
   end
+  c:geometry(cg)
+end
 
-  func.client_sideline_shrink_top = function (c, by)
-    local cg = c:geometry()
-    local min = default.property.minimal_client_height
-    if by then
-      cg.height = math.max(cg.height - by, min)
-    else
-      local delta = math.floor(cg.height/11)
-      if delta ~= 0 and cg.height > min then
-        cg.height = cg.height - delta
-      end
+func.client_sideline_shrink_top = function (c, by)
+  local cg = c:geometry()
+  local min = default.property.minimal_client_height
+  if by then
+    cg.height = math.max(cg.height - by, min)
+  else
+    local delta = math.floor(cg.height/11)
+    if delta ~= 0 and cg.height > min then
+      cg.height = cg.height - delta
     end
-    c:geometry(cg)
   end
+  c:geometry(cg)
+end
 
-  func.client_sideline_shrink_bottom = function (c, by)
-    local cg = c:geometry()
-    local min = default.property.minimal_client_height
-    if by then
-      local t = cg.y + cg.width
-      cg.height = math.max(cg.height - by, min)
-      cg.y = t - cg.height
-    else
-      local delta = math.floor(cg.height/11)
-      if delta ~= 0 and cg.height > min then
-        cg.y = cg.y + delta
-        cg.height = cg.height - delta
-      end
+func.client_sideline_shrink_bottom = function (c, by)
+  local cg = c:geometry()
+  local min = default.property.minimal_client_height
+  if by then
+    local t = cg.y + cg.width
+    cg.height = math.max(cg.height - by, min)
+    cg.y = t - cg.height
+  else
+    local delta = math.floor(cg.height/11)
+    if delta ~= 0 and cg.height > min then
+      cg.y = cg.y + delta
+      cg.height = cg.height - delta
     end
-    c:geometry(cg)
   end
-
+  c:geometry(cg)
 end
 
 func.client_opaque_less = function (c)
@@ -433,287 +429,284 @@ func.client_kill = function (c)
   c:kill()
 end
 
-do
-    local instance = nil
-    func.client_action_menu = function (c)
-        local clear_instance = function ()
-            if instance then
-                instance:hide()
-                instance = nil
-            end
-        end
-        if instance and instance.wibox.visible then
-            clear_instance()
-            return
-        end
-        c = c or client.focus
-        instance = awful.menu({
-            theme = {
-                width = 200,
-            },
-            items = {
-                {
-                    "&cancel", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "=== task action menu ===", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "--- status ---", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "&raise", function ()
-                        clear_instance()
-                        func.client_raise(c)
-                    end
-                },
-                {
-                    "&top", function ()
-                        clear_instance()
-                        func.client_toggle_top(c)
-                    end
-                },
-                {
-                    "&sticky", function ()
-                        clear_instance()
-                        func.client_toggle_sticky(c)
-                    end
-                },
-                {
-                    "&kill", function ()
-                        clear_instance()
-                        func.client_kill(c)
-                    end
-                },
-                {
-                    "toggle title&bar", function ()
-                        clear_instance()
-                        func.client_toggle_titlebar(c)
-                    end
-                },
-                {
-                    "--- focus ---", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "&next client", function ()
-                        clear_instance()
-                        func.client_focus_next(c)
-                    end
-                },
-                {
-                    "&prev client", function ()
-                        clear_instance()
-                        func.client_focus_prev(c)
-                    end
-                },
-                {
-                    "&urgent", function ()
-                        clear_instance()
-                        func.client_focus_urgent(c)
-                    end
-                },
-                {
-                    "--- tag ---", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "move to next tag", function ()
-                        clear_instance()
-                        func.client_move_next(c)
-                    end
-                },
-                {
-                    "move to previous tag", function ()
-                        clear_instance()
-                        func.client_move_prev(c)
-                    end
-                },
-                {
-                    "move to ta&g", function ()
-                        clear_instance()
-                        func.client_move_to_tag(c)
-                    end
-                },
-                {
-                    "togg&le tag", function ()
-                        clear_instance()
-                        func.client_toggle_tag(c)
-                    end
-                },
-                {
-                    "--- geometry ---", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "&fullscreen", function ()
-                        clear_instance()
-                        func.client_fullscreen(c)
-                    end
-                },
-                {
-                    "m&aximize", function ()
-                        clear_instance()
-                        func.client_maximize(c)
-                    end
-                },
-                {
-                    "maximize h&orizontal", function ()
-                        clear_instance()
-                        func.client_maximize_horizontal(c)
-                    end
-                },
-                {
-                    "maximize &vertical", function ()
-                        clear_instance()
-                        func.client_maximize_vertical(c)
-                    end
-                },
-                {
-                    "m&inimize", function ()
-                        clear_instance()
-                        func.client_minimize(c)
-                    end
-                },
-                {
-                    "move to left", function ()
-                        clear_instance()
-                        func.client_sideline_left(c)
-                    end
-                },
-                {
-                    "move to right", function ()
-                        clear_instance()
-                        func.client_sideline_right(c)
-                    end
-                },
-                {
-                    "move to top", function ()
-                        clear_instance()
-                        func.client_sideline_top(c)
-                    end
-                },
-                {
-                    "move to bottom", function ()
-                        clear_instance()
-                        func.client_sideline_bottom(c)
-                    end
-                },
-                {
-                    "extend left", function ()
-                        clear_instance()
-                        func.client_sideline_extend_left(c)
-                    end
-                },
-                {
-                    "extend right", function ()
-                        clear_instance()
-                        func.client_sideline_extend_right(c)
-                    end
-                },
-                {
-                    "extend top", function ()
-                        clear_instance()
-                        func.client_sideline_extend_top(c)
-                    end
-                },
-                {
-                    "extend bottom", function ()
-                        clear_instance()
-                        func.client_sideline_extend_bottom(c)
-                    end
-                },
-                {
-                    "shrink left", function ()
-                        clear_instance()
-                        func.client_sideline_shrink_left(c)
-                    end
-                },
-                {
-                    "shrink right", function ()
-                        clear_instance()
-                        func.client_sideline_shrink_right(c)
-                    end
-                },
-                {
-                    "shrink top", function ()
-                        clear_instance()
-                        func.client_sideline_shrink_top(c)
-                    end
-                },
-                {
-                    "shrink bottom", function ()
-                        clear_instance()
-                        func.client_sideline_shrink_bottom(c)
-                    end
-                },
-                {
-                    "--- opacity ---", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "&less opaque", function ()
-                        clear_instance()
-                        func.client_opaque_less(c)
-                    end
-                },
-                {
-                    "&more opaque", function ()
-                        clear_instance()
-                        func.client_opaque_more(c)
-                    end
-                },
-                {
-                    "opacity off", function ()
-                        clear_instance()
-                        func.client_opaque_off(c)
-                    end
-                },
-                {
-                    "opacity on", function ()
-                        clear_instance()
-                        func.client_opaque_on(c)
-                    end
-                },
-                {
-                    "--- ordering ---", function ()
-                        clear_instance()
-                    end
-                },
-                {
-                    "swap with master", function ()
-                        clear_instance()
-                        func.client_swap_with_master(c)
-                    end
-                },
-                {
-                    "swap with next", function ()
-                        clear_instance()
-                        func.client_swap_next(c)
-                    end
-                },
-                {
-                    "swap with prev", function ()
-                        clear_instance()
-                        func.client_swap_prev(c)
-                    end
-                },
-            }
-        })
-        instance:toggle({keygrabber=true})
+  local instance = nil
+  func.client_action_menu = function (c)
+    local clear_instance = function ()
+      if instance then
+        instance:hide()
+        instance = nil
+      end
     end
-end
-
+    if instance and instance.wibox.visible then
+      clear_instance()
+      return
+    end
+    c = c or client.focus
+    instance = awful.menu({
+        theme = {
+          width = 200,
+        },
+        items = {
+          {
+            "&cancel", function ()
+              clear_instance()
+                       end
+          },
+          {
+            "=== task action menu ===", function ()
+              clear_instance()
+                                        end
+          },
+          {
+            "--- status ---", function ()
+              clear_instance()
+                              end
+          },
+          {
+            "&raise", function ()
+              clear_instance()
+              func.client_raise(c)
+                      end
+          },
+          {
+            "&top", function ()
+              clear_instance()
+              func.client_toggle_top(c)
+                    end
+          },
+          {
+            "&sticky", function ()
+              clear_instance()
+              func.client_toggle_sticky(c)
+                       end
+          },
+          {
+            "&kill", function ()
+              clear_instance()
+              func.client_kill(c)
+                     end
+          },
+          {
+            "toggle title&bar", function ()
+              clear_instance()
+              func.client_toggle_titlebar(c)
+                                end
+          },
+          {
+            "--- focus ---", function ()
+              clear_instance()
+                             end
+          },
+          {
+            "&next client", function ()
+              clear_instance()
+              func.client_focus_next(c)
+                            end
+          },
+          {
+            "&prev client", function ()
+              clear_instance()
+              func.client_focus_prev(c)
+                            end
+          },
+          {
+            "&urgent", function ()
+              clear_instance()
+              func.client_focus_urgent(c)
+                       end
+          },
+          {
+            "--- tag ---", function ()
+              clear_instance()
+                           end
+          },
+          {
+            "move to next tag", function ()
+              clear_instance()
+              func.client_move_next(c)
+                                end
+          },
+          {
+            "move to previous tag", function ()
+              clear_instance()
+              func.client_move_prev(c)
+                                    end
+          },
+          {
+            "move to ta&g", function ()
+              clear_instance()
+              func.client_move_to_tag(c)
+                            end
+          },
+          {
+            "togg&le tag", function ()
+              clear_instance()
+              func.client_toggle_tag(c)
+                           end
+          },
+          {
+            "--- geometry ---", function ()
+              clear_instance()
+                                end
+          },
+          {
+            "&fullscreen", function ()
+              clear_instance()
+              func.client_fullscreen(c)
+                           end
+          },
+          {
+            "m&aximize", function ()
+              clear_instance()
+              func.client_maximize(c)
+                         end
+          },
+          {
+            "maximize h&orizontal", function ()
+              clear_instance()
+              func.client_maximize_horizontal(c)
+                                    end
+          },
+          {
+            "maximize &vertical", function ()
+              clear_instance()
+              func.client_maximize_vertical(c)
+                                  end
+          },
+          {
+            "m&inimize", function ()
+              clear_instance()
+              func.client_minimize(c)
+                         end
+          },
+          {
+            "move to left", function ()
+              clear_instance()
+              func.client_sideline_left(c)
+                            end
+          },
+          {
+            "move to right", function ()
+              clear_instance()
+              func.client_sideline_right(c)
+                             end
+          },
+          {
+            "move to top", function ()
+              clear_instance()
+              func.client_sideline_top(c)
+                           end
+          },
+          {
+            "move to bottom", function ()
+              clear_instance()
+              func.client_sideline_bottom(c)
+                              end
+          },
+          {
+            "extend left", function ()
+              clear_instance()
+              func.client_sideline_extend_left(c)
+                           end
+          },
+          {
+            "extend right", function ()
+              clear_instance()
+              func.client_sideline_extend_right(c)
+                            end
+          },
+          {
+            "extend top", function ()
+              clear_instance()
+              func.client_sideline_extend_top(c)
+                          end
+          },
+          {
+            "extend bottom", function ()
+              clear_instance()
+              func.client_sideline_extend_bottom(c)
+                             end
+          },
+          {
+            "shrink left", function ()
+              clear_instance()
+              func.client_sideline_shrink_left(c)
+                           end
+          },
+          {
+            "shrink right", function ()
+              clear_instance()
+              func.client_sideline_shrink_right(c)
+                            end
+          },
+          {
+            "shrink top", function ()
+              clear_instance()
+              func.client_sideline_shrink_top(c)
+                          end
+          },
+          {
+            "shrink bottom", function ()
+              clear_instance()
+              func.client_sideline_shrink_bottom(c)
+                             end
+          },
+          {
+            "--- opacity ---", function ()
+              clear_instance()
+                               end
+          },
+          {
+            "&less opaque", function ()
+              clear_instance()
+              func.client_opaque_less(c)
+                            end
+          },
+          {
+            "&more opaque", function ()
+              clear_instance()
+              func.client_opaque_more(c)
+                            end
+          },
+          {
+            "opacity off", function ()
+              clear_instance()
+              func.client_opaque_off(c)
+                           end
+          },
+          {
+            "opacity on", function ()
+              clear_instance()
+              func.client_opaque_on(c)
+                          end
+          },
+          {
+            "--- ordering ---", function ()
+              clear_instance()
+                                end
+          },
+          {
+            "swap with master", function ()
+              clear_instance()
+              func.client_swap_with_master(c)
+                                end
+          },
+          {
+            "swap with next", function ()
+              clear_instance()
+              func.client_swap_next(c)
+                              end
+          },
+          {
+            "swap with prev", function ()
+              clear_instance()
+              func.client_swap_prev(c)
+                              end
+          },
+        }
+    })
+    instance:toggle({keygrabber=true})
+  end
 -- }}}
 
 -- {{{ tag actions
