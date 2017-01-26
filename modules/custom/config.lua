@@ -1,34 +1,36 @@
+-- Imports {{{
 local awful = require("awful")
+-- }}}
 
 local config = {}
 c = config
 
 -- meta configs
-c.version = "1.7.18"
-c.help_url = "https://github.com/pw4ever/awesome-wm-config/tree/" .. c.version
+config.version = "1.7.18"
+config.help_url = "https://github.com/pw4ever/awesome-wm-config/tree/" .. c.version
 
 -- actual configs
-c.terminal = os.getenv("TERMCMD") or "xterm"
+config.terminal = os.getenv("TERMCMD") or "xterm"
 
-c.system = {
+config.system = {
   taskmanager = "htopl",
   filemanager = "rangerl"
 }
 
-c.browser = {
+config.browser = {
   primary = os.getenv("BROWSER") or "firefox",
 
   -- if primary is chromium get firefox, and vicev-versa
   secondary = ({chromium="firefox", firefox="chromium"})[primary]
 }
 
-c.editor = {
+config.editor = {
   primary = os.getenv("EDITOR") or "emacs",
   secondary = "vim",
 }
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
-c.layouts =
+config.layouts =
   {
     awful.layout.suit.floating,
     awful.layout.suit.tile,

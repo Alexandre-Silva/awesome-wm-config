@@ -1,9 +1,11 @@
+-- Imports {{{
 local awful = require("awful")
 local vicious = require("vicious")
 local wibox = require("wibox")
 local naughty = require("naughty")
 
 local config = require("custom.config")
+-- }}}
 
 local widgets = {}
 
@@ -12,7 +14,7 @@ local widgets = {}
 
 -- vicious widgets: http://awesome.naquadah.org/wiki/Vicious
 
--- {{{ Globals
+-- Globals {{{
 widgets.uniarg = {}
 widgets.wibox = {}
 widgets.promptbox = {}
@@ -54,7 +56,6 @@ function widgets.add_prog_toggle(widget, prog, _mod, _button) -- {{{
       end)
   ))
 end -- }}}
-
 function widgets.new_cpuusage() -- {{{
   local cpuusage = awful.widget.graph()
   cpuusage:set_width(50)

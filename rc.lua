@@ -1,3 +1,4 @@
+-- Imports {{{
 local awful = require("awful")
 awful.rules = require("awful.rules")
 
@@ -25,6 +26,7 @@ local uniarg = require("uniarg")
 local util = require("util")
 local vicious = require("vicious")
 local wibox = require("wibox")
+-- }}}
 
 local capi = {
   tag = tag,
@@ -51,7 +53,7 @@ do
   bashets.set_script_path(config_path .. "/modules/bashets/")
 end
 
--- {{{ Error handling
+-- Error handling {{{
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
@@ -75,7 +77,7 @@ do
   end)
 end
 -- }}}
--- {{{ HACK! prevent Awesome start autostart items multiple times in a session
+-- HACK! prevent Awesome start autostart items multiple times in a session {{{
 -- cause: in-place restart by awesome.restart, xrandr change
 -- idea:
 -- * create a file awesome-autostart-once when first time "dex" autostart items (at the end of this file)
@@ -115,7 +117,7 @@ for _,fname in pairs({"quit", "restart"}) do
   end
 end
 -- }}}
--- {{{ Variable definitions
+-- Theme {{{
 do
   local config_path = awful.util.getdir("config")
   local function init_theme(theme_name)
@@ -128,7 +130,7 @@ do
   awful.spawn.with_shell("hsetroot -solid '#000000'")
 end
 -- }}}
--- {{{ Wallpaper
+-- Wallpaper {{{
 local function set_wallpaper(s)
   -- Wallpaper
   if beautiful.wallpaper then
@@ -142,7 +144,6 @@ local function set_wallpaper(s)
 end
 
 -- randomly select a background picture
---{{
 function custom.func.change_wallpaper(s)
   if custom.option.wallpaper_change_p then
     awful.spawn.with_shell("cd " .. config_path .. "/wallpaper/; ./my-wallpaper-pick.sh")
@@ -167,7 +168,6 @@ custom.func.change_wallpaper(nil)
 --Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 -- screen.connect_signal("property::geometry", set_wallpaper)
 screen.connect_signal("property::geometry", custom.func.set_wallpaper)
---}}
 -- }}}
 
 custom.widgets.init()
@@ -175,7 +175,7 @@ uniarg:init(custom.widgets.uniarg)
 custom.structure.init()
 custom.binds.init()
 
--- {{{ Rules
+-- Rules {{{
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
 
@@ -247,7 +247,7 @@ awful.rules.rules = {
 
 }
 -- }}}
--- {{{ Signals
+-- Signals {{{
 -- Signal function to execute when a new client appears.
 client.connect_signal(
   "manage",
@@ -319,9 +319,7 @@ client.connect_signal(
 
       -- hide the titlebar by default (it takes space)
       awful.titlebar.hide(c)
-
     end
-
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)

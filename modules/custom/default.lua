@@ -1,4 +1,6 @@
+-- Imports {{{
 local awful = require("awful")
+-- }}}
 
 local default = {}
 

@@ -1,4 +1,4 @@
--- {{{ Imports
+-- Imports {{{
 local awful = require("awful")
 local bashets = require("bashets")
 local beautiful = require("beautiful")
@@ -13,7 +13,7 @@ local default = require("custom.default")
 
 local structure = {}
 
--- {{{ Helper funcs
+-- Helper funcs {{{
 local function build(arg)
   local current = {}
   local keys = {} -- keep the keys sorted
@@ -31,7 +31,7 @@ local function build(arg)
   return current
 end
 -- }}}
--- {{{ Menus
+-- Menus {{{
 local apps_menu = build({system=config.system,
                          terminal=config.terminal,
                          browser=config.browser,
@@ -80,7 +80,7 @@ local main_menu = {
   }
 }
 -- }}}
--- {{{ Init
+-- Init {{{
 function structure.init()
   local tag = awful.tag.add(
     os.getenv("USER"),

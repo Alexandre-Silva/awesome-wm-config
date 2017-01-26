@@ -1,3 +1,4 @@
+-- Imports {{{
 local awful = require("awful")
 local uniarg = require("uniarg")
 local util = require("util")
@@ -6,10 +7,10 @@ local widgets = require("custom.widgets")
 local func = require("custom.func")
 local structure = require("custom.structure")
 local config = require("custom.config")
+-- }}}
 
 
 local binds = {}
-
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -19,7 +20,7 @@ local binds = {}
 local modkey = "Mod4"
 binds.modkey = modkey
 
--- {{{ Utils
+-- Utils {{{
 -- Gets the 'index'-esme tag with in the given 'focus'
 -- @param index The index of indended tag (starts at 1)
 -- @param screen The screen to search for the tag
@@ -39,7 +40,7 @@ local function get_tag(index, screen)
   end
 end
 -- }}}
--- {{{ Mouse bindings
+-- Mouse bindings {{{
 root.buttons(awful.util.table.join(
                awful.button({ }, 1, func.all_clients),
                awful.button({ }, 2, func.tag_action_menu),
@@ -48,7 +49,7 @@ root.buttons(awful.util.table.join(
                awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
--- {{{ universal arguments
+-- Universal arguments {{{
 binds.globalkeys = awful.util.table.join(
   awful.key({ modkey }, "u",
     function ()
@@ -88,7 +89,7 @@ binds.globalkeys = awful.util.table.join(
   end)
 )
 -- }}}
--- {{{ window management
+-- Window management {{{
 binds.globalkeys = awful.util.table.join(
   binds.globalkeys,
 
@@ -159,8 +160,13 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({modkey, "Control"}, "p", func.tag_move_backward),
   uniarg:key_repeat({modkey, "Control"}, "n", func.tag_move_forward),
 
-  -- }}}
-  -- {{{ Client management
+  nil
+)
+-- }}}
+-- Client management {{{
+binds.globalkeys = awful.util.table.join(
+  binds.globalkeys,
+
   --- change focus
   uniarg:key_repeat({ modkey,           }, "k", func.client_focus_next),
   uniarg:key_repeat({ modkey,           }, "Tab", func.client_focus_next),
@@ -190,8 +196,12 @@ binds.globalkeys = awful.util.table.join(
   --- misc
   awful.key({ modkey, "Shift" }, "`", func.client_toggle_titlebar),
 
-  -- }}}
-  -- {{{ app bindings
+  nil
+) -- }}}
+-- App bindings {{{
+binds.globalkeys = awful.util.table.join(
+  binds.globalkeys,
+
   --- admin
   awful.key({ modkey,         }, "`",      func.system_lock),
   awful.key({ modkey,         }, "Home",   func.system_lock),
@@ -309,7 +319,7 @@ binds.globalkeys = awful.util.table.join(
 )
 
 -- }}}
--- {{{ client management
+-- Client management {{{
 
 --- operation
 binds.clientkeys = awful.util.table.join(
@@ -398,7 +408,7 @@ binds.clientkeys = awful.util.table.join(
   nil
 )
 -- }}}
--- {{{ Bind all key numbers to tags.
+-- Bind all key numbers to tags. {{{
 -- Be careful: we use keycodes to make it works on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9, plus 0.
 for i = 1, 10 do
@@ -435,7 +445,7 @@ for i = 1, 10 do
   )
 end
 -- }}}
--- {{{ client buttons
+-- Client buttons {{{
 binds.clientbuttons = awful.util.table.join(
   awful.button({ }, 1, function (c)
       if awful.client.focus.filter(c) then
