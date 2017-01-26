@@ -111,37 +111,15 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({ modkey, "Shift", "Control" }, "o", func.tag_move_screen_prev),
 
   --- misc
-  awful.key({modkey}, "F2", function()
-      awful.prompt.run(
-        {prompt = "Run: "},
-        widgets.promptbox[mouse.screen].widget,
-        awful.spawn, awful.completion.shell,
-        awful.util.getdir("cache") .. "/history"
-      )
-  end),
-
-  awful.key({modkey}, "r", function()
-      awful.prompt.run(
-        {prompt = "Run: "},
-        widgets.promptbox[mouse.screen].widget,
-        awful.spawn, awful.completion.shell,
-        awful.util.getdir("cache") .. "/history"
-      )
-  end),
+  awful.key({modkey}, "F2", func.prompt_run),
+  awful.key({modkey}, "r", func.prompt_run),
 
   -- awful.key({modkey}, "F3", function()
   --     local config_path = awful.util.getdir("config")
   --     awful.spawn.with_shell(config_path .. "/bin/trackpad-toggle.sh")
   -- end),
 
-  awful.key({modkey}, "F4", function()
-      awful.prompt.run(
-        {prompt = "Run Lua code: "},
-        widgets.promptbox[mouse.screen].widget,
-        awful.util.eval, nil,
-        awful.util.getdir("cache") .. "/history_eval"
-      )
-  end),
+  awful.key({modkey}, "F4", func.prompt_run_lua),
 
   awful.key({ modkey }, "c", function ()
       awful.spawn(config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua" )

@@ -11,7 +11,45 @@ local func = {}
 
 -- Customized functions
 
--- {{{ General
+-- {{{ prompts
+
+--prompt_yes_no: Creates a yes/no question and returns true if user enters yes, y, etc.
+-- @param prompt: Text to show the user.
+-- @param callback: Fuction which accepts single boolean param equal.
+-- This param is True if use enter yes or variant, False otherwise.
+func.prompt_yes_no = function(prompt, callback)
+  awful.screen.focused().mypromptbox:run(
+    awful.prompt.run({prompt = prompt .. " (type 'yes' or 'y' to confirm): "},
+      function (t)
+        callback(string.lower(t) == 'yes' or string.lower(t) == 'y') end,
+      function (t, p, n)
+        return awful.completion.generic(t, p, n, {'no', 'No', 'yes', 'Yes'}) end))
+end
+
+func.prompt_run = function ()
+  awful.screen.focused().mypromptbox:run(
+    {prompt = "Run: "},
+    awful.spawn,
+    awful.completion.shell,
+    awful.util.getdir("cache") .. "/history")
+end
+
+func.prompt_run_lua = function ()
+  awful.prompt.run(
+    {prompt = "Run Lua code: "},
+    widgets.promptbox[mouse.screen].widget,
+    awful.util.eval,
+    nil,
+    awful.util.getdir("cache") .. "/history_lua")
+end
+
+func.app_finder = function ()
+  awful.util.spawn("xfce4-appfinder")
+end
+
+-- }}}
+
+-- {{{ System
 func.system_lock = function ()
   awful.util.spawn("xscreensaver-command -l")
 end
@@ -21,69 +59,45 @@ func.system_suspend = function ()
 end
 
 func.system_hibernate = function ()
-  local scr = mouse.screen
-  awful.prompt.run({prompt = "Hibernate (type 'yes' to confirm)? "},
-  widgets.promptbox[scr].widget,
-  function (t)
-    if string.lower(t) == 'yes' then
-      awful.util.spawn("systemctl hibernate")
-    end
-  end,
-  function (t, p, n)
-    return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
+  func.prompt_yes_no(
+    "Hibernate ?",
+    function (yes)
+      if yes then awful.util.spawn("systemctl hibernate") end
   end)
 end
 
 func.system_hybrid_sleep = function ()
-  local scr = mouse.screen
-  awful.prompt.run({prompt = "Hybrid Sleep (type 'yes' to confirm)? "},
-  widgets.promptbox[scr].widget,
-  function (t)
-    if string.lower(t) == 'yes' then
-      awful.util.spawn("systemctl hybrid-sleep")
-    end
-  end,
-  function (t, p, n)
-    return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
+  func.prompt_yes_no(
+    "Hybrid Sleep ?",
+    function (yes)
+      if yes then awful.util.spawn("systemctl hybrid-sleep") end
   end)
 end
 
 func.system_reboot = function ()
-  local scr = mouse.screen
-  awful.prompt.run({prompt = "Reboot (type 'yes' to confirm)? "},
-  widgets.promptbox[scr].widget,
-  function (t)
-    if string.lower(t) == 'yes' then
-      awesome.emit_signal("exit", nil)
-      awful.util.spawn("systemctl reboot")
-    end
-  end,
-  function (t, p, n)
-    return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
+  func.prompt_yes_no(
+    "Reboot ?",
+    function (yes)
+      if yes then
+        awesome.emit_signal("exit", nil)
+        awful.util.spawn("systemctl reboot")
+      end
   end)
 end
 
 func.system_power_off = function ()
-  local scr = mouse.screen
-  awful.prompt.run({prompt = "Power Off (type 'yes' to confirm)? "},
-  widgets.promptbox[scr].widget,
-  function (t)
-    if string.lower(t) == 'yes' then
-      awesome.emit_signal("exit", nil)
-      awful.util.spawn("systemctl poweroff")
-    end
-  end,
-  function (t, p, n)
-    return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
+  func.prompt_yes_no(
+    "Power Off ?",
+    function (yes)
+      if yes then
+        awesome.emit_signal("exit", nil)
+        awful.util.spawn("systemctl poweroff")
+      end
   end)
 end
+-- }}}
 
-func.app_finder = function ()
-    awful.util.spawn("xfce4-appfinder")
-end
-
--- {{ client actions
-
+-- {{{ client actions
 func.client_focus_next = function ()
     awful.client.focus.byidx(1)
     if client.focus then client.focus:raise() end
