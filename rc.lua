@@ -178,6 +178,8 @@ awful.rules.rules = {
       raise = true,
       keys = custom.binds.clientkeys,
       buttons = custom.binds.clientbuttons,
+      screen = awful.screen.preferred,
+      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
       opacity = custom.default.property.default_naughty_opacity,
       size_hints_honor = false,
     }
@@ -208,7 +210,7 @@ awful.rules.rules = {
   --[[
     Set Firefox to always map on tags number 2 of screen 1.
     { rule = { class = "Firefox" },
-    properties = { tag = tags[1][2] } },
+    properties = { screen = 1, tag = "2" } },
   --]]
 
   {
