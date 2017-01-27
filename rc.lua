@@ -28,18 +28,12 @@ local vicious = require("vicious")
 local wibox = require("wibox")
 -- }}}
 
-local capi = {
-  tag = tag,
-  screen = screen,
-  client = client,
-}
-
 -- do not use letters, which shadow access key to menu entry
 awful.menu.menu_keys.down = { "Down", ".", ">", "'", "\"", }
 awful.menu.menu_keys.up = {  "Up", ",", "<", ";", ":", }
 awful.menu.menu_keys.enter = { "Right", "]", "}", "=", "+", }
 awful.menu.menu_keys.back = { "Left", "[", "{", "-", "_", }
-awful.menu.menu_keys.exec = { "Return", "Space", }
+awful.menu.menu_keys.exec = game/For Honor{ "Return", "Space", }
 awful.menu.menu_keys.close = { "Escape", "BackSpace", }
 
 naughty.config.presets.low.opacity = custom.default.property.default_naughty_opacity
