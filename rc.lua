@@ -42,8 +42,6 @@ awful.menu.menu_keys.back = { "Left", "[", "{", "-", "_", }
 awful.menu.menu_keys.exec = { "Return", "Space", }
 awful.menu.menu_keys.close = { "Escape", "BackSpace", }
 
-local modkey = custom.binds.modkey
-
 naughty.config.presets.low.opacity = custom.default.property.default_naughty_opacity
 naughty.config.presets.normal.opacity = custom.default.property.default_naughty_opacity
 naughty.config.presets.critical.opacity = custom.default.property.default_naughty_opacity
