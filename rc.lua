@@ -33,7 +33,7 @@ awful.menu.menu_keys.down = { "Down", ".", ">", "'", "\"", }
 awful.menu.menu_keys.up = {  "Up", ",", "<", ";", ":", }
 awful.menu.menu_keys.enter = { "Right", "]", "}", "=", "+", }
 awful.menu.menu_keys.back = { "Left", "[", "{", "-", "_", }
-awful.menu.menu_keys.exec = game/For Honor{ "Return", "Space", }
+awful.menu.menu_keys.exec = { "Return", "Space", }
 awful.menu.menu_keys.close = { "Escape", "BackSpace", }
 
 naughty.config.presets.low.opacity = custom.default.property.default_naughty_opacity
