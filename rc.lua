@@ -133,24 +133,17 @@ function custom.func.change_wallpaper(s)
   end
 end
 
-custom.timer.change_wallpaper = timer({timeout = custom.default.wallpaper_change_interval})
-
-custom.timer.change_wallpaper:connect_signal("timeout", custom.func.change_wallpaper)
-
-custom.timer.change_wallpaper:connect_signal("property::timeout",
-                                             function ()
-                                               custom.timer.change_wallpaper:stop()
-                                               custom.timer.change_wallpaper:start()
-                                             end
-)
-
-custom.timer.change_wallpaper:start()
--- first trigger
+custom.timer.change_wallpaper = gears.timer.start_new(
+  custom.default.wallpaper_change_interval,
+  function ()
+    custom.func.change_wallpaper()
+    return true
+end)
 custom.func.change_wallpaper(nil)
 
 --Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
--- screen.connect_signal("property::geometry", set_wallpaper)
-screen.connect_signal("property::geometry", custom.func.set_wallpaper)
+-- screen.connect_signal("property::geometry", change_wallpaper)
+screen.connect_signal("property::geometry", custom.func.change_wallpaper)
 -- }}}
 
 custom.widgets.init()
