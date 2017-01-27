@@ -18,29 +18,31 @@ local func = {}
 -- @param callback: Fuction which accepts single boolean param equal.
 -- This param is True if use enter yes or variant, False otherwise.
 func.prompt_yes_no = function(prompt, callback)
-  awful.screen.focused().mypromptbox:run(
-    awful.prompt.run({prompt = prompt .. " (type 'yes' or 'y' to confirm): "},
-      function (t)
-        callback(string.lower(t) == 'yes' or string.lower(t) == 'y') end,
-      function (t, p, n)
-        return awful.completion.generic(t, p, n, {'no', 'No', 'yes', 'Yes'}) end))
+  awful.prompt.run {
+    prompt       = prompt ..  " (type 'yes' or 'y' to confirm): ",
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    exe_callback = function (t) callback(string.lower(t) == 'yes' or string.lower(t) == 'y') end,
+    completion_callback =
+    function (t, p, n) return awful.completion.generic(t, p, n, {'no', 'No', 'yes', 'Yes'}) end,
+  }
 end
 
 func.prompt_run = function ()
-  awful.screen.focused().mypromptbox:run(
-    {prompt = "Run: "},
-    awful.spawn,
-    awful.completion.shell,
-    awful.util.getdir("cache") .. "/history")
+  awful.prompt.run {
+    prompt       = "Run: ",
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    exe_callback = awful.spawn,
+    history_path = awful.util.get_cache_dir() .. "/history"
+  }
 end
 
 func.prompt_run_lua = function ()
-  awful.prompt.run(
-    {prompt = "Run Lua code: "},
-    widgets.promptbox[mouse.screen].widget,
-    awful.util.eval,
-    nil,
-    awful.util.getdir("cache") .. "/history_lua")
+  awful.prompt.run {
+    prompt       = "Run Lua code: ",
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    exe_callback = awful.util.eval,
+    history_path = awful.util.get_cache_dir() .. "/history_eval"
+  }
 end
 
 func.app_finder = function ()

@@ -98,20 +98,11 @@ awesome.connect_signal(
     end
 end)
 
-for _,fname in pairs({"quit", "restart"}) do
+-- wrapps default exit/restart functions with a prompt asking for confirmation
+for fname in ipairs({"quit", "restart"}) do
   custom.orig[fname] = awesome[fname]
   awesome[fname] = function ()
-    local scr = mouse.screen
-    awful.prompt.run({prompt = fname .. " (type 'yes' to confirm)? "},
-      custom.widgets.promptbox[scr].widget,
-      function (t)
-        if string.lower(t) == 'yes' then
-          custom.orig[fname]()
-        end
-      end,
-      function (t, p, n)
-        return awful.completion.generic(t, p, n, {'no', 'NO', 'yes', 'YES'})
-    end)
+    custom.func.prompt_yes_no(fname, custom.orig[fname] )
   end
 end
 -- }}}
