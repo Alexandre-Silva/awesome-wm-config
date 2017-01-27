@@ -25,9 +25,10 @@ binds.modkey = modkey
 -- @param index The index of indended tag (starts at 1)
 -- @param screen The screen to search for the tag
 -- @return The newly created tag
-local function get_tag(index, screen)
-  local tag
-  local tags = awful.tag.gettags(screen)
+local function get_tag(index)
+  local screen = awful.screen.focused()
+  local tags = screen.tags
+
   if index <= #tags then
     return tags[index]
   else
@@ -418,26 +419,26 @@ for i = 1, 10 do
     binds.globalkeys,
 
     awful.key({ modkey }, keycode,
-      function () tag = get_tag(i, mouse.screen) if tag then tag:view_only() end
+      function () tag = get_tag(i) if tag then tag:view_only() end
     end),
 
     awful.key({ modkey, "Control" }, keycode,
-      function () tag = get_tag(i, mouse.screen) if tag then awful.tag.viewtoggle(tag) end
+      function () tag = get_tag(i) if tag then awful.tag.viewtoggle(tag) end
     end),
 
     awful.key({ modkey, "Shift" }, keycode,
       function ()
         if client.focus then
-          tag = get_tag(i, client.focus.screen)
-          if tag then awful.client.movetotag(tag) end
+          tag = get_tag(i)
+          if tag and client.focus then client.focus:move_to_tag(tag) end
         end
     end),
 
     awful.key({ modkey, "Control", "Shift" }, keycode,
       function ()
         if client.focus then
-          tag = get_tag(i, client.focus.screen)
-          if tag then client.focus:move_to_tag(tag) end
+          tag = get_tag(i)
+          if tag and client.focus then client.focus:togle_tag(tag) end
         end
     end),
 

@@ -82,7 +82,7 @@ end
 function util.tag.add(name, props)
     props = props or
     {
-        screen = capi.mouse.screen,
+        screen = awful.screen.focused(),
         index = 1,
     }
 
