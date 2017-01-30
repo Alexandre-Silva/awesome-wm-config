@@ -92,15 +92,15 @@ function structure.init()
   })
   tag:view_only()
 
-  awful.tag.add(
-    "nil",
-    {screen = 2,
-     layout = default.property.layout,
-     mwfact = default.property.mwfact,
-     nmaster = default.property.nmaster,
-     ncol = default.property.ncol,
-    }
-  )
+  -- awful.tag.add(
+  --   "nil",
+  --   {screen = 2,
+  --    layout = default.property.layout,
+  --    mwfact = default.property.mwfact,
+  --    nmaster = default.property.nmaster,
+  --    ncol = default.property.ncol,
+  --   }
+  -- )
 
   -- attaches main menu to panel
   structure.main_menu = awful.menu(main_menu)

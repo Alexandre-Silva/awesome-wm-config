@@ -57,7 +57,7 @@ function widgets.add_prog_toggle(widget, prog, _mod, _button) -- {{{
   ))
 end -- }}}
 function widgets.new_cpuusage() -- {{{
-  local cpuusage = awful.widget.graph()
+  local cpuusage = wibox.widget.graph()
   cpuusage:set_width(50)
   cpuusage:set_background_color("#494B4F")
   cpuusage:set_color({
@@ -83,7 +83,7 @@ function widgets.new_memusage() -- {{{
   return memusage
 end -- }}}
 function widgets.new_bat0() -- {{{
-  bat0 = awful.widget.progressbar()
+  bat0 = wibox.widget.progressbar()
   bat0:set_width(8)
   bat0:set_height(10)
   bat0:set_vertical(true)
