@@ -210,14 +210,7 @@ function structure.init()
       right_layout:add(wibox.widget.systray())
       right_layout:add(widgets.cpuusage)
       right_layout:add(widgets.memusage)
-      local bat_icon = wibox.widget.imagebox(
-        "/tmp/bat.png",
-        false
-      )
-      bat_icon.border_width = 0
-
-      right_layout:add(bat_icon)
-      right_layout:add(widgets.bat0)
+      right_layout:add(widgets.bat)
       right_layout:add(widgets.mpdstatus)
       --right_layout:add(widgets.audio_volume)
       right_layout:add(widgets.volume)

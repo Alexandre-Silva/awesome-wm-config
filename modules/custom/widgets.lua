@@ -86,7 +86,7 @@ function widgets.new_memusage() -- {{{
   return memusage
 end -- }}}
 function widgets.new_bat0() -- {{{
-  bat0 = lain.widgets.bat({
+  local bat1 = lain.widgets.bat({
       battery  = "BAT1",
       ac       = "ACAD",
       timeout  = 1,
@@ -104,31 +104,20 @@ function widgets.new_bat0() -- {{{
   })
 
 
-  -- wibox.widget {
-  --   {
-  --     max_value     = 1,
-  --     value         = 0.5,
-  --     paddings      = 1,
-  --     border_width  = 1,
-  --     border_color  = beautiful.border_color,
-  --     bg            = "#494B4F",
-  --     fg            = { type = "linear", from = { 0, 0 }, to = { 0, 10 },
-  --                       stops = { { 0, "#AECF96" }, { 0.5, "#88A175" }, { 1, "#FF5656" }}
-  --                     },
-  --     widget        = wibox.widget.progressbar,
-  --   }, {
-  --     forced_height = 10,
-  --     forced_width  = 8,
-  --     direction     = 'east',
-  --     layout        = wibox.container.rotate
-  --      }
-  -- }
+  local icons_dir = awful.util.getdir("config") .. "icons"
+  local bat_icon = wibox.widget.imagebox(
+    icons_dir .. "/battery.png",
+    false
+  )
 
-  -- vicious.register(bat0, vicious.widgets.bat, "$2", 61, "BAT1")
+  local bat = wibox.widget {
+    layout  = wibox.layout.fixed.horizontal,
 
-  -- widgets.add_prog_toggle(bat0.widget, "gnome-control-center power")
+    bat_icon,
+    bat1.widget
+  }
 
-  return bat0.widget
+  return bat
 end -- }}}
 function widgets.new_mpdstatus() -- {{{
   mpdstatus = wibox.widget.textbox()
@@ -237,7 +226,7 @@ end -- }}}
 function widgets.init() -- {{{ init
   widgets.cpuusage = widgets.new_cpuusage()
   widgets.memusage = widgets.new_memusage()
-  widgets.bat0  = widgets.new_bat0()
+  widgets.bat  = widgets.new_bat0()
   widgets.mpdstatus = widgets.new_mpdstatus()
   widgets.volume = widgets.new_volume()
   widgets.date = widgets.new_date()
