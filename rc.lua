@@ -308,5 +308,5 @@ client.connect_signal("manage", custom.func.client_manage_tag)
 
 -- XDG style autostart with "dex"
 -- HACK continue
-awful.spawn.with_shell("if ! [ -e " .. awesome_autostart_once_fname .. " ]; then dex -a -e awesome; touch " .. awesome_autostart_once_fname .. "; fi")
+-- awful.spawn.with_shell("if ! [ -e " .. awesome_autostart_once_fname .. " ]; then dex -a -e awesome; touch " .. awesome_autostart_once_fname .. "; fi")
 custom.func.client_opaque_on(nil) -- start xcompmgr

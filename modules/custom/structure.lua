@@ -2,6 +2,7 @@
 local awful = require("awful")
 local bashets = require("bashets")
 local beautiful = require("beautiful")
+local shape = require("gears.shape")
 local util = require("util")
 local wibox = require("wibox")
 
@@ -111,12 +112,12 @@ function structure.init()
   widgets.taglist.buttons = awful.util.table.join(
     awful.button({        }, 1, function(t) t:view_only() end),
     awful.button({ modkey }, 1, function(t) if client.focus then client.focus:move_to_tag(t) end end),
-    awful.button({        }, 2, awful.tag.viewtoggle),
-    awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
-    awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
-    awful.button({ modkey }, 3, function(t) t:delete() end),
-    awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
+      awful.button({        }, 2, awful.tag.viewtoggle),
+      awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
+        awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
+        awful.button({ modkey }, 3, function(t) t:delete() end),
+        awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
+        awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
   )
 
 
@@ -209,6 +210,13 @@ function structure.init()
       right_layout:add(wibox.widget.systray())
       right_layout:add(widgets.cpuusage)
       right_layout:add(widgets.memusage)
+      local bat_icon = wibox.widget.imagebox(
+        "/tmp/bat.png",
+        false
+      )
+      bat_icon.border_width = 0
+
+      right_layout:add(bat_icon)
       right_layout:add(widgets.bat0)
       right_layout:add(widgets.mpdstatus)
       --right_layout:add(widgets.audio_volume)

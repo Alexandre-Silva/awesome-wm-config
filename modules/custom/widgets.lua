@@ -1,8 +1,11 @@
 -- Imports {{{
 local awful = require("awful")
+local beautiful = require("beautiful")
+local lain = require("lain")
+local markup = lain.util.markup
+local naughty = require("naughty")
 local vicious = require("vicious")
 local wibox = require("wibox")
-local naughty = require("naughty")
 
 local config = require("custom.config")
 -- }}}
@@ -83,21 +86,49 @@ function widgets.new_memusage() -- {{{
   return memusage
 end -- }}}
 function widgets.new_bat0() -- {{{
-  bat0 = wibox.widget.progressbar()
-  bat0:set_width(8)
-  bat0:set_height(10)
-  bat0:set_vertical(true)
-  bat0:set_background_color("#494B4F")
-  bat0:set_border_color(nil)
-  bat0:set_color({ type = "linear", from = { 0, 0 }, to = { 0, 10 },
-                   stops = { { 0, "#AECF96" }, { 0.5, "#88A175" }, { 1, "#FF5656" }}
+  bat0 = lain.widgets.bat({
+      battery  = "BAT1",
+      ac       = "ACAD",
+      timeout  = 1,
+
+      settings = function ()
+        if bat_now.perc ~= "N/A" then
+          bat_now.perc = bat_now.perc .. "%"
+        end
+        if bat_now.ac_status == 1 then
+          bat_now.perc = bat_now.perc .. " plug"
+        end
+
+        widget:set_markup(bat_now.perc .. " ")
+      end
   })
 
-  vicious.register(bat0, vicious.widgets.bat, "$2", 61, "BAT1")
 
-  widgets.add_prog_toggle(bat0, "gnome-control-center power")
+  -- wibox.widget {
+  --   {
+  --     max_value     = 1,
+  --     value         = 0.5,
+  --     paddings      = 1,
+  --     border_width  = 1,
+  --     border_color  = beautiful.border_color,
+  --     bg            = "#494B4F",
+  --     fg            = { type = "linear", from = { 0, 0 }, to = { 0, 10 },
+  --                       stops = { { 0, "#AECF96" }, { 0.5, "#88A175" }, { 1, "#FF5656" }}
+  --                     },
+  --     widget        = wibox.widget.progressbar,
+  --   }, {
+  --     forced_height = 10,
+  --     forced_width  = 8,
+  --     direction     = 'east',
+  --     layout        = wibox.container.rotate
+  --      }
+  -- }
 
-  return bat0
+  -- vicious.register(bat0, vicious.widgets.bat, "$2", 61, "BAT1")
+
+  -- widgets.add_prog_toggle(bat0.widget, "gnome-control-center power")
+
+  return bat0.widget
 end -- }}}
 function widgets.new_mpdstatus() -- {{{
   mpdstatus = wibox.widget.textbox()
