@@ -36,9 +36,9 @@ awful.menu.menu_keys.back = { "Left", "[", "{", "-", "_", }
 awful.menu.menu_keys.exec = { "Return", "Space", }
 awful.menu.menu_keys.close = { "Escape", "BackSpace", }
 
-naughty.config.presets.low.opacity = custom.default.property.default_naughty_opacity
-naughty.config.presets.normal.opacity = custom.default.property.default_naughty_opacity
-naughty.config.presets.critical.opacity = custom.default.property.default_naughty_opacity
+naughty.config.presets.low.opacity = custom.config.property.default_naughty_opacity
+naughty.config.presets.normal.opacity = custom.config.property.default_naughty_opacity
+naughty.config.presets.critical.opacity = custom.config.property.default_naughty_opacity
 
 do
   local config_path = awful.util.getdir("config")
@@ -134,7 +134,7 @@ function custom.func.change_wallpaper(s)
 end
 
 custom.timer.change_wallpaper = gears.timer.start_new(
-  custom.default.wallpaper_change_interval,
+  custom.config.wallpaper_change_interval,
   function ()
     custom.func.change_wallpaper()
     return true
@@ -167,7 +167,7 @@ awful.rules.rules = {
       buttons = custom.binds.clientbuttons,
       screen = awful.screen.preferred,
       placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-      opacity = custom.default.property.default_naughty_opacity,
+      opacity = custom.config.property.default_naughty_opacity,
       size_hints_honor = false,
     }
   },

@@ -3,7 +3,6 @@ local awful = require("awful")
 local naughty = require("naughty")
 local util = require("util")
 
-local default = require("custom.default")
 local widgets = require("custom.widgets")
 local config = require("custom.config")
 -- }}}
@@ -327,7 +326,7 @@ end
 
 func.client_sideline_shrink_left = function (c, by)
   local cg = c:geometry()
-  local min = default.property.minimal_client_width
+  local min = config.property.minimal_client_width
   if by then
     cg.width = math.max(cg.width - by, min)
   else
@@ -341,7 +340,7 @@ end
 
 func.client_sideline_shrink_right = function (c, by)
   local cg = c:geometry()
-  local min = default.property.minimal_client_width
+  local min = config.property.minimal_client_width
   if by then
     local t = cg.x + cg.width
     cg.width = math.max(cg.width - by, min)
@@ -358,7 +357,7 @@ end
 
 func.client_sideline_shrink_top = function (c, by)
   local cg = c:geometry()
-  local min = default.property.minimal_client_height
+  local min = config.property.minimal_client_height
   if by then
     cg.height = math.max(cg.height - by, min)
   else
@@ -372,7 +371,7 @@ end
 
 func.client_sideline_shrink_bottom = function (c, by)
   local cg = c:geometry()
-  local min = default.property.minimal_client_height
+  local min = config.property.minimal_client_height
   if by then
     local t = cg.y + cg.width
     cg.height = math.max(cg.height - by, min)
@@ -389,24 +388,24 @@ end
 
 func.client_opaque_less = function (c)
   local opacity = c.opacity - 0.1
-  if opacity and opacity >= default.property.min_opacity then
+  if opacity and opacity >= config.property.min_opacity then
     c.opacity = opacity
   end
 end
 
 func.client_opaque_more = function (c)
   local opacity = c.opacity + 0.1
-  if opacity and opacity <= default.property.max_opacity then
+  if opacity and opacity <= config.property.max_opacity then
     c.opacity = opacity
   end
 end
 
 func.client_opaque_off = function (c)
-  awful.util.spawn_with_shell("pkill " .. default.compmgr)
+  awful.util.spawn_with_shell("pkill " .. config.compmgr)
 end
 
 func.client_opaque_on = function (c)
-  awful.util.spawn_with_shell(default.compmgr.. " " .. default.compmgr_args)
+  awful.util.spawn_with_shell(config.compmgr.. " " .. config.compmgr_args)
 end
 
 func.client_swap_with_master = function (c)
@@ -503,16 +502,17 @@ end
 -- Tag  {{{
 
 func.tag_add_after = function ()
+
   local scr = mouse.screen
   local sel_idx = awful.tag.getidx()
   local t = util.tag.add(nil,
                          {
                            screen = scr,
                            index = sel_idx and sel_idx+1 or 1,
-                           layout = default.property.layout,
-                           mwfact = default.property.mwfact,
-                           nmaster = default.property.nmaster,
-                           ncol = default.property.ncol,
+                           layout = config.property.layout,
+                           mwfact = config.property.mwfact,
+                           nmaster = config.property.nmaster,
+                           ncol = config.property.ncol,
   })
 end
 
@@ -523,10 +523,10 @@ func.tag_add_before = function ()
                          {
                            screen = scr,
                            index = sel_idx and sel_idx or 1,
-                           layout = default.property.layout,
-                           mwfact = default.property.mwfact,
-                           nmaster = default.property.nmaster,
-                           ncol = default.property.ncol,
+                           layout = config.property.layout,
+                           mwfact = config.property.mwfact,
+                           nmaster = config.property.nmaster,
+                           ncol = config.property.ncol,
   })
 end
 

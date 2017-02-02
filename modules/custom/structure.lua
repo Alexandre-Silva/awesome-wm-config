@@ -9,7 +9,6 @@ local wibox = require("wibox")
 local config = require("custom.config")
 local widgets = require("custom.widgets")
 local func = require("custom.func")
-local default = require("custom.default")
 -- }}}
 
 local structure = {}
@@ -86,20 +85,20 @@ function structure.init()
   local tag = awful.tag.add(
     os.getenv("USER"),
     {screen = 1,
-     layout = default.property.layout,
-     mwfact = default.property.mwfact,
-     nmaster = default.property.nmaster,
-     ncol = default.property.ncol,
+     layout = config.property.layout,
+     mwfact = config.property.mwfact,
+     nmaster = config.property.nmaster,
+     ncol = config.property.ncol,
   })
   tag:view_only()
 
   -- awful.tag.add(
   --   "nil",
   --   {screen = 2,
-  --    layout = default.property.layout,
-  --    mwfact = default.property.mwfact,
-  --    nmaster = default.property.nmaster,
-  --    ncol = default.property.ncol,
+  --    layout = config.property.layout,
+  --    mwfact = config.property.mwfact,
+  --    nmaster = config.property.nmaster,
+  --    ncol = config.property.ncol,
   --   }
   -- )
 
