@@ -1,4 +1,3 @@
-local beautiful = require("beautiful")
 local awful = require("awful")
 local wibox = require("wibox")
 local naughty = require("naughty")
@@ -47,7 +46,7 @@ function util.table_join(t1, t2)
   for k,v in pairs(t2) do
     if type(v) == "table" then
       if type(t1[k] or false) == "table" then
-        t3[k] = tableJoin(t1[k] or {}, t2[k] or {})
+        t3[k] = table_join(t1[k] or {}, t2[k] or {})
       else
         t3[k] = v
       end

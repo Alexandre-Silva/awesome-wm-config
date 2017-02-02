@@ -32,7 +32,7 @@ local function get_tag(index)
   if index <= #tags then
     return tags[index]
   else
-    return util.tag.add(
+    return func.tag_add(
       nil,
       {
         screen = screen,

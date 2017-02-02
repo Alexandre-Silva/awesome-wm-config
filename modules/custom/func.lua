@@ -1,10 +1,12 @@
 -- Imports {{{
 local awful = require("awful")
+local beautiful = require("beautiful")
+local inspect = require("inspect")
 local naughty = require("naughty")
 local util = require("util")
 
-local widgets = require("custom.widgets")
 local config = require("custom.config")
+local widgets = require("custom.widgets")
 -- }}}
 
 
@@ -122,7 +124,7 @@ func.client_move_to_tag = function ()
   awful.prompt.run({prompt = "Move client to tag: "},
     widgets.promptbox[scr].widget,
     function (t)
-      local tag = util.tag.name2tag(t)
+      local tag = func.tag_name2tag(t)
       if tag then
         awful.client.movetotag(tag)
       end
@@ -143,7 +145,7 @@ func.client_toggle_tag = function (c)
   awful.prompt.run({prompt = "Toggle tag for " .. c.name .. ": "},
     widgets.promptbox[scr].widget,
     function (t)
-      local tag = util.tag.name2tag(t)
+      local tag = func.tag_name2tag(t)
       if tag then
         awful.client.toggletag(tag)
       end
@@ -500,50 +502,171 @@ do
 end
 -- }}}
 -- Tag  {{{
+function tag_rel_move(tag, rel_idx)
+  if tag then
+    local scr = awful.tag.getscreen(tag)
+    local tag_idx = awful.tag.getidx(tag)
+    local tags = awful.tag.gettags(scr)
+    local target = awful.util.cycle(#tags, tag_idx + rel_idx)
+    awful.tag.move(target, tag)
+    tag:view_only()
+  end
+end
 
-func.tag_add_after = function ()
+--name2tags: matches string 'name' to tag objects
+--@param name: tag name to find
+--@param scr: screen to look for tags on
+--@return table of tag objects or nil
+function func.tag_name2tags(name, scr)
+  local ret = {}
+  local a, b = scr or 1, scr or capi.screen.count()
+  for s = a, b do
+    for _, t in ipairs(awful.tag.gettags(s)) do
+      if name == t.name then
+        table.insert(ret, t)
+      end
+    end
+  end
+  if #ret > 0 then return ret end
+end
 
-  local scr = mouse.screen
-  local sel_idx = awful.tag.getidx()
-  local t = util.tag.add(nil,
-                         {
-                           screen = scr,
-                           index = sel_idx and sel_idx+1 or 1,
-                           layout = config.property.layout,
-                           mwfact = config.property.mwfact,
-                           nmaster = config.property.nmaster,
-                           ncol = config.property.ncol,
+function func.tag_name2tag(name, scr, idx)
+  local ts = func.tag_name2tags(name, scr)
+  if ts then return ts[idx or 1] end
+end
+
+--debug -- used to probe internal structures of taglist widget
+local function debug_taglist(scr, t)
+  do
+    local key = ""
+    for k, _ in pairs(util.taglist.taglist[scr].widgets[awful.tag.getidx(t)].widget.widgets[2].widget) do
+      key = key .. "\n" .. k
+    end
+    naughty.notify(
+      {
+        title=scr,
+        text=key,
+        timeout=20,
+      }
+    )
+  end
+end
+
+--rename
+--@param tag: tag object to be renamed (Defaults to focused tag)
+--@param newp: boolean; true if the tag is new (Defaults to false)
+function func.tag_rename(tag, newp)
+  local t = tag or client.first_tag
+  local newp = newp or false -- can be nil
+
+  local theme = beautiful.get()
+  local scr = t.screen or screen.focused()
+  local text = t.name
+  local before = t.name
+  local bg = nil
+  local fg = nil
+
+  if not t or not scr then return end
+
+  if scr.selected_tag == t then
+    bg = theme.bg_focus or '#535d6c'
+    fg = theme.fg_urgent or '#ffffff'
+  else
+    bg = theme.bg_normal or '#222222'
+    fg = theme.fg_urgent or '#ffffff'
+  end
+
+  -- debug_taglist(scr, t)
+
+  local function pp_widget_tree(w, i)
+    local ident = ""
+    for j=1,i do ident = ident .. "  " end
+    print(ident .. w.widget_name)
+    for _,cw in ipairs(w:get_children()) do
+      pp_widget_tree(cw.widget, i+1)
+    end
+  end
+  pp_widget_tree(scr.mytaglist:get_children()[1].widget, 0)
+  print()
+  pp_widget_tree(scr.mytaglist:get_children()[1].widget:get_children()[2].widget, 0)
+  print()
+  -- print(inspect(tag._private, {depth = 3}))
+  -- print(inspect(scr.mytaglist.children[1].children[1], {depth = 2}))
+  -- print(inspect(scr.mytaglist.children[1].children[1].children, {depth = 3}))
+
+  awful.prompt.run({
+      fg_cursor = fg,
+      bg_cursor = bg,
+      ul_cursor = "single",
+      text = text,
+      selectall = true,
+
+      -- util.taglist.taglist[scr.tags].widgets[t.index].widget.widgets[2].widget,
+      textbox = scr.mytaglist:get_children()[1].widget:get_children()[2].widget,
+
+      exe_callback = function(new_name)
+        if new_name and #new_name > 0 then
+          tag.name = new_name
+        else
+          if newp then
+            tag:delete()
+          end
+        end
+      end,
   })
 end
 
-func.tag_add_before = function ()
-  local scr = mouse.screen
-  local sel_idx = awful.tag.getidx()
-  local t = util.tag.add(nil,
-                         {
-                           screen = scr,
-                           index = sel_idx and sel_idx or 1,
-                           layout = config.property.layout,
-                           mwfact = config.property.mwfact,
-                           nmaster = config.property.nmaster,
-                           ncol = config.property.ncol,
-  })
+--add: add a tag
+--@param name: name of the tag (Optional)
+--@param props: properties for the new tag (screen, index, etc.) (Optional)
+function func.tag_add(name, props)
+  local props = util.table_join(
+    {
+      screen = awful.screen.focused(),
+      index = 1,
+      layout = config.property.layout,
+      mwfact = config.property.mwfact,
+      nmaster = config.property.nmaster,
+      ncol = config.property.ncol,
+    },
+    props)
+
+  local t = awful.tag.add(name or "New Tag", props)
+  if t then
+    -- awful.tag.move(props.index, t)
+    -- awful.tag.setscreen(t, props.screen)
+    t:view_only()
+  end
+
+  -- if add the tag interactively
+  if not name then
+    func.tag_rename(t, true)
+  end
+
+  return t
 end
+
+--tag_add_rel: add a tag in the focused screen in the position of the currently focused tag
+--@param name: name of the tag (Optional)
+--@param red_idx: Relative index, -1 (or lower) tag is placed beind focused tag. 0 where the current tag is. 1 or higher, after the selected tag
+--@param props: properties for the new tag (screen, index, etc.) (Optional)
+function func.tag_add_rel (name, rel_idx, props)
+  local idx = awful.screen.focused().selected_tag.index + rel_idx
+  local props = util.table_join(props or {}, {index = idx})
+  return func.tag_add(name, props)
+end
+
+function func.tag_add_after  () return func.tag_add_rel(name, 1) end
+function func.tag_add_before () return func.tag_add_rel(name, 0) end
 
 func.tag_delete = awful.tag.delete
-
-func.tag_rename = function ()
-  local scr = mouse.screen
-  local sel = awful.tag.selected(scr)
-  util.tag.rename(sel)
-end
 
 func.tag_view_prev = awful.tag.viewprev
 func.tag_view_next = awful.tag.viewnext
 
 func.tag_last = awful.tag.history.restore
 
-func.tag_goto = function ()
+function func.tag_goto ()
   local keywords = {}
   local scr = mouse.screen
   for _, t in ipairs(awful.tag.gettags(scr)) do -- only the current screen
@@ -552,22 +675,22 @@ func.tag_goto = function ()
   awful.prompt.run({prompt = "Goto tag: "},
     widgets.promptbox[scr].widget,
     function (t)
-      util.tag.name2tag(t):view_only()
+      func.tag_name2tag(t):view_only()
     end,
     function (t, p, n)
       return awful.completion.generic(t, p, n, keywords)
   end)
 end
 
-func.tag_move_forward = function ()
-  util.tag.rel_move(awful.tag.selected(), 1)
+function func.tag_move_forward ()
+  func.tag_rel_move(awful.tag.selected(), 1)
 end
 
-func.tag_move_backward = function ()
-  util.tag.rel_move(awful.tag.selected(), -1)
+function func.tag_move_backward ()
+  func.tag_rel_move(awful.tag.selected(), -1)
 end
 
-func.tag_move_screen = function (scrdelta)
+function func.tag_move_screen (scrdelta)
   local seltag = awful.tag.selected()
   local scrcount = capi.screen.count()
   if seltag then
@@ -579,17 +702,17 @@ func.tag_move_screen = function (scrdelta)
   end
 end
 
-func.tag_move_screen_prev = function ()
+function func.tag_move_screen_prev ()
   func.tag_move_screen(-1)
 end
 
-func.tag_move_screen_next = function ()
+function func.tag_move_screen_next ()
   func.tag_move_screen(1)
 end
 
 do
   local instance = nil
-  func.tag_action_menu = function (t)
+  function func.tag_action_menu (t)
     local clear_instance = function ()
       if instance then
         instance:hide()
@@ -607,8 +730,8 @@ do
             width = 200,
           },
           items = {
-            {"&cancel", function () clear_instance() end},
-            {"=== tag action menu ===", function () clear_instance() end},
+            {"&cancel",                   function () clear_instance() end},
+            {"=== tag action menu ===",   function () clear_instance() end},
 
             {"--- dynamic tagging ---",   function () clear_instance(); end},
             {"add tag &after this one",   function () clear_instance(); func.tag_add_after(t) end},

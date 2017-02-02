@@ -18,15 +18,17 @@ local autostart = require("autostart")
 local bashets = require("bashets") -- bashets config: https://gitorious.org/bashets/pages/Brief_Introduction
 local beautiful = require("beautiful")
 local custom = require('custom')
+local util = require('util')
 local gears = require("gears")
 local math = require("math")
 local menubar = require("menubar")
 local naughty = require("naughty")
 local uniarg = require("uniarg")
-local util = require("util")
 local vicious = require("vicious")
 local wibox = require("wibox")
+local inspect = require("inspect")
 -- }}}
+
 
 -- do not use letters, which shadow access key to menu entry
 awful.menu.menu_keys.down = { "Down", ".", ">", "'", "\"", }
