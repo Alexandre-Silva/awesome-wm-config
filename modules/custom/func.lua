@@ -554,7 +554,8 @@ end
 
 --rename
 --@param tag: tag object to be renamed (Defaults to focused tag)
-function func.tag_rename(tag)
+--@param callback: function called after a promp asking for a name is done
+function func.tag_rename(tag, callback)
   local tag = tag or client.first_tag
 
   local theme = beautiful.get()
@@ -586,6 +587,12 @@ function func.tag_rename(tag)
           tag.name = new_name
         end
       end,
+
+      done_callback = function ()
+        if callback then
+          callback()
+        end
+      end,
   })
 end
 
@@ -593,15 +600,14 @@ end
 --@param name: name of the tag (Optional)
 --@param props: properties for the new tag (screen, index, etc.) (Optional)
 function func.tag_add(name, props)
-  local props = util.table_join(
-    {
+  local props = util.table_join({
       screen = awful.screen.focused(),
       index = 1,
       layout = config.property.layout,
       mwfact = config.property.mwfact,
       nmaster = config.property.nmaster,
       ncol = config.property.ncol,
-    },
+                                },
     props)
 
   local t = awful.tag.add(name or "", props)
@@ -611,7 +617,13 @@ function func.tag_add(name, props)
 
   -- if add the tag interactively
   if not name then
-    func.tag_rename(t)
+    local cb = function ()
+      if not t.name or #t.name == 0 then
+        t:delete()
+      end
+    end
+
+    func.tag_rename(t, cb)
   end
 
   return t
