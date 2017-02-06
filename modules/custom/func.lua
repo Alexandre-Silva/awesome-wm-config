@@ -558,7 +558,7 @@ function func.tag_rename(tag)
   local tag = tag or client.first_tag
 
   local theme = beautiful.get()
-  local scr = tag.screen or screen.focused()
+  local scr = tag.screen or awful.screen.focused()
   local bg = nil
   local fg = nil
 
@@ -630,7 +630,12 @@ end
 function func.tag_add_after  () return func.tag_add_rel(name, 1) end
 function func.tag_add_before () return func.tag_add_rel(name, 0) end
 
-func.tag_delete = awful.tag.delete
+function func.tag_delete ()
+  local tag = awful.screen.focused().selected_tag
+  if tag then
+    tag:delete()
+  end
+end
 
 func.tag_view_prev = awful.tag.viewprev
 func.tag_view_next = awful.tag.viewnext
