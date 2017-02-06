@@ -604,10 +604,8 @@ function func.tag_add(name, props)
     },
     props)
 
-  local t = awful.tag.add(name or ".", props)
+  local t = awful.tag.add(name or "", props)
   if t then
-    -- awful.tag.move(props.index, t)
-    -- awful.tag.setscreen(t, props.screen)
     t:view_only()
   end
 
