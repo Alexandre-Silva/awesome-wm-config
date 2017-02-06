@@ -18,7 +18,7 @@ local func = {}
 -- @param prompt: Text to show the user.
 -- @param callback: Fuction which accepts single boolean param equal.
 -- This param is True if use enter yes or variant, False otherwise.
-func.prompt_yes_no = function(prompt, callback)
+function func.prompt_yes_no (prompt, callback)
   awful.prompt.run {
     prompt       = prompt ..  " (type 'yes' or 'y' to confirm): ",
     textbox      = awful.screen.focused().mypromptbox.widget,
@@ -28,7 +28,7 @@ func.prompt_yes_no = function(prompt, callback)
   }
 end
 
-func.prompt_run = function ()
+function func.prompt_run ()
   awful.prompt.run {
     prompt       = "Run: ",
     textbox      = awful.screen.focused().mypromptbox.widget,
@@ -37,7 +37,7 @@ func.prompt_run = function ()
   }
 end
 
-func.prompt_run_lua = function ()
+function func.prompt_run_lua ()
   awful.prompt.run {
     prompt       = "Run Lua code: ",
     textbox      = awful.screen.focused().mypromptbox.widget,
@@ -46,20 +46,20 @@ func.prompt_run_lua = function ()
   }
 end
 
-func.app_finder = function ()
+function func.app_finder ()
   awful.util.spawn("xfce4-appfinder")
 end
 -- }}}
 -- System {{{
-func.system_lock = function ()
+function func.system_lock ()
   awful.util.spawn("xscreensaver-command -l")
 end
 
-func.system_suspend = function ()
+function func.system_suspend ()
   awful.util.spawn("systemctl suspend")
 end
 
-func.system_hibernate = function ()
+function func.system_hibernate ()
   func.prompt_yes_no(
     "Hibernate ?",
     function (yes)
@@ -67,7 +67,7 @@ func.system_hibernate = function ()
   end)
 end
 
-func.system_hybrid_sleep = function ()
+function func.system_hybrid_sleep ()
   func.prompt_yes_no(
     "Hybrid Sleep ?",
     function (yes)
@@ -75,7 +75,7 @@ func.system_hybrid_sleep = function ()
   end)
 end
 
-func.system_reboot = function ()
+function func.system_reboot ()
   func.prompt_yes_no(
     "Reboot ?",
     function (yes)
@@ -86,7 +86,7 @@ func.system_reboot = function ()
   end)
 end
 
-func.system_power_off = function ()
+function func.system_power_off ()
   func.prompt_yes_no(
     "Power Off ?",
     function (yes)
@@ -98,24 +98,24 @@ func.system_power_off = function ()
 end
 -- }}}
 -- Client {{{
-func.client_focus_next = function ()
+function func.client_focus_next ()
   awful.client.focus.byidx(1)
   if client.focus then client.focus:raise() end
 end
 
-func.client_focus_prev = function ()
+function func.client_focus_prev ()
   awful.client.focus.byidx(-1)
   if client.focus then client.focus:raise() end
 end
 
 func.client_focus_urgent = awful.client.urgent.jumpto
 
-func.client_swap_next = function () awful.client.swap.byidx(  1) end
-func.client_swap_prev = function () awful.client.swap.byidx( -1) end
-func.client_move_next = function () util.client.rel_send(1) end
-func.client_move_prev = function () util.client.rel_send(-1) end
+function func.client_swap_next () awful.client.swap.byidx(  1) end
+function func.client_swap_prev () awful.client.swap.byidx( -1) end
+function func.client_move_next () util.client.rel_send(1) end
+function func.client_move_prev () util.client.rel_send(-1) end
 
-func.client_move_to_tag = function ()
+function func.client_move_to_tag ()
   local keywords = {}
   local scr = mouse.screen
   for _, t in ipairs(awful.tag.gettags(scr)) do -- only the current screen
@@ -135,7 +135,7 @@ func.client_move_to_tag = function ()
     nil)
 end
 
-func.client_toggle_tag = function (c)
+function func.client_toggle_tag (c)
   local keywords = {}
   local scr = mouse.screen
   for _, t in ipairs(awful.tag.gettags(scr)) do -- only the current screen
@@ -156,43 +156,43 @@ func.client_toggle_tag = function (c)
     nil)
 end
 
-func.client_toggle_titlebar = function ()
+function func.client_toggle_titlebar ()
   awful.titlebar.toggle(client.focus)
 end
 
-func.client_raise = function (c)
+function func.client_raise (c)
   c:raise()
 end
 
-func.client_fullscreen = function (c)
+function func.client_fullscreen (c)
   c.fullscreen = not c.fullscreen
 end
 
-func.client_maximize_horizontal = function (c)
+function func.client_maximize_horizontal (c)
   c.maximized_horizontal = not c.maximized_horizontal
 end
 
-func.client_maximize_vertical = function (c)
+function func.client_maximize_vertical (c)
   c.maximized_vertical = not c.maximized_vertical
 end
 
-func.client_maximize = function (c)
+function func.client_maximize (c)
   func.client_maximize_horizontal(c)
   func.client_maximize_vertical(c)
 end
 
-func.client_minimize = function (c)
+function func.client_minimize (c)
   c.minimized = not c.minimized
 end
 
-func.client_manage_tag = function (c, startup)
+function func.client_manage_tag (c, startup)
 end
 
 -- closures for client_status
 -- client_status[client] = {sidelined = <boolean>, geometry= <client geometry>}
 local client_status = {}
 
-func.client_sideline_left = function (c)
+function func.client_sideline_left (c)
   local scr = screen[mouse.screen]
   local workarea = scr.workarea
   if client_status[c] == nil then
@@ -210,7 +210,7 @@ func.client_sideline_left = function (c)
   client_status[c].sidelined = not client_status[c].sidelined
 end
 
-func.client_sideline_right = function (c)
+function func.client_sideline_right (c)
   local scr = screen[mouse.screen]
   local workarea = scr.workarea
   if client_status[c] == nil then
@@ -229,7 +229,7 @@ func.client_sideline_right = function (c)
   client_status[c].sidelined = not client_status[c].sidelined
 end
 
-func.client_sideline_top = function (c)
+function func.client_sideline_top (c)
   local scr = screen[mouse.screen]
   local workarea = scr.workarea
   if client_status[c] == nil then
@@ -247,7 +247,7 @@ func.client_sideline_top = function (c)
   client_status[c].sidelined = not client_status[c].sidelined
 end
 
-func.client_sideline_bottom = function (c)
+function func.client_sideline_bottom (c)
   local scr = screen[mouse.screen]
   local workarea = scr.workarea
   if client_status[c] == nil then
@@ -266,7 +266,7 @@ func.client_sideline_bottom = function (c)
   client_status[c].sidelined = not client_status[c].sidelined
 end
 
-func.client_sideline_extend_left = function (c, by)
+function func.client_sideline_extend_left (c, by)
   local cg = c:geometry()
   if by then
     cg.x = cg.x - by
@@ -281,7 +281,7 @@ func.client_sideline_extend_left = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_extend_right = function (c, by)
+function func.client_sideline_extend_right (c, by)
   local cg = c:geometry()
   if by then
     cg.width = cg.width + by
@@ -296,7 +296,7 @@ func.client_sideline_extend_right = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_extend_top = function (c, by)
+function func.client_sideline_extend_top (c, by)
   local cg = c:geometry()
   if by then
     cg.y = cg.y - by
@@ -311,7 +311,7 @@ func.client_sideline_extend_top = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_extend_bottom = function (c, by)
+function func.client_sideline_extend_bottom (c, by)
   local cg = c:geometry()
   if by then
     cg.height = cg.height + by
@@ -326,7 +326,7 @@ func.client_sideline_extend_bottom = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_shrink_left = function (c, by)
+function func.client_sideline_shrink_left (c, by)
   local cg = c:geometry()
   local min = config.property.minimal_client_width
   if by then
@@ -340,7 +340,7 @@ func.client_sideline_shrink_left = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_shrink_right = function (c, by)
+function func.client_sideline_shrink_right (c, by)
   local cg = c:geometry()
   local min = config.property.minimal_client_width
   if by then
@@ -357,7 +357,7 @@ func.client_sideline_shrink_right = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_shrink_top = function (c, by)
+function func.client_sideline_shrink_top (c, by)
   local cg = c:geometry()
   local min = config.property.minimal_client_height
   if by then
@@ -371,7 +371,7 @@ func.client_sideline_shrink_top = function (c, by)
   c:geometry(cg)
 end
 
-func.client_sideline_shrink_bottom = function (c, by)
+function func.client_sideline_shrink_bottom (c, by)
   local cg = c:geometry()
   local min = config.property.minimal_client_height
   if by then
@@ -388,41 +388,41 @@ func.client_sideline_shrink_bottom = function (c, by)
   c:geometry(cg)
 end
 
-func.client_opaque_less = function (c)
+function func.client_opaque_less (c)
   local opacity = c.opacity - 0.1
   if opacity and opacity >= config.property.min_opacity then
     c.opacity = opacity
   end
 end
 
-func.client_opaque_more = function (c)
+function func.client_opaque_more (c)
   local opacity = c.opacity + 0.1
   if opacity and opacity <= config.property.max_opacity then
     c.opacity = opacity
   end
 end
 
-func.client_opaque_off = function (c)
+function func.client_opaque_off (c)
   awful.util.spawn_with_shell("pkill " .. config.compmgr)
 end
 
-func.client_opaque_on = function (c)
+function func.client_opaque_on (c)
   awful.util.spawn_with_shell(config.compmgr.. " " .. config.compmgr_args)
 end
 
-func.client_swap_with_master = function (c)
+function func.client_swap_with_master (c)
   c:swap(awful.client.getmaster())
 end
 
-func.client_toggle_top = function (c)
+function func.client_toggle_top (c)
   c.ontop = not c.ontop
 end
 
-func.client_toggle_sticky = function (c)
+function func.client_toggle_sticky (c)
   c.sticky = not c.sticky
 end
 
-func.client_kill = function (c)
+function func.client_kill (c)
   c:kill()
 end
 
@@ -736,7 +736,7 @@ end
 -- clients on tags {{{
 do
   local instance = nil
-  func.clients_on_tag = function ()
+  function   func.clients_on_tag ()
     local clear_instance = function ()
       if instance then
         instance:hide()
@@ -775,7 +775,7 @@ do
   end
 end
 
-func.clients_on_tag_prompt = function ()
+function func.clients_on_tag_prompt ()
   local clients = {}
   local next = next
   local t = awful.tag.selected()
@@ -810,7 +810,7 @@ end
 
 do
   local instance = nil
-  func.all_clients = function ()
+  function   func.all_clients ()
     local clear_instance = function ()
       if instance then
         instance:hide()
@@ -850,7 +850,7 @@ do
   end
 end
 
-func.all_clients_prompt = function ()
+function func.all_clients_prompt ()
   local clients = {}
   local next = next
   local keywords = {}
@@ -886,7 +886,7 @@ end
 
 do
   local instance = nil
-  func.systeminfo = function ()
+  function   func.systeminfo ()
     if instance then
       naughty.destroy(instance)
       instance = nil
@@ -925,7 +925,7 @@ end
 
 do
   local instance = nil
-  func.help = function ()
+  function   func.help ()
     if instance then
       naughty.destroy(instance)
       instance = nil
