@@ -554,21 +554,17 @@ end
 
 --rename
 --@param tag: tag object to be renamed (Defaults to focused tag)
---@param newp: boolean; true if the tag is new (Defaults to false)
-function func.tag_rename(tag, newp)
-  local t = tag or client.first_tag
-  local newp = newp or false -- can be nil
+function func.tag_rename(tag)
+  local tag = tag or client.first_tag
 
   local theme = beautiful.get()
-  local scr = t.screen or screen.focused()
-  local text = t.name
-  local before = t.name
+  local scr = tag.screen or screen.focused()
   local bg = nil
   local fg = nil
 
-  if not t or not scr then return end
+  if not tag or not scr then return end
 
-  if scr.selected_tag == t then
+  if scr.selected_tag == tag then
     bg = theme.bg_focus or '#535d6c'
     fg = theme.fg_urgent or '#ffffff'
   else
@@ -576,41 +572,18 @@ function func.tag_rename(tag, newp)
     fg = theme.fg_urgent or '#ffffff'
   end
 
-  -- debug_taglist(scr, t)
-
-  local function pp_widget_tree(w, i)
-    local ident = ""
-    for j=1,i do ident = ident .. "  " end
-    print(ident .. w.widget_name)
-    for _,cw in ipairs(w:get_children()) do
-      pp_widget_tree(cw.widget, i+1)
-    end
-  end
-  pp_widget_tree(scr.mytaglist:get_children()[1].widget, 0)
-  print()
-  pp_widget_tree(scr.mytaglist:get_children()[1].widget:get_children()[2].widget, 0)
-  print()
-  -- print(inspect(tag._private, {depth = 3}))
-  -- print(inspect(scr.mytaglist.children[1].children[1], {depth = 2}))
-  -- print(inspect(scr.mytaglist.children[1].children[1].children, {depth = 3}))
-
   awful.prompt.run({
       fg_cursor = fg,
       bg_cursor = bg,
       ul_cursor = "single",
-      text = text,
+      prompt = "(Re)Name tag to: ",
+      text = tag.name,
       selectall = true,
-
-      -- util.taglist.taglist[scr.tags].widgets[t.index].widget.widgets[2].widget,
-      textbox = scr.mytaglist:get_children()[1].widget:get_children()[2].widget,
+      textbox = awful.screen.focused().mypromptbox.widget,
 
       exe_callback = function(new_name)
         if new_name and #new_name > 0 then
           tag.name = new_name
-        else
-          if newp then
-            tag:delete()
-          end
         end
       end,
   })
@@ -631,7 +604,7 @@ function func.tag_add(name, props)
     },
     props)
 
-  local t = awful.tag.add(name or "New Tag", props)
+  local t = awful.tag.add(name or ".", props)
   if t then
     -- awful.tag.move(props.index, t)
     -- awful.tag.setscreen(t, props.screen)
@@ -640,7 +613,7 @@ function func.tag_add(name, props)
 
   -- if add the tag interactively
   if not name then
-    func.tag_rename(t, true)
+    func.tag_rename(t)
   end
 
   return t
