@@ -152,6 +152,8 @@ custom.widgets.init()
 uniarg:init(custom.widgets.uniarg)
 custom.structure.init()
 custom.binds.init()
+bashets.start()
+
 
 -- Rules {{{
 -- Rules to apply to new clients (through the "manage" signal).

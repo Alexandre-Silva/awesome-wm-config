@@ -1,6 +1,5 @@
 -- Imports {{{
 local awful = require("awful")
-local bashets = require("bashets")
 local beautiful = require("beautiful")
 local shape = require("gears.shape")
 local util = require("util")
@@ -160,9 +159,6 @@ function structure.init()
         awful.client.focus.byidx(1)
         if client.focus then client.focus:raise() end
   end))
-
-  -- start bashets
-  bashets.start()
 
   -- Create a wibox for each screen and add it
   awful.screen.connect_for_each_screen(function(s)
