@@ -33,7 +33,8 @@ function func.prompt_run ()
     prompt       = "Run: ",
     textbox      = awful.screen.focused().mypromptbox.widget,
     exe_callback = awful.spawn,
-    history_path = awful.util.get_cache_dir() .. "/history"
+    history_path = awful.util.get_cache_dir() .. "/history",
+    completion_callback = awful.completion.shell,
   }
 end
 
