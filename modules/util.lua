@@ -57,4 +57,22 @@ function util.table_join(t1, t2)
   return t3
 end
 
+--tag_names: returns a list of all the tag names. Or, if a screen is provided, its tag names.
+--@param screen: A optional screen to returns its tags names
+function util.tag_names(screen)
+  local tags = {}
+  if screen then
+    tags = screen.tags
+  else
+    tags = root.tags()
+  end
+
+  local names = {}
+  for _, t in ipairs(tags) do
+    table.insert(names, t.name)
+  end
+
+  return names
+end
+
 return util

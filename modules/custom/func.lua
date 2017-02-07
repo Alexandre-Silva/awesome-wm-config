@@ -117,44 +117,36 @@ function func.client_move_next () util.client.rel_send(1) end
 function func.client_move_prev () util.client.rel_send(-1) end
 
 function func.client_move_to_tag ()
-  local keywords = {}
-  local scr = mouse.screen
-  for _, t in ipairs(awful.tag.gettags(scr)) do -- only the current screen
-    table.insert(keywords, t.name)
-  end
-  awful.prompt.run({prompt = "Move client to tag: "},
-    widgets.promptbox[scr].widget,
-    function (t)
+  local keywords = util.tag_names()
+
+  awful.prompt.run {
+    prompt       = "Move client to tag: ",
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+    exe_callback = function (t)
       local tag = func.tag_name2tag(t)
       if tag then
         awful.client.movetotag(tag)
       end
     end,
-    function (t, p, n)
-      return awful.completion.generic(t, p, n, keywords)
-    end,
-    nil)
+  }
 end
 
 function func.client_toggle_tag (c)
-  local keywords = {}
-  local scr = mouse.screen
-  for _, t in ipairs(awful.tag.gettags(scr)) do -- only the current screen
-    table.insert(keywords, t.name)
-  end
   local c = c or client.focus
-  awful.prompt.run({prompt = "Toggle tag for " .. c.name .. ": "},
-    widgets.promptbox[scr].widget,
-    function (t)
+  local keywords = util.tag_names()
+
+  awful.prompt.run {
+    prompt       = "Move client to tag: ",
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+    exe_callback = function (t)
       local tag = func.tag_name2tag(t)
       if tag then
         awful.client.toggletag(tag)
       end
     end,
-    function (t, p, n)
-      return awful.completion.generic(t, p, n, keywords)
-    end,
-    nil)
+  }
 end
 
 function func.client_toggle_titlebar ()
@@ -523,12 +515,16 @@ function func.tag_move_backward () func.tag_rel_move(-1) end
 --@return table of tag objects or nil
 function func.tag_name2tags(name, scr)
   local ret = {}
-  local a, b = scr or 1, scr or capi.screen.count()
-  for s = a, b do
-    for _, t in ipairs(awful.tag.gettags(s)) do
-      if name == t.name then
-        table.insert(ret, t)
-      end
+  local tags = {}
+  if scr then
+    tags = scr.tags
+  else
+    tags = root.tags()
+  end
+
+  for _, t in ipairs(tags) do
+    if name == t.name then
+      table.insert(ret, t)
     end
   end
   if #ret > 0 then return ret end
@@ -657,19 +653,15 @@ func.tag_view_next = awful.tag.viewnext
 func.tag_last = awful.tag.history.restore
 
 function func.tag_goto ()
-  local keywords = {}
-  local scr = mouse.screen
-  for _, t in ipairs(awful.tag.gettags(scr)) do -- only the current screen
-    table.insert(keywords, t.name)
-  end
-  awful.prompt.run({prompt = "Goto tag: "},
-    widgets.promptbox[scr].widget,
-    function (t)
+  local keywords = util.tag_names(awful.screen.focused())
+  awful.prompt.run {
+    prompt       = "Goto tag: ",
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+    exe_callback = function (t)
       func.tag_name2tag(t):view_only()
     end,
-    function (t, p, n)
-      return awful.completion.generic(t, p, n, keywords)
-  end)
+  }
 end
 
 function func.tag_move_screen (scrdelta)
@@ -800,20 +792,19 @@ function func.clients_on_tag_prompt ()
         end
       end
     end
-    if next(clients) ~= nil then
-      awful.prompt.run({prompt = "Focus on client on current tag: "},
-        widgets.promptbox[scr].widget,
-        function (t)
-          local c = clients[t]
-          if c then
-            client.focus = c
-            c:raise()
-          end
-        end,
-        function (t, p, n)
-          return awful.completion.generic(t, p, n, keywords)
-      end)
-    end
+
+    awful.prompt.run {
+      prompt       = "Focus on client on current tag: ",
+      textbox      = awful.screen.focused().mypromptbox.widget,
+      completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+      exe_callback = function (t)
+        local c = clients[t]
+        if c then
+          client.focus = c
+          c:raise()
+        end
+      end,
+    }
   end
 end
 
@@ -874,9 +865,11 @@ function func.all_clients_prompt ()
     end
   end
   if next(clients) ~= nil then
-    awful.prompt.run({prompt = "Focus on client from global list: "},
-      widgets.promptbox[scr].widget,
-      function (t)
+    awful.prompt.run {
+      prompt       = "Focus on client from global list: ",
+      textbox      = awful.screen.focused().mypromptbox.widget,
+      completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+      exe_callback = function (t)
         local c = clients[t]
         if c then
           local t = c:tags()
@@ -887,9 +880,7 @@ function func.all_clients_prompt ()
           c:raise()
         end
       end,
-      function (t, p, n)
-        return awful.completion.generic(t, p, n, keywords)
-    end)
+    }
   end
 end
 
