@@ -502,16 +502,19 @@ do
 end
 -- }}}
 -- Tag  {{{
-function tag_rel_move(tag, rel_idx)
+--tag_rel_move: Moves the tags position relationaly to its current position
+--@param rel_idx: the relative target position. -1 swaps postion with the previous tag, 1 with the next.
+--@param tag: the tag to move, or if nil the focused tag
+function func.tag_rel_move(rel_idx, tag)
+  local tag = tag or awful.screen.focused().selected_tag
   if tag then
-    local scr = awful.tag.getscreen(tag)
-    local tag_idx = awful.tag.getidx(tag)
-    local tags = awful.tag.gettags(scr)
-    local target = awful.util.cycle(#tags, tag_idx + rel_idx)
-    awful.tag.move(target, tag)
+    tag.index = tag.index + rel_idx
     tag:view_only()
   end
 end
+
+function func.tag_move_forward () func.tag_rel_move( 1) end
+function func.tag_move_backward () func.tag_rel_move(-1) end
 
 --name2tags: matches string 'name' to tag objects
 --@param name: tag name to find
@@ -560,17 +563,15 @@ function func.tag_rename(tag, callback)
 
   local theme = beautiful.get()
   local scr = tag.screen or awful.screen.focused()
-  local bg = nil
-  local fg = nil
 
   if not tag or not scr then return end
 
   if scr.selected_tag == tag then
-    bg = theme.bg_focus or '#535d6c'
-    fg = theme.fg_urgent or '#ffffff'
+    local bg = theme.bg_focus or '#535d6c'
+    local fg = theme.fg_urgent or '#ffffff'
   else
-    bg = theme.bg_normal or '#222222'
-    fg = theme.fg_urgent or '#ffffff'
+    local bg = theme.bg_normal or '#222222'
+    local fg = theme.fg_urgent or '#ffffff'
   end
 
   awful.prompt.run({
@@ -668,14 +669,6 @@ function func.tag_goto ()
     function (t, p, n)
       return awful.completion.generic(t, p, n, keywords)
   end)
-end
-
-function func.tag_move_forward ()
-  func.tag_rel_move(awful.tag.selected(), 1)
-end
-
-function func.tag_move_backward ()
-  func.tag_rel_move(awful.tag.selected(), -1)
 end
 
 function func.tag_move_screen (scrdelta)
