@@ -118,14 +118,14 @@ function func.client_swap_prev () awful.client.swap.byidx( -1) end
 
 --client_move_rel: moves the client to the tag with a certain relative index
 --@param rel_idx: The relative index of the target tag to the current one
---@param client: the client to move. If nil defaults to focused client
-function func.client_move_rel(rel_idx, client)
-  local client = client or awful.client.focus.history.list[1]
+--@param c: the client to move. If nil defaults to focused client
+function func.client_move_rel(rel_idx, c)
+  local c = c or client.focus
 
-  if client then
-    local tgt_idx = client.first_tag.index + rel_idx
-    local tgt_tag = client.screen.tags[tgt_idx]
-    client:move_to_tag(tgt_tag)
+  if c then
+    local tgt_idx = c.first_tag.index + rel_idx
+    local tgt_tag = c.screen.tags[tgt_idx]
+    c:move_to_tag(tgt_tag)
     tgt_tag:view_only()
   end
 end
