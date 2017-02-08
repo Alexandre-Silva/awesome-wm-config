@@ -7,6 +7,8 @@ local util = require("util")
 
 local config = require("custom.config")
 local widgets = require("custom.widgets")
+
+require("awful.autofocus")
 -- }}}
 
 
@@ -113,8 +115,23 @@ func.client_focus_urgent = awful.client.urgent.jumpto
 
 function func.client_swap_next () awful.client.swap.byidx(  1) end
 function func.client_swap_prev () awful.client.swap.byidx( -1) end
-function func.client_move_next () util.client.rel_send(1) end
-function func.client_move_prev () util.client.rel_send(-1) end
+
+--client_move_rel: moves the client to the tag with a certain relative index
+--@param rel_idx: The relative index of the target tag to the current one
+--@param client: the client to move. If nil defaults to focused client
+function func.client_move_rel(rel_idx, client)
+  local client = client or awful.client.focus.history.list[1]
+
+  if client then
+    local tgt_idx = client.first_tag.index + rel_idx
+    local tgt_tag = client.screen.tags[tgt_idx]
+    client:move_to_tag(tgt_tag)
+    tgt_tag:view_only()
+  end
+end
+
+function func.client_move_next () func.client_move_rel(1) end
+function func.client_move_prev () func.client_move_rel(-1) end
 
 function func.client_move_to_tag ()
   local keywords = util.tag_names()
