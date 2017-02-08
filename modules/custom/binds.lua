@@ -186,13 +186,13 @@ binds.globalkeys = awful.util.table.join(
   awful.key({modkey, "Control", "Shift"}, "g", func.client_toggle_tag),
 
   --- change space allocation in tile layout
-  awful.key({ modkey,                   }, "=",     function () awful.tag.setmwfact( 0.5) end),
-  awful.key({ modkey,                   }, "l",     function () awful.tag.incmwfact( 0.05) end),
-  awful.key({ modkey,                   }, "h",     function () awful.tag.incmwfact(-0.05) end),
-  uniarg:key_repeat({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster( 1) end),
-  uniarg:key_repeat({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster(-1) end),
-  uniarg:key_repeat({ modkey, "Control" }, "l",     function () awful.tag.incncol( 1) end),
-  uniarg:key_repeat({ modkey, "Control" }, "h",     function () awful.tag.incncol(-1) end),
+  awful.key({ modkey,                   }, "=", function () tag.selected().master_width_factor = 0.5 end),
+  awful.key({ modkey,                   }, "l", function () awful.tag.incmwfact( 0.05) end),
+  awful.key({ modkey,                   }, "h", function () awful.tag.incmwfact(-0.05) end),
+  uniarg:key_repeat({ modkey, "Shift"   }, "l", function () awful.tag.incnmaster( 1) end),
+  uniarg:key_repeat({ modkey, "Shift"   }, "h", function () awful.tag.incnmaster(-1) end),
+  uniarg:key_repeat({ modkey, "Control" }, "l", function () awful.tag.incncol( 1) end),
+  uniarg:key_repeat({ modkey, "Control" }, "h", function () awful.tag.incncol(-1) end),
 
   --- misc
   awful.key({ modkey, "Shift" }, "`", func.client_toggle_titlebar),

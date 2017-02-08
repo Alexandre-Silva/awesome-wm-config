@@ -140,7 +140,7 @@ function widgets.new_mpdstatus() -- {{{
     end, 1)
 
   -- http://git.sysphere.org/vicious/tree/README
-  mpdstatus = wibox.layout.constraint(mpdstatus, "max", 180, nil)
+  mpdstatus = wibox.container.constraint(mpdstatus, "max", 180, nil)
 
   mpdstatus:buttons(
     awful.util.table.join(

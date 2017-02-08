@@ -142,8 +142,9 @@ function func.client_move_to_tag ()
     completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
     exe_callback = function (t)
       local tag = func.tag_name2tag(t)
-      if tag then
-        awful.client.movetotag(tag)
+      local c = client.focus
+      if tag and c then
+        c:move_to_tag(tag)
       end
     end,
   }
@@ -153,17 +154,19 @@ function func.client_toggle_tag (c)
   local c = c or client.focus
   local keywords = util.tag_names()
 
-  awful.prompt.run {
-    prompt       = "Move client to tag: ",
-    textbox      = awful.screen.focused().mypromptbox.widget,
-    completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
-    exe_callback = function (t)
-      local tag = func.tag_name2tag(t)
-      if tag then
-        awful.client.toggletag(tag)
-      end
-    end,
-  }
+  if c then
+    awful.prompt.run {
+      prompt       = "Move client to tag: ",
+      textbox      = awful.screen.focused().mypromptbox.widget,
+      completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+      exe_callback = function (t)
+        local tag = func.tag_name2tag(t)
+        if tag then
+          c:toggle_tag(tag)
+        end
+      end,
+    }
+  end
 end
 
 function func.client_toggle_titlebar ()
@@ -413,11 +416,11 @@ function func.client_opaque_more (c)
 end
 
 function func.client_opaque_off (c)
-  awful.util.spawn_with_shell("pkill " .. config.compmgr)
+  awful.spawn.spawn.with_shell("pkill " .. config.compmgr)
 end
 
 function func.client_opaque_on (c)
-  awful.util.spawn_with_shell(config.compmgr.. " " .. config.compmgr_args)
+  awful.spawn.with_shell(config.compmgr.. " " .. config.compmgr_args)
 end
 
 function func.client_swap_with_master (c)
@@ -556,7 +559,7 @@ end
 local function debug_taglist(scr, t)
   do
     local key = ""
-    for k, _ in pairs(util.taglist.taglist[scr].widgets[awful.tag.getidx(t)].widget.widgets[2].widget) do
+    for k, _ in pairs(util.taglist.taglist[scr].widgets[t.index].widget.widgets[2].widget) do
       key = key .. "\n" .. k
     end
     naughty.notify(
@@ -681,25 +684,20 @@ function func.tag_goto ()
   }
 end
 
-function func.tag_move_screen (scrdelta)
-  local seltag = awful.tag.selected()
-  local scrcount = capi.screen.count()
-  if seltag then
-    local s = awful.tag.getscreen(seltag) + scrdelta
-    if s > scrcount then s = 1 elseif s < 1 then s = scrcount end
-    awful.tag.setscreen(seltag, s)
-    seltag:view_only()
-    awful.screen.focus(s)
+function func.tag_move_screen (rel_idx)
+  local t = awful.screen.focused().selected_tag
+
+  if t then
+    local tgt_idx = (t.screen.index + scrdelta) % screen:count()
+    local s_tgt = screen[tgt_idx]
+    t.screen = s_tgt
+    t:view_only()
+    screen.focus(s)
   end
 end
 
-function func.tag_move_screen_prev ()
-  func.tag_move_screen(-1)
-end
-
-function func.tag_move_screen_next ()
-  func.tag_move_screen(1)
-end
+function func.tag_move_screen_next () func.tag_move_screen( 1) end
+function func.tag_move_screen_prev () func.tag_move_screen(-1) end
 
 do
   local instance = nil
@@ -714,7 +712,7 @@ do
       clear_instance()
       return
     end
-    t = t or awful.tag.selected()
+    t = t or tag.selected()
     if t then
       instance = awful.menu({
           theme = {
@@ -770,7 +768,7 @@ do
       theme = { width = 400 },
     }
     local next = next
-    local t = awful.tag.selected()
+    local t = tag.selected()
     if t then
       for _, c in pairs(t:clients()) do
         if c.focusable and c.pid ~= 0 then
@@ -796,7 +794,7 @@ end
 function func.clients_on_tag_prompt ()
   local clients = {}
   local next = next
-  local t = awful.tag.selected()
+  local t = tag.selected()
   if t then
     local keywords = {}
     local scr = mouse.screen
@@ -960,7 +958,7 @@ do
         timeout = 20,
         screen = mouse.screen,
     })
-    awful.util.spawn_with_shell(config.browser.primary .. " '" .. config.help_url .. "'")
+    awful.spawn.with_shell(config.browser.primary .. " '" .. config.help_url .. "'")
   end
 end
 
