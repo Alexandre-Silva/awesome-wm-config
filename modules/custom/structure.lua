@@ -178,7 +178,10 @@ function structure.init()
           nil))
 
       -- Create a taglist widget
-      s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+      s.mytaglist = awful.widget.taglist(
+        s,
+        awful.widget.taglist.filter.all,
+        widgets.taglist.buttons)
 
       -- Create a textbox showing current universal argument
       s.myuniarg = wibox.widget.textbox()
