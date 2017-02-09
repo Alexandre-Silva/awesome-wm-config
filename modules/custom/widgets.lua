@@ -89,7 +89,7 @@ function widgets.new_bat() -- {{{
   local bat = lain.widget.bat({
       battery  = "BAT1",
       ac       = "ACAD",
-      timeout  = 1,
+      timeout  = 60,
 
       settings = function ()
         if bat_now.perc ~= "N/A" then
