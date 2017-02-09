@@ -573,17 +573,15 @@ local function debug_taglist(scr, t)
 end
 
 --rename
---@param tag: tag object to be renamed (Defaults to focused tag)
+--@param t: tag object to be renamed (Defaults to focused tag)
 --@param callback: function called after a promp asking for a name is done
-function func.tag_rename(tag, callback)
-  local tag = tag or client.first_tag
-
+function func.tag_rename(t, callback)
+  local t = t or awful.screen.focused().selected_tag
   local theme = beautiful.get()
-  local scr = tag.screen or awful.screen.focused()
 
-  if not tag or not scr then return end
+  if not t then return end
 
-  if scr.selected_tag == tag then
+  if t.screen.selected_tag == t then
     local bg = theme.bg_focus or '#535d6c'
     local fg = theme.fg_urgent or '#ffffff'
   else
@@ -596,13 +594,13 @@ function func.tag_rename(tag, callback)
       bg_cursor = bg,
       ul_cursor = "single",
       prompt = "(Re)Name tag to: ",
-      text = tag.name,
+      text = t.name,
       selectall = true,
       textbox = awful.screen.focused().mypromptbox.widget,
 
       exe_callback = function(new_name)
         if new_name and #new_name > 0 then
-          tag.name = new_name
+          t.name = new_name
         end
       end,
 
