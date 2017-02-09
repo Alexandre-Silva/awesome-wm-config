@@ -85,8 +85,8 @@ function widgets.new_memusage() -- {{{
 
   return memusage
 end -- }}}
-function widgets.new_bat0() -- {{{
-  local bat1 = lain.widgets.bat({
+function widgets.new_bat() -- {{{
+  local bat = lain.widget.bat({
       battery  = "BAT1",
       ac       = "ACAD",
       timeout  = 1,
@@ -114,7 +114,7 @@ function widgets.new_bat0() -- {{{
     layout  = wibox.layout.fixed.horizontal,
 
     bat_icon,
-    bat1.widget
+    bat.widget
   }
 
   return bat
@@ -226,7 +226,7 @@ end -- }}}
 function widgets.init() -- {{{ init
   widgets.cpuusage = widgets.new_cpuusage()
   widgets.memusage = widgets.new_memusage()
-  widgets.bat  = widgets.new_bat0()
+  widgets.bat  = widgets.new_bat()
   widgets.mpdstatus = widgets.new_mpdstatus()
   widgets.volume = widgets.new_volume()
   widgets.date = widgets.new_date()
