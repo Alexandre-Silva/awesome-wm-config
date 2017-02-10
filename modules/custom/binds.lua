@@ -108,7 +108,7 @@ binds.globalkeys = awful.util.table.join(
   --- multiple screens/multi-head/RANDR
   uniarg:key_repeat({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
   uniarg:key_repeat({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
-  uniarg:key_repeat({ modkey,           }, "o", function (c) c:move_to_screen() end),
+  uniarg:key_repeat({ modkey,           }, "o", function () client.focus:move_to_screen() end),
   uniarg:key_repeat({ modkey, "Control" }, "o", func.tag_move_screen_next),
   uniarg:key_repeat({ modkey, "Shift", "Control" }, "o", func.tag_move_screen_prev),
 

@@ -650,7 +650,9 @@ end
 --@param red_idx: Relative index, -1 (or lower) tag is placed beind focused tag. 0 where the current tag is. 1 or higher, after the selected tag
 --@param props: properties for the new tag (screen, index, etc.) (Optional)
 function func.tag_add_rel (name, rel_idx, props)
-  local idx = awful.screen.focused().selected_tag.index + rel_idx
+  local idx = 1
+  local t = awful.screen.focused().selected_tag
+  if t then idx = t.index + rel_idx end
   local props = util.table_join(props or {}, {index = idx})
   return func.tag_add(name, props)
 end
@@ -686,11 +688,11 @@ function func.tag_move_screen (rel_idx)
   local t = awful.screen.focused().selected_tag
 
   if t then
-    local tgt_idx = (t.screen.index + scrdelta) % screen:count()
+    local tgt_idx = (t.screen.index + rel_idx - 1) % screen:count() + 1
     local s_tgt = screen[tgt_idx]
     t.screen = s_tgt
     t:view_only()
-    screen.focus(s)
+    awful.screen.focus(s_tgt)
   end
 end
 
