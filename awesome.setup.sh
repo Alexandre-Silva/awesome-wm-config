@@ -1,4 +1,4 @@
-package=(
+packages=(
     "pm:awesome"
     "rock:inspect"
     "rock:luacheck"
