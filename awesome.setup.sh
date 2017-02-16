@@ -1,5 +1,7 @@
 package=(
     "pm:awesome"
+    "rock:inspect"
+    "rock:luacheck"
 )
 
 links=(
