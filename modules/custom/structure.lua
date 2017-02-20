@@ -267,34 +267,38 @@ function structure.init()
       -- Create the wibox
       s.mywibox = awful.wibar({ position = "top", height = "18", screen = s })
 
-      -- Widgets that are aligned to the left
-      local left_layout = wibox.layout.fixed.horizontal()
-      left_layout:add(widgets.launcher)
-      left_layout:add(s.mytaglist)
-      left_layout:add(s.myuniarg)
-      left_layout:add(s.mypromptbox)
+      s.mywibox:setup{
+        -- left layout
+        {
+          widgets.launcher,
+          s.mytaglist,
+          s.myuniarg,
+          s.mypromptbox,
 
+          layout = wibox.layout.fixed.horizontal(),
+        },
 
-      -- Widgets that are aligned to the right
-      local right_layout = wibox.layout.fixed.horizontal()
-      right_layout:add(wibox.widget.systray())
-      right_layout:add(widgets.cpuusage)
-      right_layout:add(widgets.memusage)
-      right_layout:add(widgets.bat)
-      right_layout:add(widgets.mpdstatus)
-      --right_layout:add(widgets.audio_volume)
-      right_layout:add(widgets.volume)
-      right_layout:add(widgets.date)
-      --right_layout:add(widgets.textclock)
-      right_layout:add(s.mylayoutbox)
+        s.mytasklist,
 
-      -- Now bring it all together (with the tasklist in the middle)
-      local layout = wibox.layout.align.horizontal()
-      layout:set_left(left_layout)
-      layout:set_middle(s.mytasklist)
-      layout:set_right(right_layout)
+        {
+          wibox.widget.systray(),
+          widgets.cpuusage,
+          widgets.memusage,
+          widgets.bat,
+          widgets.mpdstatus,
 
-      s.mywibox:set_widget(layout)
+          --widgets.audio_volume,
+          widgets.volume,
+          widgets.date,
+          --widgets.textclock,
+
+          s.mylayoutbox,
+
+          layout = wibox.layout.fixed.horizontal(),
+        },
+
+        layout = wibox.layout.align.horizontal(),
+      }
   end)
 
   util.taglist.set_taglist(widgets.taglist)
