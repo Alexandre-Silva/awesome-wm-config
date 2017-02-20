@@ -198,8 +198,8 @@ function func.client_minimize (c)
   c.minimized = not c.minimized
 end
 
-function func.client_manage_tag (c, startup)
-end
+-- function func.client_manage_tag (c, startup)
+-- end
 
 -- closures for client_status
 -- client_status[client] = {sidelined = <boolean>, geometry= <client geometry>}
