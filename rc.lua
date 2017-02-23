@@ -19,6 +19,10 @@ local custom = require('custom')
 local gears = require("gears")
 local naughty = require("naughty")
 local uniarg = require("uniarg")
+
+local awesome = awesome
+local screen = screen
+local client = client
 -- }}}
 
 
@@ -143,7 +147,6 @@ custom.structure.init()
 custom.binds.init()
 bashets.start()
 
-
 -- Rules {{{
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
@@ -159,7 +162,7 @@ awful.rules.rules = {
       keys = custom.binds.clientkeys,
       buttons = custom.binds.clientbuttons,
       screen = awful.screen.preferred,
-      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
+      placement = awful.placement.no_overlap + awful.placement.no_offscreen,
       opacity = custom.config.property.default_naughty_opacity,
       size_hints_honor = false,
     }
@@ -201,8 +204,7 @@ awful.rules.rules = {
       opacity = 0.8,
       sticky = true,
     },
-    callback = function (c)
-    end,
+    callback = function (_) end,
   },
 
 
@@ -221,7 +223,6 @@ awful.rules.rules = {
 -- Signals {{{
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", custom.structure.manage_client)
--- client.connect_signal("manage", custom.func.client_manage_tag)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
