@@ -97,7 +97,6 @@ end
 -- }}}
 -- Theme {{{
 do
-  local config_path = awful.util.getdir("config")
   local function init_theme(theme_name)
     local theme_path = config_path .. "/themes/" .. theme_name .. "/theme.lua"
     beautiful.init(theme_path)

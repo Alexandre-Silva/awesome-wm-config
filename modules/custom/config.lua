@@ -3,11 +3,17 @@ local awful = require("awful")
 -- }}}
 
 local config = {}
-c = config
+
+-- Default modkey.
+-- Usually, Mod4 is the key with a logo between Control and Alt.
+-- If you do not like this or do not have such a key,
+-- I suggest you to remap Mod4 to another key using xmodmap or other custom.config.
+-- However, you can use another modifier like Mod1, but it may interact with others.
+config.modkey = "Mod4"
 
 -- meta configs
 config.version = "1.7.18"
-config.help_url = "https://github.com/pw4ever/awesome-wm-config/tree/" .. c.version
+config.help_url = "https://github.com/pw4ever/awesome-wm-config/tree/" .. config.version
 
 -- actual configs
 config.terminal = os.getenv("TERMCMD") or "xterm"

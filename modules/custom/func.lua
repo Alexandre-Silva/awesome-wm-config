@@ -1,14 +1,19 @@
 -- Imports {{{
 local awful = require("awful")
 local beautiful = require("beautiful")
-local inspect = require("inspect")
 local naughty = require("naughty")
 local util = require("util")
 
 local config = require("custom.config")
-local widgets = require("custom.widgets")
 
 require("awful.autofocus")
+
+local awesome = awesome
+local root = root
+local mouse = mouse
+local screen = screen
+local tag = tag
+local client = client
 -- }}}
 
 
@@ -120,7 +125,7 @@ function func.client_swap_prev () awful.client.swap.byidx( -1) end
 --@param rel_idx: The relative index of the target tag to the current one
 --@param c: the client to move. If nil defaults to focused client
 function func.client_move_rel(rel_idx, c)
-  local c = c or client.focus
+  c = c or client.focus
 
   if c then
     local tgt_idx = c.first_tag.index + rel_idx
@@ -141,8 +146,9 @@ function func.client_move_to_tag ()
     textbox      = awful.screen.focused().mypromptbox.widget,
     completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
     exe_callback = function (t)
-      local tag = func.tag_name2tag(t)
       local c = client.focus
+      tag = func.tag_name2tag(t)
+
       if tag and c then
         c:move_to_tag(tag)
       end
@@ -151,7 +157,8 @@ function func.client_move_to_tag ()
 end
 
 function func.client_toggle_tag (c)
-  local c = c or client.focus
+   c = c or client.focus
+
   local keywords = util.tag_names()
 
   if c then
@@ -159,10 +166,10 @@ function func.client_toggle_tag (c)
       prompt       = "Move client to tag: ",
       textbox      = awful.screen.focused().mypromptbox.widget,
       completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
-      exe_callback = function (t)
-        local tag = func.tag_name2tag(t)
-        if tag then
-          c:toggle_tag(tag)
+      exe_callback = function (text)
+        local t = func.tag_name2tag(text)
+        if t then
+          c:toggle_tag(t)
         end
       end,
     }
@@ -517,12 +524,12 @@ end
 -- Tag  {{{
 --tag_rel_move: Moves the tags position relationaly to its current position
 --@param rel_idx: the relative target position. -1 swaps postion with the previous tag, 1 with the next.
---@param tag: the tag to move, or if nil the focused tag
-function func.tag_rel_move(rel_idx, tag)
-  local tag = tag or awful.screen.focused().selected_tag
-  if tag then
-    tag.index = tag.index + rel_idx
-    tag:view_only()
+--@param t: the tag to move, or if nil the focused tag
+function func.tag_rel_move(rel_idx, t)
+  t = t or awful.screen.focused().selected_tag
+  if t then
+    t.index = t.index + rel_idx
+    t:view_only()
   end
 end
 
@@ -535,7 +542,7 @@ function func.tag_move_backward () func.tag_rel_move(-1) end
 --@return table of tag objects or nil
 function func.tag_name2tags(name, scr)
   local ret = {}
-  local tags = {}
+  local tags
   if scr then
     tags = scr.tags
   else
@@ -576,17 +583,19 @@ end
 --@param t: tag object to be renamed (Defaults to focused tag)
 --@param callback: function called after a promp asking for a name is done
 function func.tag_rename(t, callback)
-  local t = t or awful.screen.focused().selected_tag
+  t = t or awful.screen.focused().selected_tag
   local theme = beautiful.get()
 
   if not t then return end
 
+  local bg
+  local fg
   if t.screen.selected_tag == t then
-    local bg = theme.bg_focus or '#535d6c'
-    local fg = theme.fg_urgent or '#ffffff'
+    bg = theme.bg_focus or '#535d6c'
+    fg = theme.fg_urgent or '#ffffff'
   else
-    local bg = theme.bg_normal or '#222222'
-    local fg = theme.fg_urgent or '#ffffff'
+    bg = theme.bg_normal or '#222222'
+    fg = theme.fg_urgent or '#ffffff'
   end
 
   awful.prompt.run({
@@ -616,7 +625,7 @@ end
 --@param name: name of the tag (Optional)
 --@param props: properties for the new tag (screen, index, etc.) (Optional)
 function func.tag_add(name, props)
-  local props = util.table_join({
+  props = util.table_join({
       screen = awful.screen.focused(),
       index = 1,
       layout = config.property.layout,
@@ -653,17 +662,17 @@ function func.tag_add_rel (name, rel_idx, props)
   local idx = 1
   local t = awful.screen.focused().selected_tag
   if t then idx = t.index + rel_idx end
-  local props = util.table_join(props or {}, {index = idx})
+  props = util.table_join(props or {}, {index = idx})
   return func.tag_add(name, props)
 end
 
-function func.tag_add_after  () return func.tag_add_rel(name, 1) end
-function func.tag_add_before () return func.tag_add_rel(name, 0) end
+function func.tag_add_after  () return func.tag_add_rel(nil, 1) end
+function func.tag_add_before () return func.tag_add_rel(nil, 0) end
 
 function func.tag_delete ()
-  local tag = awful.screen.focused().selected_tag
-  if tag then
-    tag:delete()
+  local t = awful.screen.focused().selected_tag
+  if t then
+    t:delete()
   end
 end
 
@@ -793,11 +802,9 @@ end
 
 function func.clients_on_tag_prompt ()
   local clients = {}
-  local next = next
   local t = tag.selected()
   if t then
     local keywords = {}
-    local scr = mouse.screen
     for _, c in pairs(t:clients()) do
       if c.focusable and c.pid ~= 0 then
         local k = c.name .. " ~" .. tostring(c.pid) or ""
@@ -869,7 +876,6 @@ function func.all_clients_prompt ()
   local clients = {}
   local next = next
   local keywords = {}
-  local scr = mouse.screen
   for _, c in pairs(client.get()) do
     if c.focusable and c.pid ~= 0 then
       local k = c.name .. " ~" .. tostring(c.pid) or ""

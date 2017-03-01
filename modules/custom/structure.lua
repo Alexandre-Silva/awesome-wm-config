@@ -1,13 +1,16 @@
 -- Imports {{{
 local awful = require("awful")
 local beautiful = require("beautiful")
-local shape = require("gears.shape")
 local util = require("util")
 local wibox = require("wibox")
 
 local config = require("custom.config")
 local widgets = require("custom.widgets")
 local func = require("custom.func")
+local modkey = require("custom.config").modkey
+
+local awesome = awesome
+local client = client
 -- }}}
 
 local structure = {}
@@ -16,11 +19,11 @@ local structure = {}
 local function build(arg)
   local current = {}
   local keys = {} -- keep the keys sorted
-  for k, v in pairs(arg) do table.insert(keys, k) end
+  for k, _ in pairs(arg) do table.insert(keys, k) end
   table.sort(keys)
 
   for _, k in ipairs(keys) do
-    v = arg[k]
+    local v = arg[k]
     if type(v) == 'table' then
       table.insert(current, {k, build(v)})
     else
@@ -210,11 +213,11 @@ function structure.init()
         end
     end),
 
-    awful.button({ }, 2, function (c)
+    awful.button({ }, 2, function (_)
         func.clients_on_tag()
     end),
 
-    awful.button({ modkey }, 2, function (c)
+    awful.button({ modkey }, 2, function (_)
         func.all_clients()
     end),
 

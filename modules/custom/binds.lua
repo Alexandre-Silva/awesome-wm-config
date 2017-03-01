@@ -1,12 +1,16 @@
 -- Imports {{{
 local awful = require("awful")
 local uniarg = require("uniarg")
-local util = require("util")
-
 local widgets = require("custom.widgets")
 local func = require("custom.func")
 local structure = require("custom.structure")
 local config = require("custom.config")
+
+local awesome = awesome
+local root = root
+local mouse = mouse
+local tag = tag
+local client = client
 -- }}}
 
 
@@ -17,8 +21,7 @@ local binds = {}
 -- If you do not like this or do not have such a key,
 -- I suggest you to remap Mod4 to another key using xmodmap or other custom.config.
 -- However, you can use another modifier like Mod1, but it may interact with others.
-local modkey = "Mod4"
-binds.modkey = modkey
+local modkey = config.modkey
 
 -- Utils {{{
 -- Gets the 'index'-esme tag with in the given 'focus'
@@ -396,7 +399,7 @@ binds.clientkeys = awful.util.table.join(
 
   -- maximize/minimize
   awful.key({ modkey, "Shift"   }, "m", func.client_minimize),
-  awful.key({ modkey, "Control" }, "space",  function(c) c.floating = not floating end),
+  awful.key({ modkey, "Control" }, "space",  function(c) c.floating = not c.floating end),
   awful.key({ modkey,           }, "t", func.client_toggle_top),
   awful.key({ modkey,           }, "s", func.client_toggle_sticky),
   awful.key({ modkey,           }, ",", func.client_maximize_horizontal),

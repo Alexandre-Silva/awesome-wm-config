@@ -1,13 +1,13 @@
 -- Imports {{{
 local awful = require("awful")
-local beautiful = require("beautiful")
 local lain = require("lain")
-local markup = lain.util.markup
 local naughty = require("naughty")
 local vicious = require("vicious")
 local wibox = require("wibox")
 
 local config = require("custom.config")
+
+local awesome = awesome
 -- }}}
 
 local widgets = {}
@@ -25,13 +25,11 @@ widgets.layoutbox = {}
 widgets.taglist = {}
 -- }}}
 
-function widgets.add_prog_toggle(widget, prog, _mod, _button) -- {{{
-  if not _mod or not _button then
-    mod = {}
-    button = 1
-  end
-
+function widgets.add_prog_toggle(widget, prog, mod, button) -- {{{
+  mod = mod or {}
+  button = button or 1
   local pid = nil
+  local ret
 
   widget:buttons(
     awful.util.table.join(
@@ -76,7 +74,7 @@ function widgets.new_cpuusage() -- {{{
 end
 -- }}}
 function widgets.new_memusage() -- {{{
-  memusage = wibox.widget.textbox()
+  local memusage = wibox.widget.textbox()
 
   vicious.register(memusage, vicious.widgets.mem,
                    "<span fgcolor='yellow'>$1% ($2MB/$3MB)</span>", 3)
@@ -86,12 +84,15 @@ function widgets.new_memusage() -- {{{
   return memusage
 end -- }}}
 function widgets.new_bat() -- {{{
-  local bat = lain.widget.bat({
+  local lain_bat = lain.widget.bat({
       battery  = "BAT1",
       ac       = "ACAD",
       timeout  = 60,
 
       settings = function ()
+        local bat_now = bat_now
+        local widget = widget
+
         if bat_now.perc ~= "N/A" then
           bat_now.perc = bat_now.perc .. "%"
         end
@@ -114,19 +115,19 @@ function widgets.new_bat() -- {{{
     layout  = wibox.layout.fixed.horizontal,
 
     bat_icon,
-    bat.widget
+    lain_bat.widget
   }
 
   return bat
 end -- }}}
 function widgets.new_mpdstatus() -- {{{
-  mpdstatus = wibox.widget.textbox()
+  local mpdstatus = wibox.widget.textbox()
   mpdstatus:set_ellipsize("end")
 
   vicious.register(
     mpdstatus, vicious.widgets.mpd,
     function (mpdwidget, args)
-      local text = nil
+      local text
       local state = args["{state}"]
       if state then
         if state == "Stop" then
@@ -164,7 +165,7 @@ function widgets.new_mpdstatus() -- {{{
   return mpdstatus
 end --}}}
 function widgets.new_volume() -- {{{
-  volume = wibox.widget.textbox()
+  local volume = wibox.widget.textbox()
   vicious.register(volume, vicious.widgets.volume,
                    "<span fgcolor='cyan'>$1%$2</span>", 1, "Master")
 
@@ -190,13 +191,8 @@ function widgets.new_volume() -- {{{
   return volume
 end -- }}}
 function widgets.new_date() -- {{{
-  date = wibox.widget.textbox()
+  local date = wibox.widget.textbox()
   vicious.register(date, vicious.widgets.date, "%d-%m-%y %X", 1)
-
-  local prog1="gnome-control-center datetime"
-  local started1=false
-  local prog2="gnome-control-center region"
-  local started2=false
 
   widgets.add_prog_toggle(date,"gnome-control-center datetime", {}, 1)
   widgets.add_prog_toggle(date,"gnome-control-center region", {}, 3)
