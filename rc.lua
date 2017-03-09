@@ -13,6 +13,7 @@ package.path = config_path .. "/?/init.lua;" .. package.path
 package.path = config_path .. "/modules/?.lua;" .. package.path
 package.path = config_path .. "/modules/?/init.lua;" .. package.path
 
+require("repetitive")
 local bashets = require("bashets") -- bashets config: https://gitorious.org/bashets/pages/Brief_Introduction
 local beautiful = require("beautiful")
 local custom = require('custom')
