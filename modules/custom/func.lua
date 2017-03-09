@@ -157,7 +157,7 @@ function func.client_move_to_tag ()
 end
 
 function func.client_movetoggle_tag (c)
-   c = c or client.focus
+  c = c or client.focus
 
   local keywords = util.tag_names()
 
@@ -212,78 +212,63 @@ end
 -- client_status[client] = {sidelined = <boolean>, geometry= <client geometry>}
 local client_status = {}
 
-function func.client_sideline_left (c)
-  local scr = screen[mouse.screen]
+-- Toggles the sidelining of a given client to a certain geometry.
+-- @param c: The client to toggle the sidelining
+-- @param geo_transform: The indended geometry transformation function
+function func.client_sideline (c, geo_transform)
+  c = c or client.focus
+  local scr = awful.screen.focused()
   local workarea = scr.workarea
+
   if client_status[c] == nil then
     client_status[c] = {sidelined=false, geometry=nil}
   end
+
   if client_status[c].sidelined then
     if client_status[c].geometry then
       c:geometry(client_status[c].geometry)
     end
   else
     client_status[c].geometry = c:geometry()
-    workarea.width = math.floor(workarea.width/2)
+    geo_transform(workarea)
     c:geometry(workarea)
   end
+
   client_status[c].sidelined = not client_status[c].sidelined
+end
+
+function func.client_sideline_left (c)
+  func.client_sideline(
+    c,
+    function(workarea)
+      workarea.width = math.floor(workarea.width/2)
+  end)
 end
 
 function func.client_sideline_right (c)
-  local scr = screen[mouse.screen]
-  local workarea = scr.workarea
-  if client_status[c] == nil then
-    client_status[c] = {sidelined=false, geometry=nil}
-  end
-  if client_status[c].sidelined then
-    if client_status[c].geometry then
-      c:geometry(client_status[c].geometry)
-    end
-  else
-    client_status[c].geometry = c:geometry()
-    workarea.x = workarea.x + math.floor(workarea.width/2)
-    workarea.width = math.floor(workarea.width/2)
-    c:geometry(workarea)
-  end
-  client_status[c].sidelined = not client_status[c].sidelined
+  func.client_sideline(
+    c,
+    function(workarea)
+      workarea.x = workarea.x + math.floor(workarea.width/2)
+      workarea.width = math.floor(workarea.width/2)
+  end)
 end
 
 function func.client_sideline_top (c)
-  local scr = screen[mouse.screen]
-  local workarea = scr.workarea
-  if client_status[c] == nil then
-    client_status[c] = {sidelined=false, geometry=nil}
-  end
-  if client_status[c].sidelined then
-    if client_status[c].geometry then
-      c:geometry(client_status[c].geometry)
-    end
-  else
-    client_status[c].geometry = c:geometry()
-    workarea.height = math.floor(workarea.height/2)
-    c:geometry(workarea)
-  end
-  client_status[c].sidelined = not client_status[c].sidelined
+  func.client_sideline(
+    c,
+    function(workarea)
+      workarea.height = math.floor(workarea.height/2)
+  end)
 end
 
 function func.client_sideline_bottom (c)
-  local scr = screen[mouse.screen]
-  local workarea = scr.workarea
-  if client_status[c] == nil then
-    client_status[c] = {sidelined=false, geometry=nil}
-  end
-  if client_status[c].sidelined then
-    if client_status[c].geometry then
-      c:geometry(client_status[c].geometry)
-    end
-  else
-    client_status[c].geometry = c:geometry()
-    workarea.y = workarea.y + math.floor(workarea.height/2)
-    workarea.height = math.floor(workarea.height/2)
-    c:geometry(workarea)
-  end
-  client_status[c].sidelined = not client_status[c].sidelined
+  func.client_sideline(
+    c,
+    function(workarea)
+      workarea.y = workarea.y + math.floor(workarea.height/2)
+      workarea.height = math.floor(workarea.height/2)
+  end)
 end
 
 function func.client_sideline_extend_left (c, by)
@@ -632,7 +617,7 @@ function func.tag_add(name, props)
       mwfact = config.property.mwfact,
       nmaster = config.property.nmaster,
       ncol = config.property.ncol,
-                                },
+                          },
     props)
 
   local t = awful.tag.add(name or "", props)
