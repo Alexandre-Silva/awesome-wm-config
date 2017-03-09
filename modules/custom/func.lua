@@ -145,9 +145,9 @@ function func.client_move_to_tag ()
     prompt       = "Move client to tag: ",
     textbox      = awful.screen.focused().mypromptbox.widget,
     completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
-    exe_callback = function (t)
+    exe_callback = function (text)
       local c = client.focus
-      tag = func.tag_name2tag(t)
+      tag = func.tag_name2tag(text)
 
       if tag and c then
         c:move_to_tag(tag)
@@ -156,7 +156,7 @@ function func.client_move_to_tag ()
   }
 end
 
-function func.client_toggle_tag (c)
+function func.client_movetoggle_tag (c)
    c = c or client.focus
 
   local keywords = util.tag_names()
@@ -484,7 +484,7 @@ do
           {"move to next tag", function () clear_instance(); func.client_move_next(c) end},
           {"move to prev tag", function () clear_instance(); func.client_move_prev(c) end},
           {"move to ta&g",     function () clear_instance(); func.client_move_to_tag(c) end},
-          {"togg&le tag",      function () clear_instance(); func.client_toggle_tag(c) end},
+          {"togg&le tag",      function () clear_instance(); func.client_movetoggle_tag(c) end},
 
           {"--- geometry ---", function () clear_instance(); end},
           {"&fullscreen",      function () clear_instance(); func.client_fullscreen(c) end},

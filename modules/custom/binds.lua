@@ -186,7 +186,7 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({modkey,    "Shift"}, "n", func.client_move_next),
   uniarg:key_repeat({modkey,    "Shift"}, "p", func.client_move_prev),
   awful.key({modkey,            "Shift"}, "g", func.client_move_to_tag),
-  awful.key({modkey, "Control", "Shift"}, "g", func.client_toggle_tag),
+  awful.key({modkey, "Control", "Shift"}, "g", func.client_movetoggle_tag),
 
   --- change space allocation in tile layout
   awful.key({ modkey,                   }, "=", function () tag.selected().master_width_factor = 0.5 end),
