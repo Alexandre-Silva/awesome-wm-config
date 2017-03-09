@@ -3,6 +3,7 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
 local util = require("util")
+local inspect = require("inspect")
 
 local config = require("custom.config")
 
@@ -271,126 +272,104 @@ function func.client_sideline_bottom (c)
   end)
 end
 
-function func.client_sideline_extend_left (c, by)
+local function _delta(value)
+  return math.ceil(value / 7)
+end
+
+-- the cg paramter of geo_transform function is then used to set the final
+-- geometry of the client
+function func.client_transform_geo(c, geo_transform)
+  local wa = awful.screen.focused().workarea
   local cg = c:geometry()
-  if by then
-    cg.x = cg.x - by
-    cg.width = cg.width + by
-  else -- use heuristics
-    local delta = math.floor(cg.x/7)
-    if delta ~= 0 then
+
+  geo_transform(wa, cg)
+  c:geometry(cg)
+end
+
+function func.client_sideline_extend_left (c)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local delta = _delta(cg.x)
       cg.x = cg.x - delta
       cg.width = cg.width + delta
-    end
-  end
-  c:geometry(cg)
+  end)
 end
 
-function func.client_sideline_extend_right (c, by)
-  local cg = c:geometry()
-  if by then
-    cg.width = cg.width + by
-  else
-    local workarea = screen[mouse.screen].workarea
-    local rmargin = math.max( (workarea.x + workarea.width - cg.x - cg.width), 0)
-    local delta = math.floor(rmargin/7)
-    if delta ~= 0 then
-      cg.width = cg.width + delta
-    end
-  end
-  c:geometry(cg)
+function func.client_sideline_extend_right (c)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local rmargin = math.max( (wa.x + wa.width - cg.x - cg.width), 0)
+      cg.width = cg.width + _delta(rmargin)
+  end)
 end
 
-function func.client_sideline_extend_top (c, by)
-  local cg = c:geometry()
-  if by then
-    cg.y = cg.y - by
-    cg.height = cg.height + by
-  else
-    local delta = math.floor(cg.y/7)
-    if delta ~= 0 then
+function func.client_sideline_extend_top (c)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local delta = _delta(cg.y)
       cg.y = cg.y - delta
       cg.height = cg.height + delta
-    end
-  end
-  c:geometry(cg)
+  end)
 end
 
-function func.client_sideline_extend_bottom (c, by)
-  local cg = c:geometry()
-  if by then
-    cg.height = cg.height + by
-  else
-    local workarea = screen[mouse.screen].workarea
-    local bmargin = math.max( (workarea.y + workarea.height - cg.y - cg.height), 0)
-    local delta = math.floor(bmargin/7)
-    if delta ~= 0 then
-      cg.height = cg.height + delta
-    end
-  end
-  c:geometry(cg)
+function func.client_sideline_extend_bottom (c)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local bmargin = math.max( (wa.y + wa.height - cg.y - cg.height), 0)
+      cg.height = cg.height + _delta(bmargin)
+  end)
 end
 
-function func.client_sideline_shrink_left (c, by)
-  local cg = c:geometry()
-  local min = config.property.minimal_client_width
-  if by then
-    cg.width = math.max(cg.width - by, min)
-  else
-    local delta = math.floor(cg.width/11)
-    if delta ~= 0 and cg.width > min then
-      cg.width = cg.width - delta
-    end
-  end
-  c:geometry(cg)
+function func.client_sideline_shrink_left (c)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local min = config.property.minimal_client_width
+      if cg.width > min then
+        cg.width = cg.width - _delta(cg.width)
+      end
+  end)
 end
 
-function func.client_sideline_shrink_right (c, by)
-  local cg = c:geometry()
-  local min = config.property.minimal_client_width
-  if by then
-    local t = cg.x + cg.width
-    cg.width = math.max(cg.width - by, min)
-    cg.x = t - cg.width
-  else
-    local delta = math.floor(cg.width/11)
-    if delta ~= 0 and cg.width > min then
-      cg.x = cg.x + delta
-      cg.width = cg.width - delta
-    end
-  end
-  c:geometry(cg)
+function func.client_sideline_shrink_right (c)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local min = config.property.minimal_client_width
+      local delta = _delta(cg.width)
+      if cg.width > min then
+        cg.x = cg.x + delta
+        cg.width = cg.width - delta
+      end
+  end)
 end
 
 function func.client_sideline_shrink_top (c, by)
-  local cg = c:geometry()
-  local min = config.property.minimal_client_height
-  if by then
-    cg.height = math.max(cg.height - by, min)
-  else
-    local delta = math.floor(cg.height/11)
-    if delta ~= 0 and cg.height > min then
-      cg.height = cg.height - delta
-    end
-  end
-  c:geometry(cg)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local min = config.property.minimal_client_height
+      if cg.height > min then
+        cg.height = cg.height - _delta(cg.height)
+      end
+  end)
 end
 
 function func.client_sideline_shrink_bottom (c, by)
-  local cg = c:geometry()
-  local min = config.property.minimal_client_height
-  if by then
-    local t = cg.y + cg.width
-    cg.height = math.max(cg.height - by, min)
-    cg.y = t - cg.height
-  else
-    local delta = math.floor(cg.height/11)
-    if delta ~= 0 and cg.height > min then
-      cg.y = cg.y + delta
-      cg.height = cg.height - delta
-    end
-  end
-  c:geometry(cg)
+  func.client_transform_geo(
+    c,
+    function (wa, cg)
+      local min = config.property.minimal_client_height
+      local delta = _delta(cg.height)
+      if cg.height > min then
+        cg.y = cg.y + delta
+        cg.height = cg.height - delta
+      end
+  end)
 end
 
 function func.client_opaque_less (c)
