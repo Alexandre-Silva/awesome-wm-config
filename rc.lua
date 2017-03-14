@@ -13,7 +13,10 @@ package.path = config_path .. "/?/init.lua;" .. package.path
 package.path = config_path .. "/modules/?.lua;" .. package.path
 package.path = config_path .. "/modules/?/init.lua;" .. package.path
 
-require("repetitive")
+if os.getenv("AWESOME_DEBUG") then
+  require("repetitive")
+end
+
 local bashets = require("bashets") -- bashets config: https://gitorious.org/bashets/pages/Brief_Introduction
 local beautiful = require("beautiful")
 local custom = require('custom')
@@ -29,7 +32,7 @@ local client = client
 
 -- do not use letters, which shadow access key to menu entry
 awful.menu.menu_keys.down = { "Down", ".", ">", "'", "\"", }
-awful.menu.menu_keys.up = {  "Up", ",", "<", ";", ":", }
+awful.menu.menu_keys.up = { "Up", ",", "<", ";", ":", }
 awful.menu.menu_keys.enter = { "Right", "]", "}", "=", "+", }
 awful.menu.menu_keys.back = { "Left", "[", "{", "-", "_", }
 awful.menu.menu_keys.exec = { "Return", "Space", }
