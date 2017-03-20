@@ -92,15 +92,16 @@ function widgets.new_bat() -- {{{
       settings = function ()
         local bat_now = bat_now
         local widget = widget
+        local text=""
 
         if bat_now.perc ~= "N/A" then
-          bat_now.perc = bat_now.perc .. "%"
+          text = bat_now.perc .. "%"
         end
         if bat_now.ac_status == 1 then
-          bat_now.perc = bat_now.perc .. " plug"
+          text = text .. " plug"
         end
 
-        widget:set_markup(bat_now.perc .. " ")
+        widget:set_markup(text .. " ")
       end
   })
 
