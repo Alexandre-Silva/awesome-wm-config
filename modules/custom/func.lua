@@ -55,6 +55,15 @@ function func.prompt_run_lua ()
   }
 end
 
+function func.prompt_input_text (prompt, keywords, callback)
+  awful.prompt.run {
+    prompt       = prompt,
+    textbox      = awful.screen.focused().mypromptbox.widget,
+    completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+    exe_callback = callback
+  }
+end
+
 function func.app_finder ()
   awful.util.spawn("xfce4-appfinder")
 end
@@ -161,20 +170,29 @@ end
 function func.client_movetoggle_tag (c)
   c = c or client.focus
 
-  local keywords = util.tag_names()
-
   if c then
-    awful.prompt.run {
-      prompt       = "Move client to tag: ",
-      textbox      = awful.screen.focused().mypromptbox.widget,
-      completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
-      exe_callback = function (text)
+    func.prompt_input_text(
+      "Toggle client to tag: ",
+      util.tag_names(), -- keywords
+      function (text)
         local t = func.tag_name2tag(text)
         if t then
           c:toggle_tag(t)
         end
-      end,
-    }
+      end
+    )
+
+    -- awful.prompt.run {
+    --   prompt       = "Move client to tag: ",
+    --   textbox      = awful.screen.focused().mypromptbox.widget,
+    --   completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
+    --   exe_callback = function (text)
+    --     local t = func.tag_name2tag(text)
+    --     if t then
+    --       c:toggle_tag(t)
+    --     end
+    --   end,
+    -- }
   end
 end
 
