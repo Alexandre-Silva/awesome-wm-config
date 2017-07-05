@@ -9,6 +9,12 @@ local util = {}
 util.taglist = {}
 util.taglist.taglist = {}
 
+
+--range_mod: returns the module of 'v' offset inside interval [a, b]
+function util.range_mod(v, a, b)
+  return ((v - a) % ((b + 1) - a)) + a
+end
+
 function util.taglist.set_taglist(taglist)
   util.taglist.taglist = taglist
 end

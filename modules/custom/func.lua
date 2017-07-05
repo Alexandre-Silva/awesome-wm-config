@@ -127,10 +127,11 @@ function func.client_swap_prev () awful.client.swap.byidx( -1) end
 --@param c: the client to move. If nil defaults to focused client
 function func.client_move_rel(rel_idx, c)
   c = c or client.focus
+  local s = c.screen
 
   if c then
-    local tgt_idx = c.first_tag.index + rel_idx
-    local tgt_tag = c.screen.tags[tgt_idx]
+    local tgt_idx = util.range_mod(c.first_tag.index + rel_idx, 1, #s.tags)
+    local tgt_tag = s.tags[tgt_idx]
     c:move_to_tag(tgt_tag)
     tgt_tag:view_only()
   end
