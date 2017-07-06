@@ -149,22 +149,22 @@ end
 function func.client_move_next () func.client_move_rel(1) end
 function func.client_move_prev () func.client_move_rel(-1) end
 
-function func.client_move_to_tag ()
-  local keywords = util.tag_names()
+function func.client_move_to_tag (c)
+  c = c or client.focus
 
-  awful.prompt.run {
-    prompt       = "Move client to tag: ",
-    textbox      = awful.screen.focused().mypromptbox.widget,
-    completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
-    exe_callback = function (text)
-      local c = client.focus
-      tag = func.tag_name2tag(text)
+  if c then
+    func.prompt_input_text(
+      "Move client to tag: ",
+      util.tag_names(), -- keywords
+      function (text)
+        tag = func.tag_name2tag(text)
 
-      if tag and c then
-        c:move_to_tag(tag)
+        if tag then
+          c:move_to_tag(tag)
+        end
       end
-    end,
-  }
+    )
+  end
 end
 
 function func.client_movetoggle_tag (c)
@@ -181,18 +181,6 @@ function func.client_movetoggle_tag (c)
         end
       end
     )
-
-    -- awful.prompt.run {
-    --   prompt       = "Move client to tag: ",
-    --   textbox      = awful.screen.focused().mypromptbox.widget,
-    --   completion_callback = function (t, p, n) return awful.completion.generic(t, p, n, keywords) end,
-    --   exe_callback = function (text)
-    --     local t = func.tag_name2tag(text)
-    --     if t then
-    --       c:toggle_tag(t)
-    --     end
-    --   end,
-    -- }
   end
 end
 
