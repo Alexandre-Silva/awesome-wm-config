@@ -1,6 +1,3 @@
-[submodule "modules/vicious"]
-	path = modules/vicious
-	url = https://github.com/Mic92/vicious
 [submodule "modules/repetitive"]
 	path = modules/repetitive
 	url = https://github.com/Elv13/repetitive
