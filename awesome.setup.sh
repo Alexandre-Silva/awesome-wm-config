@@ -6,5 +6,5 @@ packages=(
 )
 
 links=(
-    {"$DOTFILES/setups/",$HOME"/.config/"}awesome
+    "${ADM_DIR}" "${HOME}/.config/awesome"
 )
