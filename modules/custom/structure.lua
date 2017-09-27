@@ -56,7 +56,7 @@ local awesome_menu = {
   --{ "manual", config.terminal .. " -e man awesome" },
   { "&edit config", config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
   { "&restart", awesome.restart },
-  { "&quit", awesome.quit }
+  { "&quit", function () awesome.quit() end }
 }
 
 local main_menu = {
