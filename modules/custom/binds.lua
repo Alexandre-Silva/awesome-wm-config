@@ -258,18 +258,18 @@ binds.globalkeys = awful.util.table.join(
 
   uniarg:key_numarg({}, "XF86MonBrightnessUp",
     function ()
-      awful.spawn("xbacklight -inc 10")
+      awful.spawn("light -A 5")
     end,
     function (n)
-      awful.spawn("xbacklight -inc " .. n)
+      awful.spawn("light -A " .. n)
   end),
 
   uniarg:key_numarg({}, "XF86MonBrightnessDown",
     function ()
-      awful.spawn("xbacklight -dec 10")
+      awful.spawn("light -U 10")
     end,
     function (n)
-      awful.spawn("xbacklight -dec " .. n)
+      awful.spawn("light -U " .. n)
   end),
 
   awful.key({},         "XF86WLAN",    function () awful.spawn("nm-connection-editor") end),
