@@ -1,7 +1,7 @@
 packages=(
     "pm:awesome"
     "pm:vicious"
-    "pm:light"
+    "aur:light"
     "rock:inspect"
     "rock:luacheck"
 )
