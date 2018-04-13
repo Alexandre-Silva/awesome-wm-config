@@ -274,7 +274,7 @@ binds.globalkeys = awful.util.table.join(
 
   awful.key({},         "XF86WLAN",    function () awful.spawn("nm-connection-editor") end),
   awful.key({},         "XF86Display", function () awful.spawn("arandr") end),
-  awful.key({},         "Print",       function () awful.spawn("xfce4-screenshooter") end),
+  awful.key({},         "Print",       function () awful.spawn("spectacle") end), -- KDE screenshot tool
   uniarg:key_repeat({}, "XF86Launch1", function () awful.spawn(config.terminal) end),
   awful.key({},         "XF86Sleep",   function () awful.spawn("systemctl suspend") end),
   awful.key({ modkey }, "XF86Sleep",   function () awful.spawn("systemctl hibernate") end),
