@@ -4,6 +4,7 @@ local lain = require("lain")
 local naughty = require("naughty")
 local vicious = require("vicious")
 local wibox = require("wibox")
+local gears = require("gears")
 
 local config = require("custom.config")
 
@@ -121,13 +122,61 @@ function widgets.new_bat() -- {{{
 
   return bat
 end -- }}}
-function widgets.new_mpdstatus() -- {{{
-  local mpdstatus = wibox.widget.textbox()
-  mpdstatus:set_ellipsize("end")
+function widgets.new_playerstatus() -- {{{
+  local playerstatus = wibox.widget.textbox()
+  playerstatus:set_ellipsize("end")
+
 
   vicious.register(
-    mpdstatus, vicious.widgets.mpd,
-    function (mpdwidget, args)
+    playerstatus,
+    function (format, warg)
+      local player_state = {
+        ["{volume}"]   = 0,
+        ["{bitrate}"]  = 0,
+        ["{elapsed}"]  = 0,
+        ["{duration}"] = 0,
+        ["{repeat}"]   = false,
+        ["{random}"]   = false,
+        ["{state}"]    = "N/A",
+        ["{Artist}"]   = "N/A",
+        ["{Title}"]    = "N/A",
+        ["{Album}"]    = "N/A",
+        ["{Genre}"]    = "N/A",
+        --["{Name}"]   = "N/A",
+        --["{file}"]   = "N/A",
+      }
+
+
+      -- Get status from player
+      local f = io.popen("playerctl status")
+      local state = f:read()
+      f:close()
+
+      if state == nil then
+        state = "Stop"
+      end
+
+      player_state['{state}'] = state
+
+
+      -- Get music data from player
+      local f = io.popen("playerctl metadata")
+      for line in f:lines() do
+        for player, key, value in string.gmatch(line, "([%w]+) ([%w]+:[%w]+)[%s]+(.*)$") do
+          if player == "spotify" then
+            if     key == 'xesam:album'   then player_state["{Album}"] = value
+            elseif key == 'xesam:artist'  then player_state["{Artist}"] = value
+            elseif key == 'xesam:title'   then player_state["{Title}"] = value
+            end
+          end
+        end
+      end
+      f:close()
+
+      return player_state
+    end,
+
+    function (playerwidget, args)
       local text
       local state = args["{state}"]
       if state then
@@ -142,29 +191,30 @@ function widgets.new_mpdstatus() -- {{{
     end, 1)
 
   -- http://git.sysphere.org/vicious/tree/README
-  mpdstatus = wibox.container.constraint(mpdstatus, "max", 180, nil)
+  playerstatus = wibox.container.constraint(playerstatus, "max", 180, nil)
 
-  mpdstatus:buttons(
+  playerstatus:buttons(
     awful.util.table.join(
       awful.button({ }, 1, function ()
-          awful.spawn("mpc toggle")
+          awful.spawn("playerctl play-pause")
       end),
       awful.button({ }, 2, function ()
-          awful.spawn("mpc prev")
+          awful.spawn("playerctl previous")
       end),
       awful.button({ }, 3, function ()
-          awful.spawn("mpc next")
+          awful.spawn("playerctl next")
       end),
       awful.button({ }, 4, function ()
-          awful.spawn("mpc seek -1%")
+          awful.spawn("playerctl position 5-")
       end),
       awful.button({ }, 5, function ()
-          awful.spawn("mpc seek +1%")
+          awful.spawn("playerctl position 5+")
       end)
   ))
 
-  return mpdstatus
+  return playerstatus
 end --}}}
+
 function widgets.new_volume() -- {{{
   local volume = wibox.widget.textbox()
   vicious.register(volume, vicious.widgets.volume,
@@ -224,7 +274,7 @@ function widgets.init() -- {{{ init
   widgets.cpuusage = widgets.new_cpuusage()
   widgets.memusage = widgets.new_memusage()
   widgets.bat  = widgets.new_bat()
-  widgets.mpdstatus = widgets.new_mpdstatus()
+  widgets.playerstatus = widgets.new_playerstatus()
   widgets.volume = widgets.new_volume()
   widgets.date = widgets.new_date()
 end -- }}}

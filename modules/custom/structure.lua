@@ -288,7 +288,7 @@ function structure.init()
           widgets.cpuusage,
           widgets.memusage,
           widgets.bat,
-          widgets.mpdstatus,
+          widgets.playerstatus,
 
           --widgets.audio_volume,
           widgets.volume,

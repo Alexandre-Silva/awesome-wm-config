@@ -230,10 +230,10 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({ modkey, "Shift" }, "\\", function() awful.spawn("kmag") end),
 
   --- the rest
-  uniarg:key_repeat({}, "XF86AudioPrev", function () awful.spawn("mpc prev") end),
-  uniarg:key_repeat({}, "XF86AudioNext", function () awful.spawn("mpc next") end),
-  awful.key({}, "XF86AudioPlay", function () awful.spawn("mpc toggle") end),
-  awful.key({}, "XF86AudioStop", function () awful.spawn("mpc stop") end),
+  uniarg:key_repeat({}, "XF86AudioPrev", function () awful.spawn("playerctl previous") end),
+  uniarg:key_repeat({}, "XF86AudioNext", function () awful.spawn("playerctl next") end),
+  awful.key({}, "XF86AudioPlay", function () awful.spawn("playerctl play-pause") end),
+  awful.key({}, "XF86AudioStop", function () awful.spawn("playerctl stop") end),
 
   uniarg:key_numarg({}, "XF86AudioRaiseVolume",
     function ()
