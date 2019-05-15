@@ -20,6 +20,7 @@ end
 local bashets = require("bashets") -- bashets config: https://gitorious.org/bashets/pages/Brief_Introduction
 local beautiful = require("beautiful")
 local custom = require('custom')
+local util = require('util')
 local gears = require("gears")
 local naughty = require("naughty")
 local uniarg = require("uniarg")
@@ -79,14 +80,12 @@ end
 local cachedir = awful.util.getdir("cache")
 local XDG_SESSION_ID = os.getenv("XDG_SESSION_ID") or "0"
 local awesome_tags_fname = cachedir .. "/awesome-tags"
-local awesome_autostart_once_fname = cachedir .. "/awesome-autostart-once-" .. XDG_SESSION_ID
 local awesome_client_tags_fname = cachedir .. "/awesome-client-tags-" ..  XDG_SESSION_ID
 
 awesome.connect_signal(
   "exit",
   function (restart)
     if not restart then
-      awful.spawn.with_shell("rm -rf " .. awesome_autostart_once_fname)
       bashets.stop()
     end
 end)
@@ -233,7 +232,19 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- XDG style autostart with "dex"
 -- HACK continue
-if not os.getenv("AWESOME_DEBUG") then
-  awful.spawn.with_shell("if ! [ -e " .. awesome_autostart_once_fname .. " ]; then dex -a -e awesome; touch " .. awesome_autostart_once_fname .. "; fi")
+
+local awesome_pid = io.popen('pgrep awesome | tail -n 1'):read('*n')
+local session_file = '/tmp/awesome.' .. awesome_pid
+if not util.file_exists(session_file) then
+  local f = io.open(session_file, 'w')
+  f:write('')
+  f:close()
+
+  if not os.getenv("AWESOME_DEBUG") then
+    awful.spawn.with_shell("dex -a -e awesome")
+    awful.spawn.with_shell("hash awesome_on_launch.sh && awesome_on_launch.sh")
+  end
+
 end
+
 custom.func.client_opaque_on(nil) -- start xcompmgr
