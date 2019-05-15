@@ -5,6 +5,7 @@ local naughty = require("naughty")
 local vicious = require("vicious")
 local wibox = require("wibox")
 local gears = require("gears")
+local beautiful = require("beautiful")
 
 local config = require("custom.config")
 
@@ -25,6 +26,9 @@ widgets.promptbox = {}
 widgets.layoutbox = {}
 widgets.taglist = {}
 -- }}}
+
+
+local function theme() return beautiful.get() end
 
 function widgets.add_prog_toggle(widget, prog, mod, button) -- {{{
   mod = mod or {}
@@ -107,11 +111,7 @@ function widgets.new_bat() -- {{{
   })
 
 
-  local icons_dir = awful.util.getdir("config") .. "icons"
-  local bat_icon = wibox.widget.imagebox(
-    icons_dir .. "/battery.png",
-    false
-  )
+  local bat_icon = wibox.widget.imagebox(theme().widget_bat, false)
 
   local bat = wibox.widget {
     layout  = wibox.layout.fixed.horizontal,
@@ -214,7 +214,6 @@ function widgets.new_playerstatus() -- {{{
 
   return playerstatus
 end --}}}
-
 function widgets.new_volume() -- {{{
   local volume = wibox.widget.textbox()
   vicious.register(volume, vicious.widgets.volume,
