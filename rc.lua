@@ -107,6 +107,7 @@ do
   end
 
   init_theme("zenburn")
+  -- init_theme("powerarrow-dark")
 
   awful.spawn.with_shell("hsetroot -solid '#000000'")
 end
