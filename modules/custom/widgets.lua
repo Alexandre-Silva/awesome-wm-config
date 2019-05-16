@@ -63,17 +63,26 @@ function widgets.add_prog_toggle(widget, prog, mod, button) -- {{{
   ))
 end -- }}}
 function widgets.new_cpuusage() -- {{{
-  local cpuusage = wibox.widget.graph()
-  cpuusage:set_width(50)
-  cpuusage:set_background_color("#494B4F")
-  cpuusage:set_color({
+  local graph = wibox.widget.graph()
+  graph:set_width(50)
+  graph:set_background_color(theme().bg_normal)
+  graph:set_color({
       type = "linear", from = { 0, 0 }, to = { 10,0 },
       stops = { {0, "#FF5656"}, {0.5, "#88A175"}, {1, "#AECF96" }}
   })
 
-  vicious.register(cpuusage, vicious.widgets.cpu, "$1", 5)
+  vicious.register(graph, vicious.widgets.cpu, "$1", 5)
 
-  widgets.add_prog_toggle(cpuusage, config.system.taskmanager)
+  widgets.add_prog_toggle(graph, config.system.taskmanager)
+
+  local cpu_icon = wibox.widget.imagebox(theme().widget_cpu, true)
+
+  local cpuusage = wibox.widget {
+    layout  = wibox.layout.fixed.horizontal,
+
+    cpu_icon,
+    graph,
+  }
 
   return cpuusage
 end
