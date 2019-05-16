@@ -32,6 +32,9 @@ local function build(arg)
   end
   return current
 end
+
+local function theme() return beautiful.get() end
+
 -- }}}
 -- Menus {{{
 local apps_menu = build({system=config.system,
@@ -283,10 +286,10 @@ function structure.init()
 
         s.mytasklist,
 
-        {
+        theme().format_widgets( {
           wibox.widget.systray(),
-          widgets.cpuusage,
           widgets.memusage,
+          widgets.cpuusage,
           widgets.bat,
           widgets.playerstatus,
 
@@ -296,9 +299,7 @@ function structure.init()
           --widgets.textclock,
 
           s.mylayoutbox,
-
-          layout = wibox.layout.fixed.horizontal(),
-        },
+        }),
 
         layout = wibox.layout.align.horizontal(),
       }

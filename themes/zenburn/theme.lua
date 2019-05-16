@@ -4,20 +4,23 @@
 --    License:  GNU GPL v2   --
 -------------------------------
 
--- required in awesome 3.5, Lua 5.2
+-- Imports {{{
 local awful = require("awful")
--- {{{ Main
-theme = {}
+local gears = require("gears")
+local wibox = require("wibox")
+-- }}}
+
+-- Main {{{
+local theme = {}
 theme.name = "zenburn"
 theme.confdir       = awful.util.getdir("config") .. "/themes/" .. theme.name
 -- theme.wallpaper_cmd = { "feh --bg-fill " .. theme.confdir .. "/background" }
 -- }}}
 
-
--- {{{ Styles
+-- Styles {{{
 theme.font      = "Profont 8"
 
--- {{{ Colors
+-- Colors {{{
 theme.fg_normal = "#DCDCCC"
 theme.fg_focus  = "#F0CC67"
 theme.fg_urgent = "#CC9393"
@@ -36,20 +39,20 @@ theme.fg_urgent     = "#A36666"
 
 -- }}}
 
--- {{{ Borders
+-- Borders {{{
 theme.border_width  = 1
 theme.border_focus  = "#6F6F6F"
 theme.border_normal = theme.bg_normal
 theme.border_marked = theme.fg_urgent
 -- }}}
 
--- {{{ Titlebars
+-- Titlebars {{{
 theme.titlebar_bg_focus  = theme.bg_normal
 theme.titlebar_bg_normal = theme.bg_normal
 -- theme.titlebar_[normal|focus]
 -- }}}
 
--- {{{ Widgets
+-- Widgets {{{
 theme.fg_widget        = "#AECF96"
 theme.fg_center_widget = "#88A175"
 theme.fg_end_widget    = "#FF5656"
@@ -60,41 +63,40 @@ theme.bg_widget        = theme.bg_normal
 theme.border_widget    = theme.bg_normal
 -- }}}
 
--- {{{ Mouse finder
+-- Mouse finder {{{
 theme.mouse_finder_color = theme.fg_urgent
 -- theme.mouse_finder_[timeout|animate_timeout|radius|factor]
 -- }}}
 
--- {{{ Tooltips
+-- Tooltips {{{
 -- theme.tooltip_[font|opacity|fg_color|bg_color|border_width|border_color]
 -- }}}
 
--- {{{ Taglist and Tasklist
+-- Taglist and Tasklist {{{
 -- theme.[taglist|tasklist]_[bg|fg]_[focus|urgent]
 -- }}}
 
--- {{{ Menu
+-- Menu {{{
 -- theme.menu_[bg|fg]_[normal|focus]
 -- theme.menu_[height|width|border_color|border_width]
 -- }}}
 -- }}}
 
-
--- {{{ Icons
+-- Icons {{{
 --
--- {{{ Taglist icons
+-- Taglist icons {{{
 theme.taglist_squares_sel   = theme.confdir .. "/icons/taglist/sel.png"
 theme.taglist_squares_unsel = theme.confdir .. "/icons/taglist/unsel.png"
 --theme.taglist_squares_resize = "false"
 -- }}}
 
--- {{{ Misc icons
+-- Misc icons {{{
 theme.awesome_icon           = theme.confdir .. "/icons/awesome.png"
 --theme.menu_submenu_icon      = "/usr/share/awesome/themes/default/submenu.png"
 --theme.tasklist_floating_icon = "/usr/share/awesome/themes/default/tasklist/floatingw.png"
 -- }}}
 
--- {{{ Layout icons
+-- Layout icons {{{
 theme.layout_tile       = theme.confdir .. "/icons/layouts/tile.png"
 theme.layout_tileleft   = theme.confdir .. "/icons/layouts/tileleft.png"
 theme.layout_tilebottom = theme.confdir .. "/icons/layouts/tilebottom.png"
@@ -109,7 +111,7 @@ theme.layout_magnifier  = theme.confdir .. "/icons/layouts/magnifier.png"
 theme.layout_floating   = theme.confdir .. "/icons/layouts/floating.png"
 -- }}}
 
--- {{{ Widget icons
+-- Widget icons {{{
 theme.widget_cpu       = theme.confdir .. "/icons/cpu.png"
 theme.widget_bat       = theme.confdir .. "/icons/battery.png"
 theme.widget_bat_low   = theme.confdir .. "/icons/battery_low.png"
@@ -127,7 +129,7 @@ theme.widget_crypto    = theme.confdir .. "/icons/crypto.png"
 theme.widget_sep       = theme.confdir .. "/icons/separator.png"
 -- }}}
 
--- {{{ Titlebar icons
+-- Titlebar icons {{{
 theme.titlebar_close_button_focus  = theme.confdir .. "/icons/titlebar/close_focus.png"
 theme.titlebar_close_button_normal = theme.confdir .. "/icons/titlebar/close_normal.png"
 
@@ -153,5 +155,20 @@ theme.titlebar_maximized_button_normal_inactive = theme.confdir .. "/icons/title
 -- }}}
 -- }}}
 
+-- functions {{{
+
+--format_widgets: Given a list of widgets, returns a table formated with this
+--theme ready for usage in a wibar
+--@param widgets: the list of widgest
+function theme.format_widgets(widgets)
+  -- shallow copy
+  local widgets_new = gears.table.clone(widgets, false)
+
+  widgets_new.layout = wibox.layout.fixed.horizontal()
+
+  return widgets_new
+end
+
+-- }}}
 
 return theme
