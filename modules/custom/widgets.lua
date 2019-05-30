@@ -1,6 +1,7 @@
 -- Imports {{{
 local awful = require("awful")
 local lain = require("lain")
+local markup = lain.util.markup
 local naughty = require("naughty")
 local vicious = require("vicious")
 local wibox = require("wibox")
@@ -88,14 +89,34 @@ function widgets.new_cpuusage() -- {{{
 end
 -- }}}
 function widgets.new_memusage() -- {{{
-  local memusage = wibox.widget.textbox()
+  if false then
+    local memusage = wibox.widget.textbox()
 
-  vicious.register(memusage, vicious.widgets.mem,
-                   "<span fgcolor='yellow'>$1% ($2MB/$3MB)</span>", 3)
+    vicious.register(memusage, vicious.widgets.mem,
+                    "<span fgcolor='yellow'>$1% ($2MB/$3MB)</span>", 3)
 
-  widgets.add_prog_toggle(memusage, config.system.taskmanager)
+    widgets.add_prog_toggle(memusage, config.system.taskmanager)
 
-  return memusage
+    return memusage
+
+  else
+    local mem_icon = wibox.widget.imagebox(theme().widget_mem)
+    local mem = lain.widget.mem({
+        settings = function()
+          widget:set_markup(markup.font(theme().font, " " .. mem_now.perc .. "% "))
+        end
+    })
+
+    local mem_widget = wibox.widget {
+      layout  = wibox.layout.fixed.horizontal,
+
+      mem_icon,
+      mem,
+    }
+
+    return mem_widget
+  end
+
 end -- }}}
 function widgets.new_bat() -- {{{
   local lain_bat = lain.widget.bat({
