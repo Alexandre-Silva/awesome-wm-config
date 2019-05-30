@@ -193,11 +193,12 @@ function widgets.new_playerstatus() -- {{{
       local f = io.popen("playerctl metadata")
       for line in f:lines() do
         for player, key, value in string.gmatch(line, "([%w]+) ([%w]+:[%w]+)[%s]+(.*)$") do
-          if player == "spotify" then
+          if player == "spotify" or player == "smplayer" then
             if     key == 'xesam:album'   then player_state["{Album}"] = value
             elseif key == 'xesam:artist'  then player_state["{Artist}"] = value
             elseif key == 'xesam:title'   then player_state["{Title}"] = value
             end
+
           end
         end
       end
