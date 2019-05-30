@@ -279,46 +279,12 @@ binds.globalkeys = awful.util.table.join(
   awful.key({},         "XF86Sleep",   function () awful.spawn("systemctl suspend") end),
   awful.key({ modkey }, "XF86Sleep",   function () awful.spawn("systemctl hibernate") end),
 
-  --- hacks for Thinkpad W530 FN mal-function
-  uniarg:key_repeat({ modkey },            "F10",  function () awful.spawn("mpc prev") end),
-  awful.key({         modkey },            "F11",  function () awful.spawn("mpc toggle") end),
-  uniarg:key_repeat({ modkey },            "F12",  function () awful.spawn("mpc next") end),
-  uniarg:key_repeat({ modkey, "Control" }, "Left", function () awful.spawn("mpc prev") end),
-  awful.key(        { modkey, "Control" }, "Down", function () awful.spawn("mpc toggle") end),
-  uniarg:key_repeat({ modkey, "Control" }, "Right",function () awful.spawn("mpc next") end),
-  awful.key(        { modkey, "Control" }, "Up",   function () awful.spawn("gnome-alsamixer") end),
+  -- Function keys
+  awful.key({ modkey }, "F5",   function () awful.spawn("arandr") end),
+  awful.key({ modkey }, "F6",   function () awful.spawn("light -U 5") end),
+  awful.key({ modkey }, "F7",   function () awful.spawn("light -A 5") end),
+  awful.key({ modkey }, "F8",   function () awful.spawn("amixer sset Master toggle") end),
 
-  uniarg:key_numarg({ modkey, "Shift" }, "Left",
-    function ()
-      awful.spawn("mpc seek -1%")
-    end,
-    function (n)
-      awful.spawn("mpc seek -" .. n .. "%")
-  end),
-
-  uniarg:key_numarg({ modkey, "Shift" }, "Right",
-    function ()
-      awful.spawn("mpc seek +1%")
-    end,
-    function (n)
-      awful.spawn("mpc seek +" .. n .. "%")
-  end),
-
-  uniarg:key_numarg({ modkey, "Shift" }, "Down",
-    function ()
-      awful.spawn("mpc seek -10%")
-    end,
-    function (n)
-      awful.spawn("mpc seek -" .. n .. "%")
-  end),
-
-  uniarg:key_numarg({ modkey, "Shift" }, "Up",
-    function ()
-      awful.spawn("mpc seek +10%")
-    end,
-    function (n)
-      awful.spawn("mpc seek +" .. n .. "%")
-  end),
   nil
 )
 
