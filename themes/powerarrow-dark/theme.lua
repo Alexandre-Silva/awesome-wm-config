@@ -19,25 +19,32 @@ theme.name                                      = "powerarrow-dark"
 theme.dir                                       = awful.util.getdir("config") .. "/themes/" .. theme.name
 theme.wallpaper                                 = theme.dir .. "/wall.png"
 theme.font                                      = "xos4 Terminus 9"
+
 theme.fg_normal                                 = "#DDDDFF"
 -- theme.fg_focus                                  = "#EA6F81" -- old
 theme.fg_focus                                  = "#F0CC67"
 theme.fg_urgent                                 = "#CC9393"
 theme.bg_normal                                 = "#1A1A1A"
 theme.bg_focus                                  = "#313131"
-theme.bg_urgent                                 = "#1A1A1A"
-theme.border_width                              = dpi(1)
+theme.bg_urgent                                 = theme.bg_normal
+
+theme.border_width                              = dpi(3)
 theme.border_normal                             = "#3F3F3F"
 theme.border_focus                              = "#7F7F7F"
 theme.border_marked                             = "#CC9393"
-theme.tasklist_bg_focus                         = "#1A1A1A"
+
 theme.titlebar_bg_focus                         = theme.bg_focus
 theme.titlebar_bg_normal                        = theme.bg_normal
 theme.titlebar_fg_focus                         = theme.fg_focus
+theme.titlebar_fg_normal                        = theme.fg_normal
+
 theme.menu_height                               = dpi(16)
 theme.menu_width                                = dpi(140)
+
+theme.tasklist_bg_focus                         = theme.bg_normal
 theme.tasklist_plain_task_name                  = true
-theme.tasklist_disable_icon                     = true
+theme.tasklist_disable_icon                     = false
+
 theme.useless_gap                               = dpi(0)
 
 
