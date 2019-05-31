@@ -14,6 +14,8 @@ local dpi   = require("beautiful.xresources").apply_dpi
 local os = os
 local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
+local arc_actions_dir = "/usr/share/icons/Arc/actions/16"
+
 local theme                                     = {}
 theme.name                                      = "powerarrow-dark"
 theme.dir                                       = awful.util.getdir("config") .. "/themes/" .. theme.name
@@ -73,8 +75,9 @@ theme.widget_cpu                                = theme.dir .. "/icons/cpu.png"
 theme.widget_temp                               = theme.dir .. "/icons/temp.png"
 theme.widget_net                                = theme.dir .. "/icons/net.png"
 theme.widget_hdd                                = theme.dir .. "/icons/hdd.png"
-theme.widget_music                              = theme.dir .. "/icons/note.png"
-theme.widget_music_on                           = theme.dir .. "/icons/note_on.png"
+theme.widget_music_playing                      = arc_actions_dir .. "/media-playback-start.png"
+theme.widget_music_stopped                      = arc_actions_dir .. "/media-playback-stop.png"
+theme.widget_music_paused                       = arc_actions_dir .. "/media-playback-pause.png"
 theme.widget_vol                                = theme.dir .. "/icons/vol.png"
 theme.widget_vol_low                            = theme.dir .. "/icons/vol_low.png"
 theme.widget_vol_no                             = theme.dir .. "/icons/vol_no.png"

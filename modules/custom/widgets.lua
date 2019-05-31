@@ -89,33 +89,21 @@ function widgets.new_cpuusage() -- {{{
 end
 -- }}}
 function widgets.new_memusage() -- {{{
-  if false then
-    local memusage = wibox.widget.textbox()
+  local mem_icon = wibox.widget.imagebox(theme().widget_mem)
+  local mem = lain.widget.mem({
+      settings = function()
+        widget:set_markup(markup.font(theme().font, " " .. mem_now.perc .. "% "))
+      end
+  })
 
-    vicious.register(memusage, vicious.widgets.mem,
-                    "<span fgcolor='yellow'>$1% ($2MB/$3MB)</span>", 3)
+  local mem_widget = wibox.widget {
+    layout  = wibox.layout.fixed.horizontal,
 
-    widgets.add_prog_toggle(memusage, config.system.taskmanager)
+    mem_icon,
+    mem,
+  }
 
-    return memusage
-
-  else
-    local mem_icon = wibox.widget.imagebox(theme().widget_mem)
-    local mem = lain.widget.mem({
-        settings = function()
-          widget:set_markup(markup.font(theme().font, " " .. mem_now.perc .. "% "))
-        end
-    })
-
-    local mem_widget = wibox.widget {
-      layout  = wibox.layout.fixed.horizontal,
-
-      mem_icon,
-      mem,
-    }
-
-    return mem_widget
-  end
+  return mem_widget
 
 end -- }}}
 function widgets.new_bat() -- {{{
@@ -153,6 +141,8 @@ function widgets.new_bat() -- {{{
   return bat
 end -- }}}
 function widgets.new_playerstatus() -- {{{
+  local player_icon = wibox.widget.imagebox(theme().widget_music_stopped)
+
   local playerstatus = wibox.widget.textbox()
   playerstatus:set_ellipsize("end")
 
@@ -213,12 +203,28 @@ function widgets.new_playerstatus() -- {{{
       if state then
         if state == "Stop" then
           text = ""
+          player_icon.image = theme().widget_music_stopped
+
         else
-          text = args["{Artist}"]..' - '.. args["{Title}"]
+          if state == "Playing" then
+            player_icon.image = theme().widget_music_playing
+
+          elseif state == "Paused" then
+            player_icon.image = theme().widget_music_paused
+
+          end
+
+          local artist = args["{Artist}"]
+          local title = args["{Artist}"]
+          if     artist ~= "N/A" and title ~= "N/A" then text = artist .. ' - ' .. title
+          elseif artist ~= "N/A"                    then text = artist
+          elseif title ~= "N/A"                     then text = title
+          else                                           text = ""
+          end
         end
-        return '<span fgcolor="light green"><b>[' .. state .. ']</b> <small>' .. text .. '</small></span>'
+
+        return text
       end
-      return ""
     end, 1)
 
   -- http://git.sysphere.org/vicious/tree/README
@@ -243,7 +249,14 @@ function widgets.new_playerstatus() -- {{{
       end)
   ))
 
-  return playerstatus
+  local player_widget = wibox.widget {
+    layout  = wibox.layout.fixed.horizontal,
+
+    player_icon,
+    playerstatus,
+  }
+
+  return player_widget
 end --}}}
 function widgets.new_volume() -- {{{
   local volume = wibox.widget.textbox()
