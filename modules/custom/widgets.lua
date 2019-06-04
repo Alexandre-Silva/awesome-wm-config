@@ -215,7 +215,7 @@ function widgets.new_playerstatus() -- {{{
           end
 
           local artist = args["{Artist}"]
-          local title = args["{Artist}"]
+          local title = args["{Title}"]
           if     artist ~= "N/A" and title ~= "N/A" then text = artist .. ' - ' .. title
           elseif artist ~= "N/A"                    then text = artist
           elseif title ~= "N/A"                     then text = title
