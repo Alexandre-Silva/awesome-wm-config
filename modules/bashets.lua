@@ -278,10 +278,11 @@ end
 
 --- Start widget updates
 function bashets.start()
-	-- Create timers table if not initialized or empty
-	if (not timers) or table.maxn(timers) == 0 then
-		util.create_timers_table()
-	end
+	-- Create timers table if not initialized or empty 
+    -- TODO in awesome v4.3 this broke (maxn is not defined) and thus is commented out
+	-- if (not timers) or table.maxn(timers) == 0 then
+	-- 	util.create_timers_table()
+	--end
 	-- Start all timers
 	for _, tmr in pairs(timers) do
 		tmr:start()
