@@ -4,6 +4,7 @@ packages=(
     "pm:awesome"
     "pm:vicious"
     "pm:playerctl"
+    "pm:nitrogen"
     "aur:light"
     "rock:inspect"
     "rock:luacheck"
