@@ -237,7 +237,7 @@ binds.globalkeys = awful.util.table.join(
 
   uniarg:key_numarg({}, "XF86AudioRaiseVolume",
     function ()
-      awful.spawn("amixer sset Master 5%+")
+      awful.spawn("amixer sset Master '5%+'")
     end,
     function (n)
       awful.spawn("amixer sset Master " .. n .. "%+")
@@ -245,7 +245,7 @@ binds.globalkeys = awful.util.table.join(
 
   uniarg:key_numarg({}, "XF86AudioLowerVolume",
     function ()
-      awful.spawn("amixer sset Master 5%-")
+      awful.spawn("amixer sset Master '5%-'")
     end,
     function (n)
       awful.spawn("amixer sset Master " .. n .. "%-")
