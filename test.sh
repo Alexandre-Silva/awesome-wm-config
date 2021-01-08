@@ -10,4 +10,4 @@ AWESOME=${AWESOME:-awesome}
 
 Xephyr -br -ac -noreset -screen 800x600 :2 &
 sleep 1
-AWESOME_DEBUG='' XDG_CONFIG_HOME=~/projects DISPLAY=:2 "${AWESOME}" -c ~/projects/awesome/rc.lua
+AWESOME_DEBUG='' XDG_CONFIG_HOME=../ DISPLAY=:2 "${AWESOME}" -c ./rc.lua

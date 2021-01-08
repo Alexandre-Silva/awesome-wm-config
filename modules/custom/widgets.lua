@@ -108,7 +108,7 @@ function widgets.new_memusage() -- {{{
 end -- }}}
 function widgets.new_bat() -- {{{
   local lain_bat = lain.widget.bat({
-      battery  = "BAT1",
+      battery  = os.getenv("AWESOME_BATTERY") or "BAT1",
       ac       = "ACAD",
       timeout  = 60,
 
