@@ -237,22 +237,22 @@ binds.globalkeys = awful.util.table.join(
 
   uniarg:key_numarg({}, "XF86AudioRaiseVolume",
     function ()
-      awful.spawn("amixer sset Master '5%+'")
+      awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' '+5%'")
     end,
     function (n)
-      awful.spawn("amixer sset Master " .. n .. "%+")
+      awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' +" .. n .. "%")
   end),
 
   uniarg:key_numarg({}, "XF86AudioLowerVolume",
     function ()
-      awful.spawn("amixer sset Master '5%-'")
+      awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' '-5%'")
     end,
     function (n)
-      awful.spawn("amixer sset Master " .. n .. "%-")
+      awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' -" .. n .. "%")
   end),
 
-  awful.key({}, "XF86AudioMute",    function () awful.spawn("amixer sset Master toggle") end),
-  awful.key({}, "XF86AudioMicMute", function () awful.spawn("amixer sset Mic toggle") end),
+  awful.key({}, "XF86AudioMute",    function () awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' toggle") end),
+  awful.key({}, "XF86AudioMicMute", function () awful.spawn("pactl set-sink-input-volume '@DEFAULT_SOURCE@' toggle") end),
   awful.key({}, "XF86ScreenSaver",  function () awful.spawn("xscreensaver-command -l") end),
   awful.key({}, "XF86WebCam",       function () awful.spawn("cheese") end),
 
