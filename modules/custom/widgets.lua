@@ -269,16 +269,16 @@ function widgets.new_volume() -- {{{
     awful.util.table.join(
       volume:buttons(),
       awful.button({ }, 2, function ()
-          awful.spawn("amixer sset Mic toggle")
+          awful.spawn("pactl set-sink-input-mute '@DEFAULT_SOURCE@' toggle")
       end),
       awful.button({ }, 3, function ()
-          awful.spawn("amixer sset Master toggle")
+          awful.spawn("pactl set-sink-mute '@DEFAULT_SINK@' toggle")
       end),
       awful.button({ }, 4, function ()
-          awful.spawn("amixer sset Master 1%-")
+          awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' '-1%'")
       end),
       awful.button({ }, 5, function ()
-          awful.spawn("amixer sset Master 1%+")
+          awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' '+1%'")
       end)
   ))
 
