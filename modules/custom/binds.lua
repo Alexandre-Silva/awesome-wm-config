@@ -5,6 +5,7 @@ local widgets = require("custom.widgets")
 local func = require("custom.func")
 local structure = require("custom.structure")
 local config = require("custom.config")
+local naughty = require("naughty")
 
 local awesome = awesome
 local root = root
@@ -22,6 +23,14 @@ local binds = {}
 -- I suggest you to remap Mod4 to another key using xmodmap or other custom.config.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 local modkey = config.modkey
+
+local ctx = {
+  -- With push to talk we produce a notificaiton to show if the MIC is on or off.
+  -- To prevent spamming multiple notificaitons, each new notificaiton relating to
+  -- push to talk replaces the previous one. The id the current active
+  -- notificaiton is stored here
+  mic_notification = nil,
+}
 
 -- Utils {{{
 -- Gets the 'index'-esme tag with in the given 'focus'
@@ -228,6 +237,27 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({ modkey, "Shift" }, "b",  function() awful.spawn(config.browser.secondary) end),
   uniarg:key_repeat({ modkey, "Mod1", }, "v",  function() awful.spawn("virtualbox") end),
   uniarg:key_repeat({ modkey, "Shift" }, "\\", function() awful.spawn("kmag") end),
+
+  -- mic universal press to talk
+  awful.key({ modkey,         }, "w",
+    function()
+      awful.spawn("pactl set-source-mute '@DEFAULT_SOURCE@' 0")
+      local id_to_replace = nil
+      if ctx.mic_notification ~= nil then
+        id_to_replace = ctx.mic_notification.id
+        print(ctx.mic_notification.id)
+      end
+      ctx.mic_notification = naughty.notify({title = 'Mic: ON', replaces_id = id_to_replace});
+    end,
+    function()
+      awful.spawn("pactl set-source-mute '@DEFAULT_SOURCE@' 1")
+      local id_to_replace = nil
+      if ctx.mic_notification ~= nil then
+        id_to_replace = ctx.mic_notification.id
+      end
+      ctx.mic_notification = naughty.notify({title = 'Mic: OFF', replaces_id = id_to_replace});
+    end
+    ),
 
   --- the rest
   uniarg:key_repeat({}, "XF86AudioPrev", function () awful.spawn("playerctl previous") end),
