@@ -263,7 +263,7 @@ function widgets.new_volume() -- {{{
   vicious.register(volume, vicious.widgets.volume,
                    "<span fgcolor='cyan'>$1%$2</span>", 1, "Master")
 
-  widgets.add_prog_toggle(volume, config.terminal .. " --exec=alsamixer")
+  widgets.add_prog_toggle(volume, "pavucontrol")
 
   volume:buttons(
     awful.util.table.join(
