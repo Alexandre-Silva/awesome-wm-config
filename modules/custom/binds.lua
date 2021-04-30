@@ -29,7 +29,7 @@ local ctx = {
   -- To prevent spamming multiple notificaitons, each new notificaiton relating to
   -- push to talk replaces the previous one. The id the current active
   -- notificaiton is stored here
-  mic_notification = nil,
+  mic_notification = { id = nil },
 }
 
 -- Utils {{{
@@ -242,20 +242,11 @@ binds.globalkeys = awful.util.table.join(
   awful.key({ modkey,         }, "w",
     function()
       awful.spawn("pactl set-source-mute '@DEFAULT_SOURCE@' 0")
-      local id_to_replace = nil
-      if ctx.mic_notification ~= nil then
-        id_to_replace = ctx.mic_notification.id
-        print(ctx.mic_notification.id)
-      end
-      ctx.mic_notification = naughty.notify({title = 'Mic: ON', replaces_id = id_to_replace});
+      ctx.mic_notification = naughty.notify({title = 'Mic: ON', replaces_id = ctx.mic_notification.id});
     end,
     function()
       awful.spawn("pactl set-source-mute '@DEFAULT_SOURCE@' 1")
-      local id_to_replace = nil
-      if ctx.mic_notification ~= nil then
-        id_to_replace = ctx.mic_notification.id
-      end
-      ctx.mic_notification = naughty.notify({title = 'Mic: OFF', replaces_id = id_to_replace});
+      ctx.mic_notification = naughty.notify({title = 'Mic: OFF', replaces_id = ctx.mic_notification.id});
     end
     ),
 
