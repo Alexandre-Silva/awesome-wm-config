@@ -6,8 +6,9 @@ packages=(
     "pm:playerctl"
     "pm:nitrogen"
     "pm:arc-gtk-theme"
-    "om:arc-icon-theme"
-    "om:alsa-utils"
+    "pm:arc-icon-theme"
+    "pm:alsa-utils"
+    "pm:flameshot" # for screenshots
     "aur:light"
     "rock:inspect"
     "rock:luacheck"
