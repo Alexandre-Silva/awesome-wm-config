@@ -3,6 +3,7 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local util = require("util")
 local wibox = require("wibox")
+local naughty = require("naughty")
 
 local config = require("custom.config")
 local widgets = require("custom.widgets")
@@ -35,6 +36,153 @@ end
 
 local function theme() return beautiful.get() end
 
+local function pprint(v, offset)
+  if offset == nil then
+    offset = 0
+  end
+
+  local ident = ''
+  for i=0, offset do
+    ident = ident .. ' '
+  end
+
+  for k, v in pairs(v) do
+    if type(v) == "table" then
+      print(string.format('%s%s (table):', ident, k))
+      pprint(v, offset+2)
+    else
+      print(string.format('%s%s: %s', ident, k, v))
+    end
+  end
+end
+
+json = require "json"
+
+local XDG_SESSION_ID = os.getenv("XDG_SESSION_ID") or "0"
+local layout_fp = "/tmp/awesome_layout." ..  XDG_SESSION_ID .. ".json"
+
+function structure.save()
+  state = {tags={}, clients={}}
+
+  local tags = root.tags()
+  for i, tag in ipairs(tags) do
+    state.tags[tag.index] = tag.name
+  end
+
+  for i, c in ipairs(client.get()) do
+    state.clients[i] = {pid = c.pid, name = c.name, window = c.window, screen = c.screen.index, tag = c.first_tag.index }
+  end
+
+  print('layout:')
+  pprint(state)
+
+  local state_js = json.encode(state)
+  print(state_js)
+
+  local f = io.open(layout_fp, 'w')
+  if f then
+    f:write(state_js)
+    f:close()
+  end
+end
+
+function structure.load()
+  local f = io.open(layout_fp, 'r')
+  if not f then
+    return
+  end
+
+  local state_js = f:read()
+  print(state_js)
+  f:close()
+
+  state = json.decode(state_js)
+
+  print('layout:')
+  pprint(state)
+
+  for i, name in ipairs(state.tags) do
+    print("Creating tag: ".. name)
+    local tag = awful.tag.find_by_name(awful.screen.focused(), name)
+
+    if tag == nil then
+      tag = awful.tag.add(
+        name,
+        {screen = 1,
+         layout = config.property.layout,
+         mwfact = config.property.mwfact,
+         nmaster = config.property.nmaster,
+         ncol = config.property.ncol,
+      })
+    end
+    tag:view_only()
+  end
+
+  -- Since weere sorting wihtout "proper" sorting algorithm we
+  -- need several passes to make sure all tags are in the proper
+  -- place (ence the '_=1,10'). This is needed, since moving one tag mya displace
+  -- another already in the correct position.
+  local tags = {}
+  for _=1,10 do
+    for i, name in ipairs(state.tags) do
+      print("moving tag: ".. name)
+      local tag = awful.tag.find_by_name(awful.screen.focused(), name)
+
+      if tag then
+        tag.index = i
+      end
+      tags[i] = tag
+    end
+  end
+
+  local clients = {}
+  for _, c in ipairs(client.get()) do
+    local cw = c.window
+    if cw ~= nil then
+      clients[cw] = c
+    else
+      naughty.notify(
+        {
+          title='client no window',
+          text='name: '.. c.name,
+          timeout=3,
+      })
+    end
+  end
+
+  naughty.notify(
+    {
+      title='clients',
+      text=pprint(clients),
+      timeout=3,
+  })
+
+
+  for i, cs in ipairs(state.clients) do
+    local c = clients[cs.window]
+    if c ~= nil then
+      local tag = tags[cs.tag]
+      if tag ~= nil then
+        c:move_to_tag(tag)
+      else
+        naughty.notify(
+          {
+            title='stored client without found tag',
+            text='name: '.. cs.name .. ' tag idx: ' .. cs.tag,
+            timeout=3,
+        })
+      end
+    else
+      naughty.notify(
+        {
+          title='stored client not found',
+          text='name: '.. cs.name,
+          timeout=3,
+      })
+    end
+  end
+end
+
 -- }}}
 -- Menus {{{
 local apps_menu = build({system=config.system,
@@ -59,6 +207,8 @@ local awesome_menu = {
   --{ "manual", config.terminal .. " -e man awesome" },
   { "&edit config", config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
   { "&restart", awesome.restart },
+  { "&save layout", structure.save },
+  { "&load layout", structure.load },
   { "&quit", function () awesome.quit() end }
 }
 
@@ -87,74 +237,74 @@ local main_menu = {
 -- }}}
 -- Manage client {{{
 function structure.manage_client(c, startup)
-    -- Enable sloppy focus
-    c:connect_signal("mouse::enter", function(c)
-                       if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
+  -- Enable sloppy focus
+  c:connect_signal("mouse::enter", function(c)
+                     if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
                        and awful.client.focus.filter(c) then
-                         client.focus = c
-                       end
-    end)
+                       client.focus = c
+                     end
+  end)
 
-    if not startup then
-      -- Set the windows at the slave,
-      -- i.e. put it at the end of others instead of setting it master.
-      -- awful.client.setslave(c)
+  if not startup then
+    -- Set the windows at the slave,
+    -- i.e. put it at the end of others instead of setting it master.
+    -- awful.client.setslave(c)
 
-      -- Put windows in a smart way, only if they does not set an initial position.
-      if not c.size_hints.user_position and not c.size_hints.program_position then
-        awful.placement.no_overlap(c)
-        awful.placement.no_offscreen(c)
-      end
+    -- Put windows in a smart way, only if they does not set an initial position.
+    if not c.size_hints.user_position and not c.size_hints.program_position then
+      awful.placement.no_overlap(c)
+      awful.placement.no_offscreen(c)
     end
+  end
 
-    local titlebars_enabled = true
-    if titlebars_enabled and (c.type == "normal" or c.type == "dialog") then
+  local titlebars_enabled = true
+  if titlebars_enabled and (c.type == "normal" or c.type == "dialog") then
 
-      -- buttons for the titlebar
-      local buttons = awful.util.table.join(
-        awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.resize(c)
-        end)
-      )
+    -- buttons for the titlebar
+    local buttons = awful.util.table.join(
+      awful.button({ }, 1, function()
+          client.focus = c
+          c:raise()
+          awful.mouse.client.move(c)
+      end),
+      awful.button({ }, 3, function()
+          client.focus = c
+          c:raise()
+          awful.mouse.client.resize(c)
+      end)
+    )
 
-      -- Widgets that are aligned to the left
-      local left_layout = wibox.layout.fixed.horizontal()
-      left_layout:add(awful.titlebar.widget.iconwidget(c))
-      left_layout:buttons(buttons)
+    -- Widgets that are aligned to the left
+    local left_layout = wibox.layout.fixed.horizontal()
+    left_layout:add(awful.titlebar.widget.iconwidget(c))
+    left_layout:buttons(buttons)
 
-      -- Widgets that are aligned to the right
-      local right_layout = wibox.layout.fixed.horizontal()
-      right_layout:add(awful.titlebar.widget.floatingbutton(c))
-      right_layout:add(awful.titlebar.widget.maximizedbutton(c))
-      right_layout:add(awful.titlebar.widget.stickybutton(c))
-      right_layout:add(awful.titlebar.widget.ontopbutton(c))
-      right_layout:add(awful.titlebar.widget.closebutton(c))
+    -- Widgets that are aligned to the right
+    local right_layout = wibox.layout.fixed.horizontal()
+    right_layout:add(awful.titlebar.widget.floatingbutton(c))
+    right_layout:add(awful.titlebar.widget.maximizedbutton(c))
+    right_layout:add(awful.titlebar.widget.stickybutton(c))
+    right_layout:add(awful.titlebar.widget.ontopbutton(c))
+    right_layout:add(awful.titlebar.widget.closebutton(c))
 
-      -- The title goes in the middle
-      local middle_layout = wibox.layout.flex.horizontal()
-      local title = awful.titlebar.widget.titlewidget(c)
-      title:set_align("center")
-      middle_layout:add(title)
-      middle_layout:buttons(buttons)
+    -- The title goes in the middle
+    local middle_layout = wibox.layout.flex.horizontal()
+    local title = awful.titlebar.widget.titlewidget(c)
+    title:set_align("center")
+    middle_layout:add(title)
+    middle_layout:buttons(buttons)
 
-      -- Now bring it all together
-      local layout = wibox.layout.align.horizontal()
-      layout:set_left(left_layout)
-      layout:set_right(right_layout)
-      layout:set_middle(middle_layout)
+    -- Now bring it all together
+    local layout = wibox.layout.align.horizontal()
+    layout:set_left(left_layout)
+    layout:set_right(right_layout)
+    layout:set_middle(middle_layout)
 
-      awful.titlebar(c):set_widget(layout)
+    awful.titlebar(c):set_widget(layout)
 
-      -- hide the titlebar by default (it takes space)
-      awful.titlebar.hide(c)
-    end
+    -- hide the titlebar by default (it takes space)
+    awful.titlebar.hide(c)
+  end
 end
 -- }}}
 -- Init {{{
@@ -188,12 +338,12 @@ function structure.init()
   widgets.taglist.buttons = awful.util.table.join(
     awful.button({        }, 1, function(t) t:view_only() end),
     awful.button({ modkey }, 1, function(t) if client.focus then client.focus:move_to_tag(t) end end),
-    awful.button({        }, 2, awful.tag.viewtoggle),
-    awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
-    awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
-    awful.button({ modkey }, 3, function(t) t:delete() end),
-    awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
+      awful.button({        }, 2, awful.tag.viewtoggle),
+      awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
+        awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
+        awful.button({ modkey }, 3, function(t) t:delete() end),
+        awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
+        awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
   )
 
 
@@ -287,19 +437,19 @@ function structure.init()
         s.mytasklist,
 
         theme().format_widgets( {
-          wibox.widget.systray(),
-          widgets.memusage,
-          widgets.cpuusage,
-          widgets.bat,
-          widgets.playerstatus,
+            wibox.widget.systray(),
+            widgets.memusage,
+            widgets.cpuusage,
+            widgets.bat,
+            widgets.playerstatus,
 
-          --widgets.audio_volume,
-          widgets.volume,
-          widgets.date,
-          --widgets.textclock,
+            --widgets.audio_volume,
+            widgets.volume,
+            widgets.date,
+            --widgets.textclock,
 
-          s.mylayoutbox,
-        }),
+            s.mylayoutbox,
+                              }),
 
         layout = wibox.layout.align.horizontal(),
       }
@@ -308,6 +458,5 @@ function structure.init()
   util.taglist.set_taglist(widgets.taglist)
 end
 -- }}}
-
 
 return structure

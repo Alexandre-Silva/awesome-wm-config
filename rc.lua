@@ -247,4 +247,5 @@ if not util.file_exists(session_file) then
 
 end
 
+
 custom.func.client_opaque_on(nil) -- start xcompmgr
