@@ -82,6 +82,7 @@ config.property = {
 config.compmgr = 'xcompmgr'
 config.compmgr_args = '-f -c -s'
 config.wallpaper_change_interval = 60
+config.layout_save_period = 30
 
 
 return config

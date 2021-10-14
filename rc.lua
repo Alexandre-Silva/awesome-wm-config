@@ -85,8 +85,11 @@ local awesome_client_tags_fname = cachedir .. "/awesome-client-tags-" ..  XDG_SE
 awesome.connect_signal(
   "exit",
   function (restart)
-    if not restart then
+    if restart then
+      custom.structure.save("/tmp/awesome_layout.restart.json")
+    else
       bashets.stop()
+      custom.structure.clear("/tmp/awesome_layout.restart.json")
     end
 end)
 
@@ -97,7 +100,22 @@ for fname in ipairs({"quit", "restart"}) do
     custom.func.prompt_yes_no(fname, custom.orig[fname] )
   end
 end
+
+custom.timer.change_wallpaper = gears.timer.start_new(
+  custom.config.layout_save_period,
+  function ()
+    custom.structure.save("/tmp/awesome_layout.auto.json")
+    return true
+end)
+
+awesome.connect_signal(
+  "screen::change",
+  function (output, connection_state)
+    print('Screen change ' .. output .. ' ' .. connection_state)
+    custom.structure.load("/tmp/awesome_layout.auto.json")
+end)
 -- }}}
+
 -- Theme {{{
 do
   local function init_theme(theme_name)
@@ -247,5 +265,13 @@ if not util.file_exists(session_file) then
 
 end
 
-
 custom.func.client_opaque_on(nil) -- start xcompmgr
+
+-- Load the lauout before the restart. We give some delay to prevent race issues
+custom.timer.change_wallpaper = gears.timer.start_new(
+  1,
+  function ()
+    -- tries to reload layout on restart. If does not exist does nothing
+    custom.structure.load("/tmp/awesome_layout.restart.json")
+    return false
+end)

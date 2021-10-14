@@ -4,6 +4,7 @@ local beautiful = require("beautiful")
 local util = require("util")
 local wibox = require("wibox")
 local naughty = require("naughty")
+local json = require("json")
 
 local config = require("custom.config")
 local widgets = require("custom.widgets")
@@ -13,6 +14,9 @@ local modkey = require("custom.config").modkey
 local awesome = awesome
 local client = client
 -- }}}
+
+local XDG_SESSION_ID = os.getenv("XDG_SESSION_ID") or "0"
+local layout_fp = "/tmp/awesome_layout." ..  XDG_SESSION_ID .. ".json"
 
 local structure = {}
 
@@ -56,13 +60,8 @@ local function pprint(v, offset)
   end
 end
 
-json = require "json"
-
-local XDG_SESSION_ID = os.getenv("XDG_SESSION_ID") or "0"
-local layout_fp = "/tmp/awesome_layout." ..  XDG_SESSION_ID .. ".json"
-
-function structure.save()
-  state = {tags={}, clients={}}
+function structure.save(fp)
+  local state = {tags={}, clients={}}
 
   local tags = root.tags()
   for i, tag in ipairs(tags) do
@@ -70,7 +69,18 @@ function structure.save()
   end
 
   for i, c in ipairs(client.get()) do
-    state.clients[i] = {pid = c.pid, name = c.name, window = c.window, screen = c.screen.index, tag = c.first_tag.index }
+    local tag_idx = 1
+    if c.first_tag then
+      tag_idx = c.first_tag.index
+    end
+
+    state.clients[i] = {
+      pid = c.pid,
+      name = c.name,
+      window = c.window,
+      screen = c.screen.index,
+      tag = tag_idx,
+    }
   end
 
   print('layout:')
@@ -79,15 +89,23 @@ function structure.save()
   local state_js = json.encode(state)
   print(state_js)
 
-  local f = io.open(layout_fp, 'w')
+  if fp == nil then
+    fp = layout_fp
+  end
+
+  local f = io.open(fp, 'w')
   if f then
     f:write(state_js)
     f:close()
   end
 end
 
-function structure.load()
-  local f = io.open(layout_fp, 'r')
+function structure.load(fp)
+  if fp == nil then
+    fp = layout_fp
+  end
+
+  local f = io.open(fp, 'r')
   if not f then
     return
   end
@@ -96,7 +114,7 @@ function structure.load()
   print(state_js)
   f:close()
 
-  state = json.decode(state_js)
+  local state = json.decode(state_js)
 
   print('layout:')
   pprint(state)
@@ -143,7 +161,7 @@ function structure.load()
     else
       naughty.notify(
         {
-          title='client no window',
+          title='client without window',
           text='name: '.. c.name,
           timeout=3,
       })
@@ -156,7 +174,6 @@ function structure.load()
       text=pprint(clients),
       timeout=3,
   })
-
 
   for i, cs in ipairs(state.clients) do
     local c = clients[cs.window]
@@ -177,10 +194,26 @@ function structure.load()
         {
           title='stored client not found',
           text='name: '.. cs.name,
-          timeout=3,
+          timeout=6,
       })
     end
   end
+
+  print('Moving orphan clients to 1st tag')
+  for _, c in ipairs(client.get()) do
+    local tag = tags[1]
+    if c.first_tag == nil then
+      c:move_to_tag(tag)
+    end
+  end
+end
+
+function structure.clear(fp)
+  if fp == nil then
+    fp = layout_fp
+  end
+
+  os.remove(fp)
 end
 
 -- }}}
@@ -207,8 +240,8 @@ local awesome_menu = {
   --{ "manual", config.terminal .. " -e man awesome" },
   { "&edit config", config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
   { "&restart", awesome.restart },
-  { "&save layout", structure.save },
-  { "&load layout", structure.load },
+  { "&save layout", function () structure.save() end },
+  { "&load layout", function () structure.load() end },
   { "&quit", function () awesome.quit() end }
 }
 
@@ -338,12 +371,12 @@ function structure.init()
   widgets.taglist.buttons = awful.util.table.join(
     awful.button({        }, 1, function(t) t:view_only() end),
     awful.button({ modkey }, 1, function(t) if client.focus then client.focus:move_to_tag(t) end end),
-      awful.button({        }, 2, awful.tag.viewtoggle),
-      awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
-        awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
-        awful.button({ modkey }, 3, function(t) t:delete() end),
-        awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
-        awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
+    awful.button({        }, 2, awful.tag.viewtoggle),
+    awful.button({ modkey }, 2, function(t) if client.focus then client.focus:toggle_tag(t) end end),
+    awful.button({        }, 3, function(t) func.tag_action_menu(t) end),
+    awful.button({ modkey }, 3, function(t) t:delete() end),
+    awful.button({        }, 4, function(t) awful.tag.viewnext(t.screen) end),
+    awful.button({        }, 5, function(t) awful.tag.viewprev(t.screen) end)
   )
 
 
