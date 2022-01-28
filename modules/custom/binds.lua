@@ -153,6 +153,7 @@ binds.globalkeys = awful.util.table.join(
   awful.key({ modkey,         }, "x", function() structure.main_menu:toggle({keygrabber=true}) end),
   awful.key({ modkey, "Shift", "Ctrl" }, "'", func.all_clients_prompt),
   uniarg:key_repeat({ modkey,         }, "Return", function () awful.spawn(config.terminal) end),
+  uniarg:key_repeat({ modkey, "Shift" }, "Return", function () awful.spawn("rofi -show drun") end),
   uniarg:key_repeat({ modkey, "Mod1"  }, "Return",
     function () awful.spawn("gksudo " .. config.terminal)
   end),
