@@ -154,11 +154,12 @@ binds.globalkeys = awful.util.table.join(
   awful.key({ modkey, "Shift", "Ctrl" }, "'", func.all_clients_prompt),
   uniarg:key_repeat({ modkey,         }, "Return", function () awful.spawn(config.terminal) end),
   uniarg:key_repeat({ modkey, "Shift" }, "Return", function () awful.spawn("rofi -show drun") end),
+  awful.key({ modkey,         },         "-",      function () awful.spawn("rofi -show calc -modi calc,emoji -no-show-match -no-sort") end),
   uniarg:key_repeat({ modkey, "Mod1"  }, "Return",
     function () awful.spawn("gksudo " .. config.terminal)
   end),
 
-  --- add/delete/rename
+  --- add/delete/renam
   awful.key({modkey         }, "a", func.tag_add_after),
   awful.key({modkey, "Shift"}, "a", func.tag_add_before),
   awful.key({modkey, "Shift"}, "d", func.tag_delete),
