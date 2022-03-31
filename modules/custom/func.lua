@@ -941,4 +941,10 @@ end
 
 -- }}}
 
+
+function func.screen_name(screen)
+  local geo = screen.geometry
+  return '' .. geo.x .. 'x' .. geo.y .. '-' .. geo.width .. 'x' .. geo.height
+end
+
 return func

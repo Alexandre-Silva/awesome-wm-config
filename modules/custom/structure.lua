@@ -13,6 +13,8 @@ local modkey = require("custom.config").modkey
 
 local awesome = awesome
 local client = client
+local screen = screen
+local root = root
 -- }}}
 
 local XDG_SESSION_ID = os.getenv("XDG_SESSION_ID") or "0"
@@ -65,7 +67,12 @@ function structure.save(fp)
 
   local tags = root.tags()
   for i, tag in ipairs(tags) do
-    state.tags[tag.index] = tag.name
+    state.tags[tag.index] = {
+      name = tag.name,
+      screen = tag.screen.index,
+      index = tag.index,
+      layout = tag.layout.name,
+    }
   end
 
   for i, c in ipairs(client.get()) do
@@ -116,43 +123,80 @@ function structure.load(fp)
 
   local state = json.decode(state_js)
 
-  print('layout:')
-  pprint(state)
+  -- print('layout:')
+  -- pprint(state)
 
-  for i, name in ipairs(state.tags) do
-    print("Creating tag: ".. name)
-    local tag = awful.tag.find_by_name(awful.screen.focused(), name)
+  -- for i, ts in ipairs(state.tags) do
+  --   print("Creating tag: ".. ts.name)
+  --   local tag = awful.tag.find_by_name(awful.screen.focused(), ts.name)
 
-    if tag == nil then
-      tag = awful.tag.add(
-        name,
-        {screen = 1,
-         layout = config.property.layout,
-         mwfact = config.property.mwfact,
-         nmaster = config.property.nmaster,
-         ncol = config.property.ncol,
-      })
-    end
-    tag:view_only()
+  --   if tag == nil then
+  --     tag = awful.tag.add(
+  --       name,
+  --       {screen = 1,
+  --        layout = config.property.layout,
+  --        mwfact = config.property.mwfact,
+  --        nmaster = config.property.nmaster,
+  --        ncol = config.property.ncol,
+  --     })
+  --   end
+  --   tag:view_only()
+  -- end
+
+  -- create layouts table for assigning a layout by name
+  local layouts = {}
+  for _, l in pairs(config.layouts) do
+    layouts[l.name] = l
   end
 
-  -- Since weere sorting wihtout "proper" sorting algorithm we
-  -- need several passes to make sure all tags are in the proper
-  -- place (ence the '_=1,10'). This is needed, since moving one tag mya displace
-  -- another already in the correct position.
+  -- mark old tags to be deleted
+  for _, t in pairs(root.tags()) do
+    t.name = '__delete__'
+  end
+
+  -- loads Tags State [screen index][tag index]
   local tags = {}
-  for _=1,10 do
-    for i, name in ipairs(state.tags) do
-      print("moving tag: ".. name)
-      local tag = awful.tag.find_by_name(awful.screen.focused(), name)
-
-      if tag then
-        tag.index = i
-      end
-      tags[i] = tag
-    end
+  for s in screen do
+    tags[s.index] = {}
   end
 
+  for i, ts in ipairs(state.tags) do
+    local layout = config.property.layout
+    if layouts[ts.layout] ~= nil then
+      layout = layouts[ts.layout]
+    end
+
+    local tag = awful.tag.add(
+      ts.name,
+      {screen = ts.screen,
+       layout = layout,
+       mwfact = config.property.mwfact,
+       nmaster = config.property.nmaster,
+       ncol = config.property.ncol,
+    })
+    tag:view_only()
+
+    tags[ts.screen][i] = tag
+  end
+
+  -- Since weere sorting wihtout "proper" sorting algorithm we need several
+  -- passes to make sure all tags are in the proper place (ence the '_=1,10').
+  -- This is needed, since moving one tag may displace another already in the
+  -- correct position.
+  -- for _=1,10 do
+  --   for i, name in ipairs(state.tags) do
+  --     print("moving tag: ".. name)
+  --     local tag = awful.tag.find_by_name(main_screen, name)
+
+  --     if tag then
+  --       tag.index = i
+  --     end
+
+  --     tags[i] = tag
+  --   end
+  -- end
+
+  -- load clients indexed by X's window id
   local clients = {}
   for _, c in ipairs(client.get()) do
     local cw = c.window
@@ -178,7 +222,7 @@ function structure.load(fp)
   for i, cs in ipairs(state.clients) do
     local c = clients[cs.window]
     if c ~= nil then
-      local tag = tags[cs.tag]
+      local tag = tags[cs.screen][cs.tag]
       if tag ~= nil then
         c:move_to_tag(tag)
       else
@@ -199,9 +243,16 @@ function structure.load(fp)
     end
   end
 
+  -- properly toombstoned tags
+  for _, t in pairs(root.tags()) do
+    if t.name == '__delete__' then
+      t:delete()
+    end
+  end
+
   print('Moving orphan clients to 1st tag')
   for _, c in ipairs(client.get()) do
-    local tag = tags[1]
+    local tag = tags[1][1]
     if c.first_tag == nil then
       c:move_to_tag(tag)
     end

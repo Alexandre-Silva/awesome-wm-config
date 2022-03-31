@@ -24,6 +24,7 @@ local util = require('util')
 local gears = require("gears")
 local naughty = require("naughty")
 local uniarg = require("uniarg")
+local func = require("custom.func")
 
 local awesome = awesome
 local screen = screen
@@ -104,7 +105,9 @@ end
 custom.timer.change_wallpaper = gears.timer.start_new(
   custom.config.layout_save_period,
   function ()
-    custom.structure.save("/tmp/awesome_layout.auto.json")
+    local screen = awful.screen.focused()
+    local name = func.screen_name(screen)
+    custom.structure.save("/tmp/awesome_layout." .. name .. ".json")
     return true
 end)
 
@@ -112,7 +115,11 @@ awesome.connect_signal(
   "screen::change",
   function (output, connection_state)
     print('Screen change ' .. output .. ' ' .. connection_state)
-    custom.structure.load("/tmp/awesome_layout.auto.json")
+    -- custom.structure.load("/tmp/awesome_layout.auto.json")
+
+    local screen = awful.screen.focused()
+    local name = func.screen_name(screen)
+    custom.structure.load("/tmp/awesome_layout." .. name .. ".json")
 end)
 -- }}}
 
