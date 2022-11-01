@@ -1,5 +1,6 @@
 -- Imports {{{
 local awful = require("awful")
+local naughty = require("naughty")
 -- }}}
 
 local config = {}
@@ -17,6 +18,20 @@ config.help_url = "https://github.com/pw4ever/awesome-wm-config/tree/" .. config
 
 -- actual configs
 config.terminal = os.getenv("TERMCMD") or "xterm"
+config.terminal_last_cd = function()
+  -- local uid = os.getenv("UID")
+  local uid = '1000'
+  local f = io.open(string.format("/var/run/user/%s/cd-last.txt", uid), "r")
+
+  if f ~= nil then
+    local path = f:read("*l")
+    f:close()
+    return string.format("%s --working-directory \"%s\"", config.terminal, path)
+
+  else
+    return config.terminal
+  end
+end
 
 config.system = {
   taskmanager = "htopl",
