@@ -275,8 +275,8 @@ binds.globalkeys = awful.util.table.join(
       awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' -" .. n .. "%")
   end),
 
-  awful.key({}, "XF86AudioMute",    function () awful.spawn("pactl set-sink-volume '@DEFAULT_SINK@' toggle") end),
-  awful.key({}, "XF86AudioMicMute", function () awful.spawn("pactl set-sink-input-volume '@DEFAULT_SOURCE@' toggle") end),
+  awful.key({}, "XF86AudioMute",    function () awful.spawn("pactl set-sink-mute '@DEFAULT_SINK@' toggle") end),
+  awful.key({}, "XF86AudioMicMute", function () awful.spawn("pactl set-sink-input-mute '@DEFAULT_SOURCE@' toggle") end),
   awful.key({}, "XF86ScreenSaver",  function () awful.spawn("xscreensaver-command -l") end),
   awful.key({}, "XF86WebCam",       function () awful.spawn("cheese") end),
 
