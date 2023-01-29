@@ -289,7 +289,7 @@ local system_menu = {
 -- Create a launcher widget and a main menu
 local awesome_menu = {
   --{ "manual", config.terminal .. " -e man awesome" },
-  { "&edit config", config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
+  -- { "&edit config", config.editor.primary .. " " .. awful.util.getdir("config") .. "/rc.lua"  },
   { "&restart", awesome.restart },
   { "&save layout", function () structure.save() end },
   { "&load layout", function () structure.load() end },

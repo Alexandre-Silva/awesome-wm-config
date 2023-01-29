@@ -35,30 +35,39 @@ end
 
 config.system = {
   taskmanager = "htopl",
-  filemanager = "rangerl"
+  filemanager = "dolphin"
 }
 
 config.browser = {
   primary = os.getenv("BROWSER") or "firefox",
 
   -- if primary is chromium get firefox, and vicev-versa
-  secondary = ({chromium="firefox", firefox="chromium"})[primary]
+  secondary = ({ chromium = "firefox", firefox = "chromium" })[primary]
 }
 
 config.editor = {
-  primary = os.getenv("EDITOR") or "emacs",
+  primary = os.getenv("EDITOR"),
   secondary = "vim",
 }
 
+-- launch editor inside terminal if needed
+local terminal_editors = { ['vi'] = true, ['vim'] = true, ['nvim'] = true, ['lvim'] = true, }
+if terminal_editors[config.editor.primary] then
+  config.editor = {
+    primary = { os.getenv('TERMCMD'), '-e', os.getenv("EDITOR") },
+    secondary = "vim",
+  }
+end
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 config.layouts =
-  {
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.fair,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier,
-  }
+{
+  awful.layout.suit.floating,
+  awful.layout.suit.tile,
+  awful.layout.suit.fair,
+  awful.layout.suit.max.fullscreen,
+  awful.layout.suit.magnifier,
+}
 
 --[[
   local layouts =
