@@ -205,12 +205,48 @@ function func.client_maximize_vertical (c)
 end
 
 function func.client_maximize (c)
-  func.client_maximize_horizontal(c)
-  func.client_maximize_vertical(c)
+  c.maximized = not c.maximized
+  c.maximized_vertical = c.maximized
+  c.maximized_horizontal = c.maximized
 end
 
 function func.client_minimize (c)
   c.minimized = not c.minimized
+end
+
+function func.client_print_dbg (c)
+if c.maximized then
+  local dtraceback = debug.traceback
+  debug.traceback = function (...)
+    if select('#', ...) >= 1 then
+      local err, lvl = ...
+      if err and type(err) ~= 'thread' then
+        local trace = dtraceback(err, (lvl or 2)+1)
+        if genv.print == iobase.print then -- no remote redirect
+          return trace
+        else
+          genv.print(trace) -- report the error remotely
+          return -- don't report locally to avoid double reporting
+        end
+      end
+    end
+    -- direct call to debug.traceback: return the original.
+    -- debug.traceback(nil, level) doesn't work in Lua 5.1
+    -- (http://lua-users.org/lists/lua-l/2011-06/msg00574.html), so
+    -- simply remove first frame from the stack trace
+    return (dtraceback(...):gsub("(stack traceback:\n)[^\n]*\n", "%1"))
+  end
+    print(debug.traceback())
+end
+
+	print(string.format("floating %s", c.floating))
+	print(string.format("maximized_vertical %s", c.maximized_vertical))
+	print(string.format("maximized_horizontal %s", c.maximized_horizontal))
+	print(string.format("maximized %s", c.maximized))
+	print(string.format("_delayed_max_h %s", c._delayed_max_h))
+	print(string.format("_delayed_max_v %s", c._delayed_max_v))
+	print(string.format("is_fixed %s", c.is_fixed))
+
 end
 
 -- function func.client_manage_tag (c, startup)
