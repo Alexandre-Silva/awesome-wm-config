@@ -216,26 +216,6 @@ end
 
 function func.client_print_dbg (c)
 if c.maximized then
-  local dtraceback = debug.traceback
-  debug.traceback = function (...)
-    if select('#', ...) >= 1 then
-      local err, lvl = ...
-      if err and type(err) ~= 'thread' then
-        local trace = dtraceback(err, (lvl or 2)+1)
-        if genv.print == iobase.print then -- no remote redirect
-          return trace
-        else
-          genv.print(trace) -- report the error remotely
-          return -- don't report locally to avoid double reporting
-        end
-      end
-    end
-    -- direct call to debug.traceback: return the original.
-    -- debug.traceback(nil, level) doesn't work in Lua 5.1
-    -- (http://lua-users.org/lists/lua-l/2011-06/msg00574.html), so
-    -- simply remove first frame from the stack trace
-    return (dtraceback(...):gsub("(stack traceback:\n)[^\n]*\n", "%1"))
-  end
     print(debug.traceback())
 end
 
