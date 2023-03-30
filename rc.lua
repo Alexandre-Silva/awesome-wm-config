@@ -197,7 +197,7 @@ awful.rules.rules = {
       -- issue is in ewmh.merge_maximization(), /usr/share/awesome/lib/awful/ewmh.lua:346
       -- a delayed maximization is being generated for some reason
       gears.timer {
-           timeout     = 0.200,
+           timeout     = 0.300,
            autostart   = true,
            single_shot = true,
            callback    = function()
