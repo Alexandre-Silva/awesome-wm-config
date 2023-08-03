@@ -310,6 +310,8 @@ binds.globalkeys = awful.util.table.join(
   awful.key({ modkey }, "F7",   function () awful.spawn("light -A 5") end),
   awful.key({ modkey }, "F8",   function () awful.spawn("amixer sset Master toggle") end),
 
+  awful.key({ modkey }, "F15",  function () awful.spawn("clip2pastebin.py") end),
+
   nil
 )
 
