@@ -152,13 +152,6 @@ binds.globalkeys = awful.util.table.join(
   awful.key({ modkey, "Shift" }, "'", func.all_clients),
   awful.key({ modkey,         }, "x", function() structure.main_menu:toggle({keygrabber=true}) end),
   awful.key({ modkey, "Shift", "Ctrl" }, "'", func.all_clients_prompt),
-  uniarg:key_repeat({ modkey,         }, "Return", function () awful.spawn(config.terminal) end),
-  uniarg:key_repeat({ modkey,  "Ctrl" }, "Return", function () awful.spawn(config.terminal_last_cd()) end),
-  uniarg:key_repeat({ modkey, "Shift" }, "Return", function () awful.spawn("rofi -show drun") end),
-  awful.key({ modkey,         },         "-",      function () awful.spawn("rofi -show calc -modi calc,emoji -no-show-match -no-sort") end),
-  uniarg:key_repeat({ modkey, "Mod1"  }, "Return",
-    function () awful.spawn("gksudo " .. config.terminal)
-  end),
 
   --- add/delete/renam
   awful.key({modkey         }, "a", func.tag_add_after),
@@ -241,6 +234,14 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({ modkey, "Mod1", }, "v",  function() awful.spawn("virtualbox") end),
   uniarg:key_repeat({ modkey, "Shift" }, "\\", function() awful.spawn("kmag") end),
 
+  uniarg:key_repeat({ modkey,         }, "Return", function () awful.spawn(config.terminal) end),
+  uniarg:key_repeat({ modkey,  "Ctrl" }, "Return", function () awful.spawn(config.terminal_last_cd()) end),
+  uniarg:key_repeat({ modkey, "Shift" }, "Return", function () awful.spawn("rofi -show drun") end),
+  awful.key({ modkey,         },         "-",      function () awful.spawn("rofi -show calc -modi calc,emoji -no-show-match -no-sort") end),
+  uniarg:key_repeat({ modkey, "Mod1"  }, "Return",
+    function () awful.spawn("gksudo " .. config.terminal)
+  end),
+
   -- mic universal press to talk
   awful.key({ modkey,         }, "w",
     function()
@@ -310,7 +311,9 @@ binds.globalkeys = awful.util.table.join(
   awful.key({ modkey }, "F7",   function () awful.spawn("light -A 5") end),
   awful.key({ modkey }, "F8",   function () awful.spawn("amixer sset Master toggle") end),
 
-  awful.key({ modkey }, "F15",  function () awful.spawn("clip2pastebin.py") end),
+  -- functions keys present in moonlander
+  awful.key({ }, "F15",  function () awful.spawn("clip2pastebin.py") end),
+  awful.key({ }, "F24",  function () awful.spawn("new-note.py") end),
 
   nil
 )
