@@ -10,6 +10,7 @@ packages=(
     "pm:alsa-utils"
     "pm:flameshot" # for screenshots
     "aur:light"
+    "aur:lain-git"
     "rock:inspect"
     "rock:luacheck"
 )
