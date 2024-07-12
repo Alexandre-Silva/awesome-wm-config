@@ -237,7 +237,7 @@ binds.globalkeys = awful.util.table.join(
   uniarg:key_repeat({ modkey,         }, "Return", function () awful.spawn(config.terminal) end),
   uniarg:key_repeat({ modkey,  "Ctrl" }, "Return", function () awful.spawn(config.terminal_last_cd()) end),
   uniarg:key_repeat({ modkey, "Shift" }, "Return", function () awful.spawn("rofi -show drun") end),
-  awful.key({ modkey,         },         "-",      function () awful.spawn("rofi -show calc -modi calc,emoji -no-show-match -no-sort") end),
+  awful.key({ modkey,         },         "-",      function () awful.spawn("rofi -show calc -modi calc,emoji -no-show-match -no-sort -calc-command \"copyq copy '{result}' >/dev/null\"") end),
   uniarg:key_repeat({ modkey, "Mod1"  }, "Return",
     function () awful.spawn("gksudo " .. config.terminal)
   end),
