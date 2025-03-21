@@ -313,6 +313,8 @@ binds.globalkeys = awful.util.table.join(
 
   -- functions keys present in moonlander
   awful.key({ }, "F15",  function () awful.spawn("clip2pastebin.py") end),
+  awful.key({ }, "F13",  function () awful.spawn("astt.bash clip") end),
+  awful.key({ }, "F14",  function () awful.spawn("astt.bash write") end),
   awful.key({ }, "F24",  function () awful.spawn("org-capture") end),
 
   nil
