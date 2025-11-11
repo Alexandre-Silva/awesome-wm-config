@@ -146,10 +146,10 @@ binds.globalkeys = awful.util.table.join(
       end
   end),
 
-  awful.key({ modkey, "Shift" }, ";", func.tag_action_menu),
-  awful.key({ modkey,         }, "'", func.clients_on_tag),
-  awful.key({ modkey, "Ctrl"  }, "'", func.clients_on_tag_prompt),
-  awful.key({ modkey, "Shift" }, "'", func.all_clients),
+  -- awful.key({ modkey, "Shift" }, ";", func.tag_action_menu),
+  -- awful.key({ modkey,         }, "'", func.clients_on_tag),
+  -- awful.key({ modkey, "Ctrl"  }, "'", func.clients_on_tag_prompt),
+  -- awful.key({ modkey, "Shift" }, "'", func.all_clients),
   awful.key({ modkey,         }, "x", function() structure.main_menu:toggle({keygrabber=true}) end),
   awful.key({ modkey, "Shift", "Ctrl" }, "'", func.all_clients_prompt),
 
